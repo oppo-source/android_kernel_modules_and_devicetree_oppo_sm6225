@@ -1,0 +1,3 @@
+/*jiangyuyu@BSP.Sensor, 20201215, for sensor overlay*/
+#include "sensor/beta-sensor-mtp.dtsi"
+#include "oplus-charge.dtsi"

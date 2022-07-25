@@ -1,0 +1,3 @@
+#include "nfc/coco-nfc-pn553.dtsi"
+/*liujiafu@BSP.Sensor, 20201210, for sensor overlay*/
+#include "sensor/coco-sensor-qrd.dtsi"

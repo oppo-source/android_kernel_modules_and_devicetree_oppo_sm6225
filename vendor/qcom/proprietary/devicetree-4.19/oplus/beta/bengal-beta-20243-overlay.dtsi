@@ -1,0 +1,6 @@
+#include "nfc/beta-nfc-pn557.dtsi"
+
+/*jiangyuyu@BSP.Sensor, 20201127, for sensor overlay*/
+#include "sensor/beta-20243-sensor-mtp.dtsi"
+
+#include "oplus-charge.dtsi"

@@ -1,0 +1,8 @@
+#ifdef OPLUS_FEATURE_TP_BASIC
+#Added by Longfei.Wang@Bsp.group.Tp for nova nt36525_noflash ic driver
+
+config TOUCHPANEL_NOVA_NT36523_NOFLASH
+	bool "TP nova nt36523¡ªnoflash IC enable or not for OPPO"
+	---help---
+	say Y to enable driver for Touchpanel useing nova nt36523-noflash
+#endif
