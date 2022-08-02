@@ -3,12 +3,6 @@
 ** File : oplus_dsi_support.c
 ** Description : display driver private management
 ** Version : 1.0
-** Date : 2018/03/17
-** Author : Jie.Hu@PSW.MM.Display.Stability
-**
-** ------------------------------- Revision History: -----------
-**  <author>        <data>        <version >        <desc>
-**   Hu.Jie          2018/03/17        1.0           Build this moudle
 ******************************************************************/
 #include "oplus_dsi_support.h"
 #include <soc/oppo/boot_mode.h>

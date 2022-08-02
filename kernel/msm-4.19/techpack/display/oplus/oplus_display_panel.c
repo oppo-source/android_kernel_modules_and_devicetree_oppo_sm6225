@@ -3,12 +3,6 @@
 ** File : oplus_display_panel.c
 ** Description : oplus display panel char dev  /dev/oplus_panel
 ** Version : 1.0
-** Date : 2020/06/13
-** Author : Li.Sheng@MULTIMEDIA.DISPLAY.LCD
-**
-** ------------------------------- Revision History: -----------
-**  <author>        <data>        <version >        <desc>
-**  Li.Sheng       2020/06/13        1.0           Build this moudle
 ******************************************************************/
 #include <linux/slab.h>
 #include <linux/uaccess.h>

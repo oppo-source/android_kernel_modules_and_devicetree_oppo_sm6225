@@ -3,12 +3,6 @@
 ** File : oplus_onscreenfingerprint.c
 ** Description : oplus onscreenfingerprint feature
 ** Version : 1.0
-** Date : 2020/04/15
-** Author : Qianxu@MM.Display.LCD Driver
-**
-** ------------------------------- Revision History: -----------
-**  <author>        <data>        <version >        <desc>
-**   Qianxu         2020/04/15        1.0           Build this moudle
 ******************************************************************/
 
 #include "sde_crtc.h"

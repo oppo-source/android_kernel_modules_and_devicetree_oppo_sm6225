@@ -3,12 +3,6 @@
 ** File : oplus_display_private_api.h
 ** Description : oplus display private api implement
 ** Version : 1.0
-** Date : 2018/03/20
-** Author : Jie.Hu@PSW.MM.Display.Stability
-**
-** ------------------------------- Revision History: -----------
-**  <author>        <data>        <version >        <desc>
-**   Hu.Jie          2018/03/20        1.0           Build this moudle
 ******************************************************************/
 #include "oplus_display_private_api.h"
 #include "oplus_onscreenfingerprint.h"

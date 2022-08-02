@@ -3,12 +3,6 @@
 ** File : oplus_display_panel_apollo.c
 ** Description : oplus display panel apollo feature
 ** Version : 1.0
-** Date : 2022/01/27
-** Author : YuRuan.Tong@MULTIMEDIA.DISPLAY.LCD
-**
-** ------------------------------- Revision History: -----------
-**  <author>		<data>		<version >		<desc>
-**  Tong YuRuan	  2022/01/27	  1.0		Build this feature
 ******************************************************************/
 #include "oplus_display_panel_apollo.h"
 
