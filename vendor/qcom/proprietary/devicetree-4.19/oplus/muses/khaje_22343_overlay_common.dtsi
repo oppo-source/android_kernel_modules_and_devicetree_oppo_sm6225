@@ -1,0 +1,25 @@
+#include "regulator/wl2868c.dtsi"
+#include "camera/khaje-muses-camera-overlay.dtsi"
+#include "sensor/muses-sensor-22343-mtp.dtsi"
+#include "muses-charger.dtsi"
+&soc {
+	//#ifdef FEATURE_OPPO_NV_BACKUP
+	//add for creating a shared memory with uio for nv backup and restore
+	qcom,oembackup_sharedmem@0 {
+		compatible = "qcom,sharedmem-uio";
+		reg = <0x0 0x00100000>;
+		reg-names = "oembackup";
+		qcom,client-id = <0x00000004>;
+		qcom,guard-memory;
+		qcom,vm-nav-path;
+	};
+	//#endif /* FEATURE_OPPO_NV_BACKUP */
+};
+
+&L23A {
+	//#ifdef ODM_WT_EDIT
+	regulator-min-microvolt = <3300000>;
+	regulator-max-microvolt = <3400000>;
+	qcom,init-voltage = <3300000>;
+	//#endif ODM_WT_EDIT
+};
