@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include "../qcom/khaje-qrd-nopmi-overlay.dts"
+#include "khaje_overlay_common.dtsi"
+#include "Tacoo-F_overlay_common.dtsi"
+#include "nfc/TacooF-nfc-pn560.dtsi"
+#include "sensor/Tacoo-F-24675-sensor-mtp.dtsi"
+#include "oplus_chg/oplus-chg-24675-24676.dtsi"
+#include "oplus_chg/oplus-chg-24675-pps.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Tacoo-F";
+    oplus,dtsi_no = <24675>;
+    oplus,project-id = <24675>;
+};

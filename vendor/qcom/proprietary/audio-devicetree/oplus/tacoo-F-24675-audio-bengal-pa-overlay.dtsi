@@ -1,0 +1,65 @@
+//#ifdef OPLUS_ARCH_EXTENDS
+&tlmm {
+	sia81xx_gpio_L: sia81xx_gpio_L {
+		mux {
+			pins = "gpio84", "gpio84";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio84", "gpio84";
+			drive-strength = <6>;
+			bias-disable;
+		};
+	};
+
+	sia81xx_gpio_R: sia81xx_gpio_R {
+		mux {
+			pins = "gpio101", "gpio101";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio101", "gpio101";
+			drive-strength = <6>;
+			bias-disable;
+		};
+	};
+};
+
+&soc {
+	si_pa_L: si_pa_L{
+		compatible = "si,sia81xx";
+		si,si_pa_type = "sia81x9";
+		si,si_pa_reset = <&tlmm 84 0x00>;
+		pinctrl-names = "si_pa_gpio";
+		pinctrl-0 = <&sia81xx_gpio_L>;
+
+		si,si_pa_disable_pin = <0>;
+
+		/* the same value share a same task
+		 * valid value range : 0 ~ 7 */
+		timer_task_hdl = <0>;
+
+		channel_num = <0>;
+		owi_mode = <1>;
+	};
+
+	si_pa_R: si_pa_R{
+		compatible = "si,sia81xx";
+		si,si_pa_type = "sia81x9";
+		si,si_pa_reset = <&tlmm 101 0x00>;
+		pinctrl-names = "si_pa_gpio";
+		pinctrl-0 = <&sia81xx_gpio_R>;
+
+		si,si_pa_disable_pin = <0>;
+
+		/* the same value share a same task
+		* valid value range : 0 ~ 7 */
+		timer_task_hdl = <0>;
+
+		channel_num = <1>;
+		owi_mode = <1>;
+	};
+};
+//#endif

@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include "../qcom/khaje-qrd-nopmi-overlay.dts"
+#include "khaje_overlay_common.dtsi"
+#include "avatar-l4_overlay_common.dtsi"
+#include "nfc/avatarl4-nfc-pn560.dtsi"
+#include "sensor/avatar-l4-23271-sensor-mtp.dtsi"
+#include "oplus_chg/oplus-chg-23271-23273-23274.dtsi"
+#include "oplus_chg/oplus-chg-23271-pps.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Avatar-L4";
+    oplus,dtsi_no = <23271>;
+    oplus,project-id = <23271>;
+};

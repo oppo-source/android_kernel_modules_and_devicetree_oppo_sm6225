@@ -1,0 +1,9 @@
+/dts-v1/;
+/plugin/;
+
+#include "kona-iot-vc-cnss.dtsi"
+
+/ {
+	compatible = "qcom,kona-iot";
+	qcom,board-id = <0x010020 0x07>, <0x301000b 0x00>;
+};
