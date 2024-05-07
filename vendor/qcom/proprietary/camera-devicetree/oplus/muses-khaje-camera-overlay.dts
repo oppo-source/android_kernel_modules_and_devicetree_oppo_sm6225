@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-khaje.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/msm-camera.h>
+#include <dt-bindings/interconnect/qcom,bengal.h>
+
+#include "regulator/wl2868c.dtsi"
+#include "../khaje-camera.dtsi"
+#include "../khaje-camera-sensor-qrd.dtsi"
+#include "../khaje-camera-sensor-nopmi.dtsi"
+#include "camera/khaje-muses-camera-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, muses";
+    oplus,dtsi_no = <22341 22342 22343>;
+    oplus,project-id = <22341 22342 22343>;
+};

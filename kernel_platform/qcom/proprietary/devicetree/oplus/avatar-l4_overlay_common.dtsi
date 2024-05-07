@@ -1,0 +1,3 @@
+#include "fingerprint/uff_sm6225_avatarL4.dtsi"
+#include "oplus_thermal/oplus_thermal.dtsi"
+#include "tp/avatarL4_touchpanel.dtsi"
