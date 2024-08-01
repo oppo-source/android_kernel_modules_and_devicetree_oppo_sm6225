@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+#include "../bengal-audio-overlay.dtsi"
+#include "bengal-audio-overlay-common.dtsi"
+#include "tacoo-F-24675-audio-bengal-overlay.dtsi"
+#include "tacoo-F-24675-audio-bengal-pa-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Kalama MTP,aston";
+
+    oplus,project-id = <24675 24676>;
+};

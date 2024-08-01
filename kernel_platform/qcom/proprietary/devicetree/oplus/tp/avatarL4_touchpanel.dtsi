@@ -1,0 +1,281 @@
+
+&tlmm {
+	ts_int_active {
+ 		ts_int_active: ts_int_active {
+ 			mux {
+ 				pins = "gpio112";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio112";
+ 				drive-strength = <4>;
+ 				bias-pull-up;
+ 			};
+ 		};
+ 	};
+
+ 	pmx_ts_int_suspend {
+ 		ts_int_suspend: ts_int_suspend {
+ 			mux {
+ 				pins = "gpio112";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio112";
+ 				drive-strength = <2>;
+ 				bias-pull-down;
+ 			};
+ 		};
+ 	};
+
+ 	pmx_ts_reset_active {
+ 		ts_reset_active: ts_reset_active {
+ 			mux {
+ 				pins = "gpio86";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio86";
+ 				drive-strength = <4>;
+ 				bias-pull-up;
+ 			};
+ 		};
+ 	};
+
+ 	pmx_ts_reset_suspend {
+ 		ts_reset_suspend: ts_reset_suspend {
+ 			mux {
+ 				pins = "gpio86";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio86";
+ 				drive-strength = <2>;
+ 				bias-pull-down;
+ 			};
+ 		};
+ 	};
+
+};
+
+&pm6125_gpios {
+         aboard_pin {
+                 hw_pins_default1:hw_pins_default1 {
+				};
+
+		aboard_pin_gpio0_sleep1:aboard_pin_gpio0_sleep1 {
+			pins = "gpio2";
+			function = "normal";
+			qcom,drive-strength = <2>;
+			bias-pull-down;
+			input-enable;
+		};
+		aboard_pin_gpio0_active1:aboard_pin_gpio0_active1 {
+			pins = "gpio2";
+			function = "normal";
+			qcom,drive-strength = <2>;
+			bias-pull-up;
+			input-enable;
+		};
+
+		aboard_pin_gpio0_idle1:aboard_pin_gpio0_idle1 {
+			pins = "gpio2";
+			function = "normal";
+			qcom,drive-strength = <2>;
+			bias-disable;
+			input-enable;
+		};
+		};
+};
+
+
+#include "avatarL4-23271-tp-1229.dtsi"
+#include "avatarL4-23271-tp-td4160.dtsi"
+
+&qupv3_se2_spi {
+        status = "ok";
+
+       td4160@0 {
+                 compatible = "synaptics,td4377";
+                 reg = <0>;
+                 chip-num = <1>;
+                 chip-name = "NF_TD4160";
+                 status = "ok";
+
+                 spi-max-frequency = <10000000>;    //4800000,9600000,15000000,19200000
+                 reset-gpio = <&tlmm 86 0x00>;
+                 interrupt-parent = <&tlmm>;
+                 interrupts = <112 0x0>;
+                 irq-gpio = <&tlmm 112 0x2002>;
+                 cs-gpio = <&tlmm 80 0x00>;
+
+                 panel_type = <15 15 15>;
+                 project_id = <23271>;
+                 touchpanel,tp-index = <0>;
+                 touchpanel,max-num-support = <10>;
+                 touchpanel,tx-rx-num = <18 32>;
+                 touchpanel,panel-coords = <720 1604>;
+                 touchpanel,display-coords = <720 1604>;
+                 touchpanel,touchmajor-limit = <0 216>;
+                 touchpanel,button-type = <4>;
+                 touchpanel.button-TRx = <0 0>;
+                 tp_type = <15 15 15>;
+                 platform_support_project = <23271 23273 23274>;
+                 platform_support_project_dir = <23271 23271 23271>;
+                 firmware_name = "AC166HT000001";
+                 platform_support_project_commandline = "default_commandline", "default_commandline", "default_commandline";
+                 //panel = <&dsi_oplus21643_ds_ili7807s_1080_2412_120fps_vid>;
+                 pinctrl-names = "default", "suspend";
+                 pinctrl-0 = <&ts_int_active &ts_reset_active>;
+                 pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+                 //pinctrl-1 = <&ctp_ts_reset_poweroff>;
+                 //pinctrl-2 = <&ctp_ts_reset_poweron>;
+
+                 touchpanel,smooth-level = <255 5 4 3 2 1>;
+                 //touchpanel,smooth-level-charging = <255 10 9 8 7 6>;
+                 touchpanel,sensitive-level = <255 1 2 3 4 5>;
+                 touchpanel,single-optimized-time = <8>;
+
+                 incell_screen;
+                 fw_edge_limit_support;
+                 black_gesture_support;
+                 charger_pump_support;
+                 headset_pump_support;
+                 esd_handle_support;
+                 //spurious_fingerprint_support;
+                 //lcd_trigger_fp_check;
+                 black_gesture_test_support;
+                 noflash_support;
+                 smart_gesture_support;
+                 fw_update_app_support;
+                 game_switch_support;
+                 pressure_report_support;
+                 new_set_irq_wake_support;
+                 lcd_trigger_load_tp_fw_support;
+                 fw_update_in_probe_with_headfile;
+                 health_monitor_support;
+                 snr_read_support;
+                 tp_data_record_support;
+         };
+
+        ilitek@1 {
+                 compatible = "ilitek,ili7807s";
+                 reg = <1>;
+                 chip-num = <1>;
+                 chip-name = "NF_ILI9883C";
+                 status = "ok";
+
+                 spi-max-frequency = <10000000>;    //4800000,9600000,15000000,19200000
+                 reset-gpio = <&tlmm 86 0x00>;
+                 interrupt-parent = <&tlmm>;
+                 interrupts = <112 0x0>;
+                 irq-gpio = <&tlmm 112 0x2002>;
+                 cs-gpio = <&tlmm 80 0x00>;
+
+                 panel_type = <3 3 3>;
+                 project_id = <23271>;
+                 touchpanel,tp-index = <0>;
+                 touchpanel,max-num-support = <10>;
+                 touchpanel,tx-rx-num = <18 32>;
+                 touchpanel,panel-coords = <2880 6416>;
+                 touchpanel,display-coords = <720 1604>;
+                 touchpanel,touchmajor-limit = <0 216>;
+                 touchpanel,button-type = <4>;
+                 touchpanel.button-TRx = <0 0>;
+                 tp_type = <3 3 3>;
+                 platform_support_project = <23271 23273 23274>;
+                 platform_support_project_dir = <23271 23271 23271>;
+                 firmware_name = "AC166BI";
+                 platform_support_project_commandline = "default_commandline", "default_commandline", "default_commandline";
+                 //panel = <&dsi_oplus21643_ds_ili7807s_1080_2412_120fps_vid>;
+                 pinctrl-names = "default", "suspend";
+                 pinctrl-0 = <&ts_int_active &ts_reset_active>;
+                 pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+                 //pinctrl-1 = <&ctp_ts_reset_poweroff>;
+                 //pinctrl-2 = <&ctp_ts_reset_poweron>;
+
+                 touchpanel,smooth-level = <255 5 4 3 2 1>;
+                 //touchpanel,smooth-level-charging = <255 10 9 8 7 6>;
+                 touchpanel,sensitive-level = <255 1 2 3 4 5>;
+                 touchpanel,single-optimized-time = <8>;
+
+                 incell_screen;
+                 fw_edge_limit_support;
+                 black_gesture_support;
+                 charger_pump_support;
+                 headset_pump_support;
+                 esd_handle_support;
+                 //spurious_fingerprint_support;
+                 //lcd_trigger_fp_check;
+                 black_gesture_test_support;
+                 noflash_support;
+                 smart_gesture_support;
+                 fw_update_app_support;
+                 game_switch_support;
+                 pressure_report_support;
+                 new_set_irq_wake_support;
+                 lcd_trigger_load_tp_fw_support;
+                 fw_update_in_probe_with_headfile;
+                 health_monitor_support;
+                 snr_read_support;
+                 tp_data_record_support;
+                 exception_upload_support;
+         };
+ };
+
+&qupv3_se2_i2c {
+
+	status = "disabled";
+
+ };
+
+&qupv3_se0_spi {
+
+	status = "disabled";
+
+ };
+
+&soc {
+
+	devinfo {
+                 status = "disabled";
+         };
+
+         devinfo_avatar_L4 {
+                 compatible = "oplus-devinfo";
+
+                 pinctrl-names = "default", "sleep", "active", "idle";
+                 pinctrl-0 = <&hw_pins_default1>;
+                 pinctrl-1 = <&aboard_pin_gpio0_sleep1>;
+                 pinctrl-2 = <&aboard_pin_gpio0_active1>;
+                 pinctrl-3 = <&aboard_pin_gpio0_idle1>;
+                 main-sub {
+                         use_tristate_gpio;
+                         compatible = "hw-match, main-sub";
+                         aboard-gpio0 = <&pm6125_gpios 2 0>;
+                         aboard-patterns = <0 1 1>;    /*0[high-resistance] 1[pull-down] 2[pull-up]*/
+                         /*main board*/
+                         match-projects = <23271 23273 23274>;
+                 };
+         };
+
+	gpio_keys {
+		vol_up {
+			debounce-interval = <32>;
+		};
+	};
+
+};
+
+&spmi_bus {
+	qcom,pm6125@0 {
+		qcom,power-on@800 {
+		qcom,pon-dbc-delay = <31250>;
+		};
+	};
+};
+

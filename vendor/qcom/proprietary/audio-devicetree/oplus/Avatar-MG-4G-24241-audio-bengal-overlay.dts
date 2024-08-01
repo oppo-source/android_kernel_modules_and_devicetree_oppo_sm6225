@@ -1,0 +1,9 @@
+/dts-v1/;
+/plugin/;
+#include "../bengal-audio-overlay.dtsi"
+#include "bengal-audio-overlay-common.dtsi"
+#include "Avatar-MG-4G-24241-audio-bengal-overlay.dtsi"
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, AMG-4G";
+    oplus,project-id = <24241 24242>;
+};

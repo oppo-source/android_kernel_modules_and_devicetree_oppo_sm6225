@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+
+#include "../qcom/khaje-qrd-nopmi-overlay.dts"
+#include "khaje_overlay_common.dtsi"
+#include "muses_overlay_common.dtsi"
+#include "sensor/muses-sensor-22342-mtp.dtsi"
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, muses";
+    oplus,dtsi_no = <22342>;
+    oplus,project-id = <22342>;
+};
