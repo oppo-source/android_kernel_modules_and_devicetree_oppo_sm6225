@@ -1,0 +1,3 @@
+#include "fingerprint/uff_sm6225_TacooF.dtsi"
+#include "oplus_thermal/oplus_thermal.dtsi"
+#include "tp/TacooF_touchpanel.dtsi"

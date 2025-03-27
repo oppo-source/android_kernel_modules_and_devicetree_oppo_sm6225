@@ -1,0 +1,125 @@
+#include "bengal-sde-display.dtsi"
+
+&dsi_td4330_truly_v2_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
+	pwms = <&pm6125_pwm 0 0>;
+	qcom,bl-pmic-pwm-period-usecs = <100>;
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+	//qcom,platform-bklight-en-gpio = <&pmi632_gpios 6 0>;
+};
+
+&dsi_td4330_truly_v2_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
+	pwms = <&pm6125_pwm 0 0>;
+	qcom,bl-pmic-pwm-period-usecs = <100>;
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+	//qcom,platform-bklight-en-gpio = <&pmi632_gpios 6 0>;
+};
+
+&dsi_panel_AC190_P_4_A0013_720_1604_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,bl-update-flag = "delay_until_first_frame";
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,mdss-dsi-bl-min-level = <8>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <4095>;
+	oplus,dsi-bl-normal-max-level = <3620>;
+	oplus,dsi-brightness-normal-max-level = <3620>;
+	oplus,dsi-brightness-default-level = <526>;
+	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+};
+
+&dsi_panel_AC190_P_D_A0018_720_1604_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,bl-update-flag = "delay_until_first_frame";
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,mdss-dsi-bl-min-level = <8>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <4095>;
+	oplus,dsi-bl-normal-max-level = <3545>;
+	oplus,dsi-brightness-normal-max-level = <3545>;
+	oplus,dsi-brightness-default-level = <526>;
+	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+};
+
+&dsi_panel_AC190_P_D_A0018_720_1604_1_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,bl-update-flag = "delay_until_first_frame";
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,mdss-dsi-bl-min-level = <8>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <4095>;
+	oplus,dsi-bl-normal-max-level = <3518>;
+	oplus,dsi-brightness-normal-max-level = <3518>;
+	oplus,dsi-brightness-default-level = <526>;
+	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+};
+
+&dsi_panel_td4160_hx_alpha_l4_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,bl-update-flag = "delay_until_first_frame";
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,mdss-dsi-bl-min-level = <8>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <4095>;
+	oplus,dsi-bl-normal-max-level = <3460>;
+	oplus,dsi-brightness-normal-max-level = <3460>;
+	oplus,dsi-brightness-default-level = <526>;
+	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+};
+
+&dsi_panel_ili9883c_boe_alpha_l4_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,bl-update-flag = "delay_until_first_frame";
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,mdss-dsi-bl-min-level = <8>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <4095>;
+	oplus,dsi-bl-normal-max-level = <3460>;
+	oplus,dsi-brightness-normal-max-level = <3460>;
+	oplus,dsi-brightness-default-level = <526>;
+	qcom,platform-te-gpio = <&tlmm 81 0>;
+	qcom,platform-reset-gpio = <&tlmm 82 0>;
+};
+
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_panel_AC190_P_4_A0013_720_1604_video>;
+};
+
+&qupv3_se1_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "ok";
+	ocp2130@3e {
+		compatible = "qcom,ocp2130_bias";
+		reg = <0x3e>;
+		lcm-enp-gpio = <&tlmm 71 0>;
+		lcm-enn-gpio = <&tlmm 54 0>;
+		status = "okay";
+	};
+};
+
+&qupv3_se2_i2c {
+	status = "okay";
+	qcom,i2c-touch-active="synaptics,tcm-i2c";
+	synaptics_tcm@20 {
+		panel = <&dsi_td4330_truly_v2_video &dsi_td4330_truly_v2_cmd>;
+	};
+};
+

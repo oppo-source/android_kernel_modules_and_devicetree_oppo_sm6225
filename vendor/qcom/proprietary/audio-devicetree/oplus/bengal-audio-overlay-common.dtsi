@@ -1,0 +1,11 @@
+&wsa881x_i2c_e{
+	status = "disabled";
+};
+
+&wsa881x_i2c_44{
+	status = "disabled";
+};
+
+&fsa4480{
+	status = "disabled";
+};

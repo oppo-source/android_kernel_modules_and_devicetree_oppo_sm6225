@@ -1,0 +1,1 @@
+../../../opensource/graphics-kernel/gfx_driver_product.mk

@@ -1,0 +1,19 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sm6115.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/msm-camera.h>
+#include <dt-bindings/interconnect/qcom,bengal.h>
+
+#include "regulator/aw37004.dtsi"
+#include "../bengal-camera.dtsi"
+#include "../khaje-camera-sensor-qrd.dtsi"
+#include "camera/bengal-avatarb4-camera-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL IDP nopmi overlay, avatarb4";
+    oplus,dtsi_no = <23311 23312 23313>;
+    oplus,project-id = <23311 23312 23313>;
+};

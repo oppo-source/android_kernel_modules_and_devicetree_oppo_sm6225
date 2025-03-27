@@ -1,0 +1,156 @@
+//#ifdef OPLUS_ARCH_EXTENDS
+&tlmm {
+	sia81xx_gpio_L: sia81xx_gpio_L {
+		mux {
+			pins = "gpio84", "gpio84";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio84", "gpio84";
+			drive-strength = <6>;
+			bias-disable;
+		};
+	};
+	
+	sia81xx_gpio_R: sia81xx_gpio_R {
+		mux {
+			pins = "gpio111", "gpio111";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio111", "gpio111";
+			drive-strength = <6>;
+			bias-disable;
+		};
+	};
+};
+
+&soc {
+	si_pa_L: si_pa_L{
+		compatible = "si,sia81xx";
+		si,si_pa_type = "sia8159";
+		si,si_pa_reset = <&tlmm 84 0x00>;
+		pinctrl-names = "si_pa_gpio";
+		pinctrl-0 = <&sia81xx_gpio_L>;
+			
+		si,si_pa_disable_pin = <1>;
+			
+		/* the same value share a same task
+		 * valid value range : 0 ~ 7 */
+		timer_task_hdl = <0>;
+			
+		channel_num = <0>;
+		owi_mode = <1>;
+	};
+
+	si_pa_R: si_pa_R{
+		compatible = "si,sia81xx";
+		si,si_pa_type = "sia8159";
+		si,si_pa_reset = <&tlmm 111 0x00>;
+		pinctrl-names = "si_pa_gpio";
+		pinctrl-0 = <&sia81xx_gpio_R>;
+		
+		si,si_pa_disable_pin = <1>;
+		
+		/* the same value share a same task
+		* valid value range : 0 ~ 7 */
+		timer_task_hdl = <0>;
+		
+		channel_num = <1>;
+		owi_mode = <1>;
+	};
+};
+//#endif
+
+&bengal_snd {
+	qcom,model = "bengal-qrd-snd-card";
+	qcom,msm-mi2s-master = <1>, <1>, <1>, <1>;
+	qcom,wcn-btfm = <1>;
+	qcom,ext-disp-audio-rx = <0>;
+	qcom,audio-routing =
+		"AMIC1", "Analog Mic1",
+		"AMIC1", "MIC BIAS1",
+		"AMIC2", "Analog Mic2",
+		"AMIC2", "MIC BIAS2",
+		"AMIC3", "MIC BIAS3",
+		"AMIC3", "Analog Mic3",
+		"AMIC3", "MIC BIAS3",
+		//"AMIC4", "Analog Mic4",
+		//"AMIC4", "MIC BIAS3",
+		"IN1_HPHL", "HPHL_OUT",
+		"IN2_HPHR", "HPHR_OUT",
+		"IN3_AUX", "AUX_OUT",
+		"TX SWR_INPUT", "WCD_TX_OUTPUT",
+		"VA SWR_INPUT", "VA_SWR_CLK",
+		"VA SWR_INPUT", "WCD_TX_OUTPUT",
+		"RX_TX DEC0_INP", "TX DEC0 MUX",
+		"RX_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC2_INP", "TX DEC2 MUX",
+		"RX_TX DEC3_INP", "TX DEC3 MUX",
+		"TX_AIF1 CAP", "VA_SWR_CLK",
+		"TX_AIF2 CAP", "VA_SWR_CLK",
+		"TX_AIF3 CAP", "VA_SWR_CLK";
+		qcom,msm-mbhc-hphl-swh = <1>;
+		qcom,msm-mbhc-gnd-swh = <1>;
+		asoc-codec  = <&stub_codec>, <&bolero_cdc>,
+			<&wcd937x_codec>;
+		asoc-codec-names = "msm-stub-codec.1", "bolero-codec",
+				"wcd937x_codec";
+		qcom,wsa-max-devs = <0>;
+		//qcom,wsa-aux-dev-prefix = "SpkrMono";
+		qcom,msm_audio_ssr_devs = <&audio_gpr>, <&lpi_tlmm>,
+					<&bolero_cdc>;
+
+		qcom,afe-rxtx-lb = <1>;
+		qcom,msm-mbhc-hs-mic-max-threshold-mv = <2600>;
+		qcom,msm-mbhc-hs-mic-min-threshold-mv = <75>;
+		si,sia81xx-max-num = <2>;
+		si,sia81xx-aux-devs = <&si_pa_L>,<&si_pa_R>;
+		si,sia81xx-aux-devs-prefix = "SpkrMonoL", "SpkrMonoR";
+		oplus,mbhc-check-cross-conn = <0>;
+		oplus,mbhc-headset-micbias-alwayon = <1>;
+		oplus,mbhc-check-irq-en = <1>;
+		oplus,mbhc-headset-detect-mode = <0>;
+};
+
+&qupv3_se1_i2c {
+	//disable nfc config
+	nq@28 {
+		status = "disabled";
+	};
+
+	sipa_i2c_L: sipa_i2c_L@29{
+		compatible = "si,sia81xx-i2c";
+		reg = <0x29>;
+		si,sipa-dev = <&si_pa_L>;
+	};
+	
+	sipa_i2c_R: sipa_i2c_R@28{
+		compatible = "si,sia81xx-i2c";
+		reg = <0x28>;
+		si,sipa-dev = <&si_pa_R>;
+	};
+
+};
+
+&swr1 {
+	/delete-property/ qcom,disable-div2-clk-switch;
+};
+&wcd937x_codec {
+	/delete-property/ qcom,cdc-micbias1-mv;
+	/delete-property/ qcom,cdc-micbias2-mv;
+	/delete-property/ qcom,cdc-micbias3-mv;
+	qcom,cdc-micbias1-mv = <2700>;
+	qcom,cdc-micbias2-mv = <2700>;
+	qcom,cdc-micbias3-mv = <2700>;
+	oplus,mbhc_enable_hp_impedance_detect = <0>;
+};
+
+&adsp_mem {
+	compatible = "removed-dma-pool";
+	size = <0 0xC00000>;
+	no-map;
+	/delete-property/ reusable;
+};

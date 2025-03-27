@@ -1,0 +1,191 @@
+&tlmm {
+	ts_int_active {
+ 		ts_int_active: ts_int_active {
+ 			mux {
+ 				pins = "gpio112";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio112";
+ 				drive-strength = <4>;
+ 				bias-pull-up;
+ 			};
+ 		};
+ 	};
+
+ 	pmx_ts_int_suspend {
+ 		ts_int_suspend: ts_int_suspend {
+ 			mux {
+ 				pins = "gpio112";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio112";
+ 				drive-strength = <2>;
+ 				bias-pull-down;
+ 			};
+ 		};
+ 	};
+
+ 	pmx_ts_reset_active {
+ 		ts_reset_active: ts_reset_active {
+ 			mux {
+ 				pins = "gpio96";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio96";
+ 				drive-strength = <4>;
+ 				bias-pull-up;
+ 			};
+ 		};
+ 	};
+
+ 	pmx_ts_reset_suspend {
+ 		ts_reset_suspend: ts_reset_suspend {
+ 			mux {
+ 				pins = "gpio96";
+ 				function = "gpio";
+ 			};
+
+ 			config {
+ 				pins = "gpio96";
+ 				drive-strength = <2>;
+ 				bias-pull-down;
+ 			};
+ 		};
+ 	};
+
+};
+
+#include "avatarB4-23311-tp-9883.dtsi"
+
+&qupv3_se0_spi {
+        status = "ok";
+	td4160@0 {
+                 compatible = "synaptics,td4377";
+                 reg = <0>;
+                 chip-num = <2>;
+                 chip-name = "NF_TD4160_1", "NF_TD4160";
+                 status = "ok";
+
+                 spi-max-frequency = <10000000>;    //4800000,9600000,15000000,19200000
+                 reset-gpio = <&tlmm 96 0x00>;
+                 interrupt-parent = <&tlmm>;
+                 interrupts = <112 0x0>;
+                 irq-gpio = <&tlmm 112 0x2002>;
+
+                 panel_type = <15 15>;
+                 project_id = <23311>;
+                 touchpanel,tp-index = <0>;
+                 touchpanel,max-num-support = <10>;
+                 touchpanel,tx-rx-num = <18 32>;
+                 touchpanel,panel-coords = <720 1604>;
+                 touchpanel,display-coords = <720 1604>;
+                 touchpanel,touchmajor-limit = <0 216>;
+                 touchpanel,button-type = <4>;
+                 touchpanel.button-TRx = <0 0>;
+                 touchpanel,irq_need_dev_resume_time = <500>;
+                 tp_type = <15>;
+                 platform_support_project = <23311 23312 23313 23314 23316 23317 23318 23319>;
+                 platform_support_project_dir = <23311 23311 23311 23311 23311 23311 23311 23311>;
+                 firmware_name = "AC190HT1", "AC190HT";
+                 platform_support_project_commandline = "td4377_1", "td4377";
+                 //panel = <&dsi_oplus21643_ds_ili7807s_1080_2412_120fps_vid>;
+                 pinctrl-names = "default", "suspend";
+                 pinctrl-0 = <&ts_int_active &ts_reset_active>;
+                 pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+                 //pinctrl-1 = <&ctp_ts_reset_poweroff>;
+                 //pinctrl-2 = <&ctp_ts_reset_poweron>;
+
+                 touchpanel,smooth-level = <255 5 4 3 2 1>;
+                 //touchpanel,smooth-level-charging = <255 10 9 8 7 6>;
+                 touchpanel,sensitive-level = <255 1 2 3 4 5>;
+                 touchpanel,single-optimized-time = <8>;
+
+                 incell_screen;
+                 fw_edge_limit_support;
+                 black_gesture_support;
+                 charger_pump_support;
+                 headset_pump_support;
+                 esd_handle_support;
+                 //spurious_fingerprint_support;
+                 //lcd_trigger_fp_check;
+                 black_gesture_test_support;
+                 noflash_support;
+                 smart_gesture_support;
+                 fw_update_app_support;
+                 game_switch_support;
+                 pressure_report_support;
+                 new_set_irq_wake_support;
+                 lcd_trigger_load_tp_fw_support;
+                 fw_update_in_probe_with_headfile;
+                 health_monitor_support;
+                 snr_read_support;
+                 tp_data_record_support;
+         };
+        ilitek@1 {
+                 compatible = "ilitek,ili7807s";
+                 reg = <1>;
+                 chip-num = <1>;
+                 chip-name = "NF_ILI9883C";
+                 status = "ok";
+
+                 spi-max-frequency = <10000000>;    //4800000,9600000,15000000,19200000
+                 reset-gpio = <&tlmm 96 0x00>;
+                 interrupt-parent = <&tlmm>;
+                 interrupts = <112 0x0>;
+                 irq-gpio = <&tlmm 112 0x2002>;
+
+                 panel_type = <19>;
+                 project_id = <23311>;
+                 touchpanel,tp-index = <0>;
+                 touchpanel,max-num-support = <10>;
+                 touchpanel,tx-rx-num = <18 32>;
+                 touchpanel,panel-coords = <2880 6416>;
+                 touchpanel,display-coords = <720 1604>;
+                 touchpanel,touchmajor-limit = <0 216>;
+                 touchpanel,button-type = <4>;
+                 touchpanel.button-TRx = <0 0>;
+                 touchpanel,irq_need_dev_resume_time = <500>;
+                 tp_type = <19>;
+                 platform_support_project = <23311 23312 23313 23314 23316 23317 23318 23319>;
+                 platform_support_project_dir = <23311 23311 23311 23311 23311 23311 23311 23311>;
+                 firmware_name = "AB243_DS_ILI001";
+                 platform_support_project_commandline = "default_commandline";
+                 //panel = <&dsi_oplus21643_ds_ili7807s_1080_2412_120fps_vid>;
+                 pinctrl-names = "default", "suspend";
+                 pinctrl-0 = <&ts_int_active &ts_reset_active>;
+                 pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
+                 //pinctrl-1 = <&ctp_ts_reset_poweroff>;
+                 //pinctrl-2 = <&ctp_ts_reset_poweron>;
+
+                 touchpanel,smooth-level = <255 5 4 3 2 1>;
+                 //touchpanel,smooth-level-charging = <255 10 9 8 7 6>;
+                 touchpanel,sensitive-level = <255 1 2 3 4 5>;
+                 touchpanel,single-optimized-time = <8>;
+
+                 incell_screen;
+                 fw_edge_limit_support;
+                 black_gesture_support;
+                 charger_pump_support;
+                 headset_pump_support;
+                 esd_handle_support;
+                 //spurious_fingerprint_support;
+                 //lcd_trigger_fp_check;
+                 black_gesture_test_support;
+                 noflash_support;
+                 smart_gesture_support;
+                 fw_update_app_support;
+                 game_switch_support;
+                 pressure_report_support;
+                 new_set_irq_wake_support;
+                 lcd_trigger_load_tp_fw_support;
+                 fw_update_in_probe_with_headfile;
+                 health_monitor_support;
+                 snr_read_support;
+         };
+ };

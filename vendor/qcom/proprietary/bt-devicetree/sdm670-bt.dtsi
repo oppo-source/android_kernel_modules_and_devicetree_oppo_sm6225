@@ -1,0 +1,33 @@
+#include <dt-bindings/soc/qcom,ipcc.h>
+
+&soc {
+  bluetooth: bt_wcn3990 {
+    compatible = "qcom,wcn3990";
+    qcom,bt-vdd-io-supply = <&pm660_l13>;
+    qcom,bt-vdd-core-supply = <&pm660_l6>;
+    qcom,bt-vdd-pa-supply = <&pm660_l19>;
+    qcom,bt-vdd-xtal-supply = <&pm660_l9>;
+
+    qcom,bt-vdd-io-config = <1800000 1900000 1 0>;
+    qcom,bt-vdd-core-config = <1304000 1370000 1 0>;
+    qcom,bt-vdd-pa-config = <3312000 3400000 1 0>;
+    qcom,bt-vdd-xtal-config = <1800000 1900000 1 0>;
+  };
+};
+
+&slim_qca {
+  status = "ok";
+  ngd@1 {
+    reg = <3>;
+    #address-cells = <1>;
+    #size-cells = <1>;
+    slimbus: btfmslim-driver {
+      compatible = "slim217,221";
+      reg = <1 0>;
+    };
+  };
+};
+
+&qupv3_se6_4uart {
+  status = "ok";
+};

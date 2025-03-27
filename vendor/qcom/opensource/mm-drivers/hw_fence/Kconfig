@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+config QTI_HW_FENCE
+	bool "HW Fence"
+	help
+	  Enable the hw_fence module

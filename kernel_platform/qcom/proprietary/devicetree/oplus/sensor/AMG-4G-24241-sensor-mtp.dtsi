@@ -1,0 +1,58 @@
+&soc {
+	sensor_fb: sensor_fb {
+		compatible = "oplus,sensor-feedback";
+		master-id  = <3>;
+		smem-id    = <608>;
+	};
+	oplus_sensor {
+			compatible = "oplus,sensor-devinfo";
+			als-row-coe = <210>;
+			/* enum {AKM0991X = 0x01, MMC5603 = 0x02, MXG4300 = 0x04};*/
+			msensor@0 {
+					sensor-name = <0x02>; // MMC5603
+					sensor-direction = <1>;
+					sensor-index = <0>;
+					sensor-type = <2>; // OPLUS_MAG
+					mag_param_nfc {
+						projects-num = <1>;
+						match-projects = <24241>;
+						parameter-number= <18>;
+						soft-mag-parameter = <9948 0 942 0 361 0 712 0 10755 0 129 0 275 0 478 1 10931 0>;//e00 sign e01 sign...
+					};
+					mag_param_no_nfc {
+						projects-num = <1>;
+						match-projects = <24242>;
+						parameter-number= <18>;
+						soft-mag-parameter = <9998 0 21 1 57 0 151 0 9785 0 38 0 141 1 94 0 10310 0>;//e00 sign e01 sign...
+					};
+			};
+			/*virtual sensor
+			enum sensor_algo_id {
+					OPLUS_PICKUP_DETECT,
+					OPLUS_LUX_AOD,
+					OPLUS_TP_GESTURE,
+					OPLUS_FP_DISPLAY,
+					OPLUS_FREE_FALL,
+					OPLUS_CAMERA_PROTECT,
+					SENSOR_ALGO_NUM
+			}*/
+			pickup_detect {
+					sensor-type = <0>; //OPLUS_PICKUP_DETECT
+					is-virtual-sensor;
+					is-need-prox = <1>;
+					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+			};
+			lux_aod {
+					sensor-type = <1>; //OPLUS_LUX_AOD
+					is-virtual-sensor;
+					thrd-low = <12>;
+					thrd-high = <50>;
+					als-type = <1>; // 0 - wise_light; 1 - ambient_light
+			};
+			fp_display {
+					sensor-type = <3>; //OPLUS_FP_DISPLAY
+					is-virtual-sensor;
+					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+			};
+	};
+};

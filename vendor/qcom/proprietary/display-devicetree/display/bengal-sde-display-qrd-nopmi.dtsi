@@ -1,0 +1,9 @@
+#include "bengal-sde-display-qrd.dtsi"
+
+&dsi_td4330_truly_v2_video {
+	 /delete-property/ qcom,esd-check-enabled;
+};
+
+&dsi_td4330_truly_v2_cmd {
+	 /delete-property/ qcom,esd-check-enabled;
+};

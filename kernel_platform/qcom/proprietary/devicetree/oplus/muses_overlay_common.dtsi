@@ -1,0 +1,4 @@
+#include "tp/muses_touchpanel.dtsi"
+
+#include "fingerprint/uff_sm6225.dtsi"
+#include "muses-charger.dtsi"

@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+#include "../bengal-audio-overlay.dtsi"
+#include "bengal-audio-overlay-common.dtsi"
+#include "Avatar-B4-23311-audio-bengal-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL QRD nopmi overlay, Avatar-B4";
+    oplus,dtsi_no = <23311 23312 23313 23314 23316 23317 23318 23319>;
+    oplus,project-id = <23311 23312 23313 23314 23316 23317 23318 23319>;
+};
