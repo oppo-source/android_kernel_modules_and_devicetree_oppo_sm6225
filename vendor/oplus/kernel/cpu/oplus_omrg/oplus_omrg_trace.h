@@ -136,6 +136,12 @@ TRACE_EVENT(omrg_cpu_policy_adjust,
 
 #endif /* _TRACE_OPLUS_OMRG_H */
 
+#undef TRACE_INCLUDE_PATH
+#define TRACE_INCLUDE_PATH ../../kernel/oplus_cpu/oplus_omrg
+
+#undef TRACE_INCLUDE_FILE
+#define TRACE_INCLUDE_FILE oplus_omrg_trace
+
 /* This part must be outside protection */
 #include <trace/define_trace.h>
 

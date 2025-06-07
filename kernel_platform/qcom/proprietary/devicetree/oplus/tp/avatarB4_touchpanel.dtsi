@@ -118,7 +118,6 @@
                  noflash_support;
                  smart_gesture_support;
                  fw_update_app_support;
-                 game_switch_support;
                  pressure_report_support;
                  new_set_irq_wake_support;
                  lcd_trigger_load_tp_fw_support;

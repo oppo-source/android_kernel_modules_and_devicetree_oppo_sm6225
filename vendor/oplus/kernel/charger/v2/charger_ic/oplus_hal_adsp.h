@@ -348,7 +348,6 @@ enum usb_property_id {
 	USB_SNS_STATUS,
 	USB_SET_UFCS_SM_PERIOD,
 	USB_SET_RERUN_AICL,
-	USB_SET_RERUN_BC12,
 #endif /*OPLUS_FEATURE_CHG_BASIC*/
 	USB_PROP_MAX,
 };
@@ -610,7 +609,6 @@ struct battery_chg_dev {
 	int				last_charger_type;
 	int				adsp_crash;
 	atomic_t			state;
-	int				g_icl_ma;
 	int				rerun_max;
 	int				pd_chg_volt;
 	struct work_struct		subsys_up_work;

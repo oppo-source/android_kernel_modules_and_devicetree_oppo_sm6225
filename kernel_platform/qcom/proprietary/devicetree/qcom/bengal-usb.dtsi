@@ -65,6 +65,7 @@
 
 			iommus = <&apps_smmu 0x120 0x0>;
 			qcom,iommu-dma = "atomic";
+			qcom,smmu-s1-bypass;
 			qcom,iommu-dma-addr-pool = <0x50000000 0x60000000>;
 
 			interrupt-parent = <&intc>;

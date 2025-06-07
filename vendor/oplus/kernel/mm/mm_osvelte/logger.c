@@ -42,6 +42,7 @@
 #include "sys-memstat.h"
 #include "proc-memstat.h"
 #include "lowmem-dbg.h"
+#include "mm-config.h"
 
 /**
  * struct logger_log - represents a specific log, such as 'main' or 'radio'
@@ -894,6 +895,8 @@ static int __init logger_init(void)
 	if (unlikely(ret))
 		goto remove_procfs;
 
+	mm_config_init(root);
+
 	ret = create_log(DEV_NAME, 512 * 1024);
 	if (unlikely(ret))
 		goto remove_procfs;
@@ -920,6 +923,7 @@ static void __exit logger_exit(void)
 	remove_proc_subtree(DEV_NAME, NULL);
 	osvelte_lowmem_dbg_exit();
 	sys_memstat_exit();
+	mm_config_exit();
 }
 device_initcall(logger_init);
 module_exit(logger_exit);

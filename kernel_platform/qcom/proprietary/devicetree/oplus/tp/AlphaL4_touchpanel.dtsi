@@ -106,6 +106,7 @@
                  //touchpanel,smooth-level-charging = <255 10 9 8 7 6>;
                  touchpanel,sensitive-level = <255 1 2 3 4 5>;
                  touchpanel,single-optimized-time = <8>;
+                 max_report_rate_limit = <500>;
 
                  incell_screen;
                  fw_edge_limit_support;
@@ -128,6 +129,7 @@
                  snr_read_support;
                  tp_data_record_support;
                  glove_mode_v2_support;
+                 disable_touch_event_support;
 		 exception_upload_support;
 		 lpwg_fw_support;
          };
@@ -190,6 +192,7 @@
                  lcd_trigger_load_tp_fw_support;
                  fw_update_in_probe_with_headfile;
                  health_monitor_support;
+                 disable_touch_event_support;
                  snr_read_support;
                  glove_mode_v2_support;
 		 exception_upload_support;

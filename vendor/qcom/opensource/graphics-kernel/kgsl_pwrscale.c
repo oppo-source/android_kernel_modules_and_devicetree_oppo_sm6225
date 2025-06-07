@@ -746,7 +746,9 @@ int kgsl_pwrscale_init(struct kgsl_device *device, struct platform_device *pdev,
 			adreno_tz_data.bus.floating = false;
 	}
 
-	pwrscale->devfreq_wq = create_freezable_workqueue("kgsl_devfreq_wq");
+	pwrscale->devfreq_wq = alloc_workqueue("kgsl_devfreq_wq",
+				__WQ_LEGACY | WQ_FREEZABLE | WQ_UNBOUND | WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
+
 	if (!pwrscale->devfreq_wq) {
 		dev_err(device->dev, "Failed to allocate kgsl devfreq workqueue\n");
 		device->pwrscale.enabled = false;

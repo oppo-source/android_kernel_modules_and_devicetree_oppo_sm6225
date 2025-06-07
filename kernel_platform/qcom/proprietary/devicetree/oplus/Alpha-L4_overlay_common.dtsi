@@ -33,6 +33,20 @@
  		compatible = "oplus,midas-pdev";
  	};
 
+    //#ifdef CONFIG_OPLUS_OMRG
+    oplus-omrg {
+        compatible = "oplus,oplus-omrg";
+        oplus-omrg0 {
+                oplus,divider-cells = <1>;
+                oplus,omrg-master = <&CPU4 2016000>;
+                oplus,omrg-slave = <&CPU0 1804800>;
+                up_limit_enable;
+                /* down_limit_enable; */
+                /* thermal_enable; */
+        };
+    };
+    //#endif
+
 };
 
 &soc{
@@ -82,6 +96,12 @@
 	    linux,contiguous-region = <&dump_device_info_mem>;
 	};
  };
+
+&soc {
+	oplus,blk-mq {
+		kblockd_ux_unbound_enable = "y";
+	};
+};
 
 /* Add for Dump KMSG*/
 &ramoops_mem {

@@ -1,13 +1,15 @@
 &discrete_charger {
 	oplus,pps_ops = "cp-sc6607";
 			// 3rd PPS
-	oplus,pps_region_list = <0x00 0x3B 0x44 0x89 0x8B 0x83 0x5A>;
+	oplus,pps_region_list = <0xFFFF>;
+	oplus,pps_common_chg_region_list = <0x44 0x83 0x5A>;
 	oplus,pps_support_type = <4>;
 	oplus,pps_support_third = <1>;
 	oplus,pps_use_cp_vbat;
 	oplus,pps_warm_allow_vol = <4000>;
 	oplus,pps_warm_allow_soc = <50>;
-	oplus,pps_strategy_normal_current = <4100>;//4.1A
+	oplus,pps_strategy_normal_current = <3000>;//3A
+	oplus,pps_strategy_common_chg_current = <4100>;//4.1A
 	oplus,pps_over_high_or_low_current = <3000>;//3A
 	oplus,pps_timeout_third = <10800>;
 	oplus,pps_timeout_oplus = <7200>;

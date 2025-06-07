@@ -1903,6 +1903,7 @@ static void oplus_wired_subscribe_cpa_topic(struct oplus_mms *topic,
 		schedule_work(&chip->pd_check_work);
 
 	if (chip->cpa_support) {
+		oplus_cpa_protocol_ready(chip->cpa_topic, CHG_PROTOCOL_BC12);
 		oplus_cpa_protocol_ready(chip->cpa_topic, CHG_PROTOCOL_PD);
 		oplus_cpa_protocol_ready(chip->cpa_topic, CHG_PROTOCOL_QC);
 	}

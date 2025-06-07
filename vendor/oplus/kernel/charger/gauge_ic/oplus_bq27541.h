@@ -417,6 +417,19 @@ typedef enum
 #define BQ28Z610_SUBCMD_TRY_COUNT	3
 #define CALIB_TIME_CHECK_ARGS		6
 
+#define BQ28Z610_BATT_SN_EN_ADDR		0x3E
+#define BQ28Z610_BATT_SN_CMD			0x004C
+#define BQ28Z610_BATT_SN_READ_BUF_LEN		22
+#define BQ28Z610_BATT_SN_NO_CHECKSUM		0x00
+#define BQ28Z610_BATT_SN_RETRY_MAX		3
+
+#define BQ27Z561_BATT_VDM_DATA_READ_BUF_LEN		34
+#define BQ27Z561_BATT_INFO_RETRY_MAX			3
+#define BQ27Z561_BATTINFO_VDMDATA_CMD			0x0070
+
+#define BQ27Z561_BATTINFO_DEFAULT_CHECKSUM		0xFF
+#define BQ27Z561_BATTINFO_NO_CHECKSUM			0x00
+
 #define BQ27Z561_DATAFLASHBLOCK	0x3e
 #define BQ27Z561_SUBCMD_DEVICE_TYPE	0X0001
 #define BQ27Z561_SUBCMD_CHEMID	0X0006
@@ -426,6 +439,29 @@ typedef enum
 #define BQ27Z561_SUBCMD_IT_STATUS3	0X0075
 #define BQ27Z561_SUBCMD_FILTERED_CAP	0X0078
 #define BQ27Z561_SUBCMD_TRY_COUNT	3
+
+#define BQ27Z561_SUBCMD_MANU_DATE		0X004D
+#define BQ27Z561_SUBCMD_MANU_DATE_READ_BUF_LEN	2
+#define BQ27Z561_SUBCMD_MANU_INFO		0x0070
+#define BQ27Z561_BATT_MANU_INFO_READ_BUF_LEN	34
+#define BQ27Z561_BATT_FIRST_USAGE_DATE_L	15
+#define BQ27Z561_BATT_FIRST_USAGE_DATE_H	16
+#define BQ27Z561_BATT_FIRST_USAGE_DATE_CHECK	17
+#define BQ27Z561_BATT_UI_SOH			18
+#define BQ27Z561_BATT_UI_SOH_CHECK		19
+#define BQ27Z561_BATT_UI_CYCLE_COUNT_L		20
+#define BQ27Z561_BATT_UI_CYCLE_COUNT_H		21
+#define BQ27Z561_BATT_UI_CYCLE_COUNT_CHECK	22
+#define BQ27Z561_BATT_USED_FLAG			23
+#define BQ27Z561_BATT_USED_FLAG_CHECK		24
+#define BQ27Z561_BATT_FIRST_USAGE_DATE_WLEN	5
+#define BQ27Z561_SUBCMD_FIRST_USAGE_DATE_WADDR	0x404E
+#define BQ27Z561_BATT_UI_SOH_WLEN		4
+#define BQ27Z561_SUBCMD_UI_SOH_WADDR		0x4051
+#define BQ27Z561_BATT_UI_CC_WLEN		5
+#define BQ27Z561_SUBCMD_UI_CC_WADDR		0x4053
+#define BQ27Z561_BATT_USED_FLAG_WLEN		4
+#define BQ27Z561_SUBCMD_USED_FLAG_WADDR		0x4056
 
 #define BQ27Z561_AUTHENDATA_1ST	0x40
 #define BQ27Z561_AUTHENDATA_2ND	0x50
@@ -674,6 +710,7 @@ struct chip_bq27541 {
 	bool battery_full_param;//only for wite battery full param in guage dirver probe on 7250 platform
 	int sha1_key_index;
 	struct delayed_work afi_update;
+	struct delayed_work get_manu_battinfo_work;
 	bool afi_update_done;
 	bool protect_check_done;
 	bool disabled;
@@ -754,6 +791,14 @@ struct chip_bq27541 {
 #else
 	struct wakeup_source *suspend_ws;
 #endif
+
+	u16 manu_date;
+	u16 first_usage_date;
+	u16 ui_cycle_count;
+	u8 ui_soh;
+	u8 used_flag;
+	u8 bq27z561_seal_flag;
+	struct bat_manufacture_info battinfo;
 };
 
 struct gauge_track_info_reg {
@@ -770,6 +815,7 @@ int gauge_i2c_txsubcmd_onebyte(struct chip_bq27541 *chip, u8 cmd, u8 writeData);
 int gauge_write_i2c_block(struct chip_bq27541 *chip, u8 cmd, u8 length, u8 *writeData);
 int gauge_i2c_txsubcmd(struct chip_bq27541 *chip, int cmd, int writeData);
 int gauge_read_i2c_block(struct chip_bq27541 *chip, u8 cmd, u8 length, u8 *returnData);
+int oplus_bq27541_get_battinfo_sn(char buf[], int len);
 extern bool oplus_gauge_ic_chip_is_null(void);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 int bq27541_driver_init(void);

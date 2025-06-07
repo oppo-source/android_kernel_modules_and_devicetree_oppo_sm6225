@@ -27,9 +27,9 @@
 #include <linux/irq_work.h>
 
 #define CREATE_TRACE_POINTS
-#include <trace/events/oplus_omrg_trace.h>
+#include "oplus_omrg_trace.h"
 
-#include <linux/oplus_omrg.h>
+#include "oplus_omrg.h"
 
 #define CPUFREQ_AMP	1000UL
 #define DEVFREQ_AMP	1UL

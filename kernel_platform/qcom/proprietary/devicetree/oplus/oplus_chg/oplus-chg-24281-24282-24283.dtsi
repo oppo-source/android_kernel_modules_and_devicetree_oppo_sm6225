@@ -170,6 +170,7 @@
 };
 
 &pm6125_vadc {
+	compatible = "qcom,spmi-adc5-ab4";
 	pinctrl-0 = <&usbtemp_r_v_chan_default &usbtemp_l_v_chan_default &batt_id_chan_default>;
 
 	usbtemp_r_v_chan {
@@ -934,13 +935,13 @@
 		qcom,qc_temp_cool_fastchg_current_ma_high = <3000>;
 		qcom,qc_temp_cool_fastchg_current_ma_low = <3000>;
 
-		qcom,little_cool_bat_decidegc = <120>;  /*12C~16C*/
+		qcom,little_cool_bat_decidegc = <120>;  /*12C~35C*/
 		qcom,temp_little_cool_vfloat_mv = <4490>;
 		qcom,temp_little_cool_fastchg_current_ma = <2200>;
 		qcom,pd_temp_little_cool_fastchg_current_ma = <3300>;
 		qcom,qc_temp_little_cool_fastchg_current_ma = <3000>;
 
-		qcom,normal_bat_decidegc = <160>;       /*16C~45C*/
+		qcom,normal_bat_decidegc = <350>;       /*35C~45C*/
 		qcom,temp_normal_vfloat_mv = <4470>;
 		qcom,temp_normal_fastchg_current_ma = <2200>;
 		qcom,pd_temp_normal_fastchg_current_ma = <3300>;

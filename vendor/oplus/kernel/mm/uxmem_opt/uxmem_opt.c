@@ -38,6 +38,9 @@
 #include <linux/kprobes.h>
 #include <linux/delay.h>
 #include "../../mm/internal.h"
+#if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_OSVELTE)
+#include "../mm_osvelte/mm-config.h"
+#endif /* CONFIG_OPLUS_FEATURE_MM_OSVELTE */
 
 #include <../../cpu/sched/sched_assist/sa_common.h>
 #include <../../cpu/sched/sched_info/osi_healthinfo.h>
@@ -725,6 +728,16 @@ static void unregister_uxmem_opt_vendor_hooks(void)
 static int __init uxmem_opt_init(void)
 {
 	int ret = 0;
+
+#if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_OSVELTE)
+	struct config_oplus_bsp_uxmem_opt *config;
+
+	config = oplus_read_mm_config(module_name_uxmem_opt);
+	if (config && !config->enable) {
+		pr_info("%s is disabled in config\n", module_name_uxmem_opt);
+		return 0;
+	}
+#endif /* CONFIG_OPLUS_FEATURE_MM_OSVELTE */
 
 	if (!enable) {
 		pr_err("oplus_bsp_uxmem_opt is disabled in cmdline\n");

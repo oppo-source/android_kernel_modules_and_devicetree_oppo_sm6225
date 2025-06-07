@@ -290,5 +290,9 @@
 					is-virtual-sensor;
 					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
 			};
+			free_fall {
+					sensor-type = <4>; //OPLUS_FREE_FALL
+					is-virtual-sensor;
+			};
 	};
 };

@@ -22,6 +22,11 @@
 #include <linux/sched/task.h>
 #endif /* CONFIG_OPLUS_OOM_REAPER_OPT */
 #include <../../cpu/sched/sched_assist/sa_common.h>
+#if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_OSVELTE)
+#include "../mm_osvelte/mm-config.h"
+
+static struct config_oplus_bsp_zram_opt *config;
+#endif /* CONFIG_OPLUS_FEATURE_MM_OSVELTE */
 
 static int g_direct_swappiness = 60;
 static int g_swappiness = 160;
@@ -101,6 +106,13 @@ static void balance_reclaim(void *unused, bool *balance_anon_file_reclaim)
 	struct zone *zone;
 	unsigned long free_pages_threshold = 0;
 	unsigned long normal_zone_free_pages = 0;
+
+#if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_OSVELTE)
+	if (config && config->balance_anon_file_reclaim_always_true) {
+		*balance_anon_file_reclaim = true;
+		return;
+	}
+#endif /* CONFIG_OPLUS_FEATURE_MM_OSVELTE */
 
 	pgdat = NODE_DATA(0);
 	zone = &pgdat->node_zones[ZONE_NORMAL];
@@ -444,6 +456,16 @@ static void __exit destroy_dynamic_swappiness_proc(void)
 static int __init zram_opt_init(void)
 {
 	int ret = 0;
+
+#if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_OSVELTE)
+	config = oplus_read_mm_config(module_name_zram_opt);
+	if (config) {
+		pr_info("%s balance_anon_file_reclaim_always_true:%d\n",
+			module_name_zram_opt,
+			config->balance_anon_file_reclaim_always_true);
+	}
+#endif /* CONFIG_OPLUS_FEATURE_MM_OSVELTE */
+
 
 	ret = create_swappiness_para_proc();
 	if (ret)
