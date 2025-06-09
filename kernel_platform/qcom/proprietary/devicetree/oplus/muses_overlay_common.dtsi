@@ -2,3 +2,14 @@
 
 #include "fingerprint/uff_sm6225.dtsi"
 #include "muses-charger.dtsi"
+
+&soc {
+	oplus_mm_config: oplus,mm_config {
+		compatible = "oplus,mm_osvelte-config";
+		ram-4g {
+			oplus_boost_pool {
+				feature-disable;
+			};
+		};
+	};
+};
