@@ -1,0 +1,166 @@
+&soc {
+	gpio_keys {
+		vol_up {
+			label = "volume_down";
+			linux,code = <KEY_VOLUMEDOWN>;
+		};
+	};
+
+        // #ifdef OPLUS_FEATURE_SECURITY_COMMON
+        oplus_secure_common {
+            compatible = "oplus,secure_common";
+            oplus,sec_reg_num = <0x1B405D8>;
+            oplus,sec_en_anti_reg = <0x1B401CC>;
+            oplus,sec_override1_reg = <0x7860C0>;
+            oplus,override1_en_value = <0x1>;
+            oplus,secureboot_compatible = <0x1>;
+        };
+        //#endif /* OPLUS_FEATURE_SECURITY_COMMON */
+        //#ifdef OPLUS_FEATURE_THERMAL_HORAE
+        shell_front {
+            compatible = "oplus,shell-temp";
+        };
+
+        shell_frame {
+            compatible = "oplus,shell-temp";
+        };
+
+        shell_back {
+            compatible = "oplus,shell-temp";
+        };
+        //#endif /* OPLUS_FEATURE_THERMAL_HORAE */
+	/*CONFIG_BOOTLOADER_LOG*/
+	bootloader_log {
+	    compatible = "bootloader_log";
+	    linux,contiguous-region = <&bootloader_log_mem>;
+	}; /*CONFIG_BOOTLOADER_LOG*/
+
+        /* #ifdef OPLUS_FEATURE_DUMP_DEVICE_INFO */
+        dump_device_info {
+	    compatible = "dump_device_info";
+	    linux,contiguous-region = <&dump_device_info_mem>;
+	};
+       /* #endif OPLUS_FEATURE_DUMP_DEVICE_INFO */
+
+    oplus_rf_cable {
+        compatible = "oplus,rf_cable";
+        interrupt-parent = <&tlmm>;
+        rf_cable_support_num = <1>;
+        rf,cable0-gpio = <&tlmm 106 0>;
+        rf,cable-support-timer = <0>;
+        pinctrl-names = "rf_cable_active";
+        pinctrl-0 = <&rf_cable0_active>;
+    };
+};
+
+/* Add for Dump KMSG*/
+&ramoops_mem {
+	/delete-property/ alloc-ranges;
+	reg = <0x0 0x66800000 0x0 0x400000>;
+        size = <0x0 0x240000>;
+	console-size = <0x40000>;
+	pmsg-size = <0x200000>;
+	mem-type = <2>;
+}; /* Dump KMSG end*/
+
+&reserved_memory {
+	/*CONFIG_BOOTLOADER_LOG*/
+        /*
+        This size is from
+        boot_images/boot/QcomPkg/SocPkg/DivarPkg/LAA/uefiplat.cfg
+        0x5FFF7000, 0x00008000, "Log Buffer",        AddMem, SYS_MEM, SYS_MEM_CAP, RtData, WRITE_BACK_XN
+        so we reserve this for bootloader log
+         */
+         bootloader_log_mem: botloader_mem@0x5FFF7000 {
+                 reg = <0 0x5FFF7000 0 0x00008000>;
+                 label = "bootloader_log_mem";
+         };
+	 /*CONFIG_BOOTLOADER_LOG*/
+
+        /* #ifdef OPLUS_FEATURE_DUMP_DEVICE_INFO */
+        dump_device_info_mem: device_info_mem@0x66BFF004 {
+		reg = <0 0x66BFF004 0 0X00000FF8>;
+		label = "dump_device_info_mem";
+	};
+       /* #endif OPLUS_FEATURE_DUMP_DEVICE_INFO */
+};
+
+&spmi_bus {
+	qcom,pm6125@0 {
+		qcom,power-on@800 {
+			qcom,pon_2 {
+				qcom,pon-type = <1>;
+				qcom,pull-up = <1>;
+				linux,code = <KEY_VOLUMEUP>;
+			};
+		};
+
+		pon_pmicwd@800 {
+			compatible = "oplus,pmicwd_qpnp-power-on";
+			qcom,pmicwd;
+		};
+	};
+};
+
+//modify bark time to 20s
+&wdog {
+        /delete-property/ qcom,bark-time;
+        qcom,bark-time = <20000>;
+};
+
+//#ifdef OPLUS_FEATURE_SECURITY_COMMON
+// expand tz mem
+&removed_mem {
+	/delete-property/ reg;
+	reg = <0x0 0x60000000 0x0 0x6800000>;
+};
+
+&qcom_seecom {
+	/delete-property/ reg;
+	reg = <0x61800000 0x5000000>;
+};
+
+&qcom_smcinvoke {
+	/delete-property/ reg;
+	reg = <0x61800000 0x5000000>;
+};
+//#endif OPLUS_FEATURE_SECURITY_COMMON
+
+&soc {
+	//#ifdef FEATURE_OPPO_NV_BACKUP
+	//add for creating a shared memory with uio for nv backup and restore
+	qcom,oembackup_sharedmem@0 {
+		compatible = "qcom,sharedmem-uio";
+		reg = <0x0 0x00100000>;
+		reg-names = "oembackup";
+		qcom,client-id = <0x00000004>;
+		qcom,guard-memory;
+		qcom,vm-nav-path;
+	};
+	//#endif /* FEATURE_OPPO_NV_BACKUP */
+};
+/* #ifdef OPLUS_FEATURE_EMMC_DRIVER */
+&sdhc_1 {
+	status = "disabled";
+};
+
+&sdhc_2 {
+	cd-gpios = <&tlmm 88 GPIO_ACTIVE_HIGH>;
+	status = "ok";
+};
+
+&tlmm {
+    rf_cable0_active: rf_cable0_active {
+        mux {
+            pins = "gpio106";
+            function = "gpio";
+        };
+        config {
+            pins = "gpio106";
+            drive-strength = <2>;
+            input-enable;
+            bias-pull-up;
+        };
+    };
+};
+/* #endif */

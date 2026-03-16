@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-2.0-only
+
+KDIR := $(TOP)/kernel_platform/common
+
+ifeq ($(KGSL_PATH),)
+KGSL_PATH=$(src)
+endif
+
+# If we're not in an Android tree, select KGSL config
+ifeq ($(ANDROID_BUILD_TOP),)
+CONFIG_OPLUS_SYNC_FENCE = m
+endif
+
+ccflags-y += -I$(KGSL_PATH) -I$(KGSL_PATH)/include/linux -I$(KGSL_PATH)/include -I$(KERNEL_SRC)/drivers/devfreq -I$(KERNEL_SRC)/
+
+obj-$(CONFIG_OPLUS_SYNC_FENCE) += oplus_sync_fence.o
+oplus_sync_fence-y := src/oplus_sync_file.o

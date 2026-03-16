@@ -1,0 +1,21 @@
+# Settings for compiling holi camera architecture
+
+# Localized KCONFIG settings
+CONFIG_SPECTRA_ISP := y
+CONFIG_SPECTRA_OPE := y
+CONFIG_SPECTRA_TFE := y
+CONFIG_SPECTRA_SENSOR := y
+CONFIG_SPECTRA_OPLUS := y
+OPLUS_FEATURE_CAMERA_COMMON := y
+CONFIG_CAMERA_FLASH_PWM := y
+CONFIG_LEDS_QPNP_FLASH_V2 := y
+
+# Flags to pass into C preprocessor
+ccflags-y += -DCONFIG_SPECTRA_ISP=1
+ccflags-y += -DCONFIG_SPECTRA_OPE=1
+ccflags-y += -DCONFIG_SPECTRA_TFE=1
+ccflags-y += -DCONFIG_SPECTRA_SENSOR=1
+ccflags-y += -DCONFIG_SPECTRA_OPLUS=1
+ccflags-y += -DOPLUS_FEATURE_CAMERA_COMMON=1
+ccflags-y += -DCONFIG_CAMERA_FLASH_PWM=1
+ccflags-y += -DCONFIG_LEDS_QPNP_FLASH_V2=1

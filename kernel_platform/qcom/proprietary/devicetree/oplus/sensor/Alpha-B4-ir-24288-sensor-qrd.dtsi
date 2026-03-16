@@ -1,0 +1,371 @@
+&tlmm {
+	ir_core_default: ir_core_default {
+		mux {
+			pins = "gpio69";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio69";
+			bias-disable;
+		};
+	};
+	ir_ldo_active: ir_ldo_active {
+		mux {
+			pins = "gpio80";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio80";
+			drive-strength = <4>;
+			bias-disable;
+		};
+	};
+};
+&soc {
+	sensor_fb: sensor_fb {
+		compatible = "oplus,sensor-feedback";
+		master-id  = <3>;
+		smem-id    = <608>;
+	};
+	oplus_sensor {
+			compatible = "oplus,sensor-devinfo";
+			als-row-coe = <110>;
+			/*enum {LSM6DSM = 0x01, BMI160 = 0x02, LSM6DS3 = 0x04, BMI260 = 0x08};*/
+			gsensor@0 {
+					sensor-name = <0x89>;//BMA510
+					sensor-direction = <0>;
+					sensor-index = <1>;//source num
+					sensor-type = <0>;//OPPO_ACCEL
+			};
+			gsensor@1 {
+					sensor-name = <0x85>;//SC7A20
+					sensor-direction = <0>;
+					sensor-index = <1>;//source num
+					sensor-type = <0>;//OPPO_ACCEL
+			};
+			/* enum {AKM0991X = 0x01, MMC5603 = 0x02, MXG4300 = 0x04};*/
+			msensor@0 {
+				sensor-name = <0x02>;//MMC5603
+				sensor-direction = <2>;
+				sensor-index = <0>;
+				sensor-type = <2>;//OPLUS_MAG
+				id-gpio = <&tlmm 107 0x00>;
+				is-need-distinguish-nfc = <1>;
+				parameter-number= <18>;
+				soft-mag-parameter = <10000 0 0 0 0 0 0 0 10000 0 0 0 0 0 0 0 10000 0>;
+				soft-mag-parameter-nfc = <9960 0 819 0 344 1 987 0 9825 0 155 1 436 0 287 0 10830 0>;//e00 sign e01 sign...
+				soft-mag-parameter-no-nfc = <9960 0 819 0 344 1 987 0 9825 0 155 1 436 0 287 0 10830 0>;//e00 sign e01 sign...
+			};
+			/*enum {STK3A5X=0x01,TCS3701=0x02,TCS3408=0x04,STK326X=0x08,MN78911=0x10};*/
+			/*enum {NORMAL=0x01,UNDER_LCD=0x02,VIRTUAL_UNDER_LCD=0x03}*/
+			lsensor@0 {
+					sensor-name = <0x84>;//STK6A7X
+					sensor-index = <0>;
+					sensor-type = <3>;//OPLUS_ALS
+					bus-number = <1>;
+					irq-number = <35>;
+					als-type = <1>;//NORMAL_LCD
+					is-unit-device = <1>;
+					is-als-dri = <0>;
+					als-factor = <1000>;
+					is_als_initialed = <0>;
+					als_buffer_length = <10>;
+					//normalization_value = <549>;
+					use_lb_algo = <0>;
+					is_distinguish_screens = <1>;
+				light_param_lcd_1 {
+					coef_a     = <50000>;
+					coef_b     = <200000>;
+					coef_c     = <3380>;
+					coef_d     = <1000>;
+					coef_e     = <653>;
+					coef_f     = <348>;
+					coef_ratio = <49100>;
+					k63 = <9>;
+					lcd_name = "ili9883c"; // 主供boe
+				};
+				light_param_lcd_2 {
+					coef_a     = <50000>;
+					coef_b     = <190000>;
+					coef_c     = <3300>;
+					coef_d     = <1200>;
+					coef_e     = <730>;
+					coef_f     = <420>;
+					coef_ratio = <48000>;
+					k63 = <10>;
+					lcd_name = "td4160"; // 二供hx
+				};
+			};
+			lsensor@1 {
+					sensor-name = <0x83>;//SIP3511
+					sensor-index = <1>;
+					sensor-type = <3>;//OPLUS_ALS
+					bus-number = <1>;
+					irq-number = <35>;
+					als-type = <1>;//NORMAL_LCD
+					is-unit-device = <1>;
+					is-als-dri = <0>;
+					als-factor = <1000>;
+					is_als_initialed = <0>;
+					als_buffer_length = <8>;
+					//normalization_value = <549>;
+					use_lb_algo = <0>;
+					is_distinguish_screens = <1>;
+				light_param_lcd_1 {
+					coef_a     = <1>; 
+					coef_b     = <833>;
+					coef_c     = <1836>;
+					coef_d     = <2143>;
+					coef_e     = <0>;
+					coef_ratio = <6526000>;
+					gold-reset-scale = <0>;
+					lcd_type = <1617800>;
+					linear_comp_scope = <0>;
+					linear_comp_intercept = <893300>;
+					temp_lux = <0>;
+					coef = <480800>;
+					bal_coef = <1000>;
+					ir_coef_stage_0 = <0>;
+					ir_coef_stage_1 = <0>;
+					ir_coef_stage_2 = <1000>;
+					ir_coef_stage_3 = <0>;
+					ir_coef_val_0 = <0>;
+					ir_coef_val_1 = <1000>;
+					ir_coef_val_2 = <0>;
+					ir_coef_val_3 = <0>;
+					ir_coef_val_4 = <941>;
+					polling_use_majority = <928>;
+					k43 = <27>;
+					k51 = <1000>;
+					k52 = <0>;
+					k53 = <0>;
+					k61 = <895>;
+					k62 = <797>;
+					k63 = <99>;
+					lcd_name = "ili9883c"; // 主供boe
+				};
+				light_param_lcd_2 {
+					coef_a     = <1>;
+					coef_b     = <833>;
+					coef_c     = <1872>;
+					coef_d     = <2246>;
+					coef_e     = <0>;
+					coef_ratio = <11202368>;
+					gold-reset-scale = <0>;
+					lcd_type = <2318600>;
+					linear_comp_scope = <0>;
+					linear_comp_intercept = <1177929>;
+					temp_lux = <0>;
+					coef = <654107>;
+					bal_coef = <1000>;
+					ir_coef_stage_0 = <0>;
+					ir_coef_stage_1 = <0>;
+					ir_coef_stage_2 = <1000>;
+					ir_coef_stage_3 = <0>;
+					ir_coef_val_0 = <0>;
+					ir_coef_val_1 = <1000>;
+					ir_coef_val_2 = <0>;
+					ir_coef_val_3 = <0>;
+					ir_coef_val_4 = <1013>;
+					polling_use_majority = <1010>;
+					k43 = <21>;
+					k51 = <1000>;
+					k52 = <0>;
+					k53 = <0>;
+					k61 = <1021>;
+					k62 = <850>;
+					k63 = <101>;
+					lcd_name = "td4160"; // 二供hx
+				};
+			};
+			lsensor@2 {
+					sensor-name = <0x82>; //SIP3535
+					sensor-index = <2>;
+					sensor-type = <3>; //OPLUS_ALS
+					bus-number = <1>;
+					irq-number = <35>;
+					als-type = <1>; //NORMAL_LCD
+					is-unit-device = <1>;
+					is-als-dri = <0>;
+					als-factor = <210>;
+					is_als_initialed = <0>;
+					als_buffer_length = <10>;
+					//normalization_value = <549>;
+					use_lb_algo = <0>;
+			};
+			psensor@0 {
+					sensor-name = <0x84>;//STK6A7X
+					sensor-index = <0>;
+					sensor-type = <4>;//OPLUS_PROXIMITY
+					bus-number = <1>;
+					irq-number = <35>;
+					//ps-cail-type = <2>;
+					ps-type = <1>;
+					/*1-need close 2-close has contidition 0-not close*/
+					is_need_close_pd = <0>;
+					//is_ps_initialzed = <0>;
+					low_step = <300>;
+					high_step = <400>;
+					low_limit = <700>;
+					high_limit = <900>;
+					dirty_low_step = <350>;
+					dirty_high_step = <550>;
+					ps_dirty_limit = <1800>;
+					ps_ir_limit = <2000>;
+					ps_adjust_min = <0>;
+					ps_adjust_max = <1850>;
+					sampling_count = <5>;
+					step_max = <400>;
+					step_min = <100>;
+					step_div = <2000>;
+					anti_shake_delta = <70>;
+					dynamic_cali_max = <5000>;
+					raw2offset_radio = <1000>;
+					offset_max = <60000>;
+					offset_range_min = <0>;
+					offset_range_max = <65535>;
+					force_cali_limit = <2000>;
+					cali_jitter_limit = <30>;
+					cal_offset_margin = <3000>;
+			};
+			psensor@1 {
+					sensor-name = <0x83>;//SIP3511
+					sensor-index = <1>;
+					sensor-type = <4>;//OPLUS_PROXIMITY
+					bus-number = <1>;
+					irq-number = <35>;
+					//ps-cail-type = <2>;
+					ps-type = <1>;
+					/*1-need close 2-close has contidition 0-not close*/
+					is_need_close_pd = <0>;
+					//is_ps_initialzed = <0>;
+					low_step = <300>;
+					high_step = <400>;
+					low_limit = <650>;
+					high_limit = <1050>;
+					dirty_low_step = <300>;
+					dirty_high_step = <400>;
+					ps_dirty_limit = <1800>;
+					ps_ir_limit = <2000>;
+					ps_adjust_min = <0>;
+					ps_adjust_max = <1850>;
+					sampling_count = <5>;
+					step_max = <400>;
+					step_min = <100>;
+					step_div = <2000>;
+					anti_shake_delta = <70>;
+					dynamic_cali_max = <2000>;
+					raw2offset_radio = <1000>;
+					offset_max = <60000>;
+					offset_range_min = <0>;
+					offset_range_max = <65534>;
+					force_cali_limit = <2000>;
+					cali_jitter_limit = <30>;
+					cal_offset_margin = <3000>;
+			};
+			psensor@2 {
+					sensor-name = <0x82>; //SIP3535
+					sensor-index = <2>;
+					sensor-type = <4>; //OPLUS_PROXIMITY
+					bus-number = <1>;
+					irq-number = <35>;
+					ps-type = <1>;
+					/*1-need close 2-close has contidition 0-not close*/
+					is_need_close_pd = <0>;
+					low_step = <300>;
+					high_step = <400>;
+					low_limit = <700>;
+					high_limit = <900>;
+					dirty_low_step = <500>;
+					dirty_high_step = <150>;
+					ps_dirty_limit = <1800>;
+					ps_ir_limit = <2000>;
+					ps_adjust_min = <0>;
+					ps_adjust_max = <1850>;
+					sampling_count = <5>;
+					step_max = <400>;
+					step_min = <100>;
+					step_div = <2000>;
+					anti_shake_delta = <70>;
+					dynamic_cali_max = <5000>;
+					raw2offset_radio = <1000>;
+					offset_max = <60000>;
+					offset_range_min = <0>;
+					offset_range_max = <65534>;
+					force_cali_limit = <2000>;
+					cali_jitter_limit = <30>;
+					cal_offset_margin = <3000>;
+			};
+			/*
+			cctrsensor@0 {
+				decoupled-driver = <1>; //0 - tcs3408 driver; 1 - oplus_cct driver
+				sensor-name = <0x10>; //sip1221lr1n
+				sensor-index = <0>;
+				sensor-type = <7>; //OPLUS_CCT_REAR
+				bus-number = <1>;
+				//feature
+				publish-sensors = <0x5>; //bit[0] - als, bit[1] - rgb, bit[2] - flicker, bit[3] - spectral
+				is-ch-dri = <0>;
+				timer-size = <25>; //ms
+				fac-cali-sensor = <0x1>; //0x1 - als, 0x2 - rgb, 0x4, flicker
+				para-matrix = <0>;//0-default
+			};*/
+
+			/*virtual sensor
+			enum sensor_algo_id {
+					OPLUS_PICKUP_DETECT,
+					OPLUS_LUX_AOD,
+					OPLUS_TP_GESTURE,
+					OPLUS_FP_DISPLAY,
+					OPLUS_FREE_FALL,
+					OPLUS_CAMERA_PROTECT,
+					SENSOR_ALGO_NUM
+			}*/
+			pickup_detect {
+					sensor-type = <0>; //OPLUS_PICKUP_DETECT
+					is-virtual-sensor;
+					is-need-prox = <1>;
+					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+			};
+			lux_aod {
+					sensor-type = <1>; //OPLUS_LUX_AOD
+					is-virtual-sensor;
+					thrd-low = <12>;
+					thrd-high = <50>;
+					als-type = <1>; // 0 - wise_light; 1 - ambient_light
+			};
+			fp_display {
+					sensor-type = <3>; //OPLUS_FP_DISPLAY
+					is-virtual-sensor;
+					prox-type = <0>; // 0 - proximity; 1 - proximity_fake
+			};
+			free_fall {
+                    sensor-type = <4>; //OPLUS_FREE_FALL
+                    is-virtual-sensor;
+            };
+	};
+	consumer_ir_core {
+		compatible = "oplus,kookong_ir_core";
+		status = "okay";
+		vdd-type = <3>; /* 0: internal LDO , 1: external LOD  3:GPIO ldo*/
+		pinctrl-names = "default";
+		pinctrl-0 = <&ir_ldo_active>;
+		ir-ldo-ctrl = <&tlmm 80 0x00>;
+	};
+};
+&qupv3_se4_spi{
+	status = "ok";
+	consumerIr@0 {
+		compatible = "oplus,kookong_ir_spi";
+		reg = <0>;
+		status = "ok";
+
+		spi-max-frequency = <5000000>;    /*4800000,9600000,15000000,19200000*/
+		ir-spi-mode = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&ir_core_default>;
+	};
+};
+&qupv3_se4_2uart {
+	status = "disabled";
+};

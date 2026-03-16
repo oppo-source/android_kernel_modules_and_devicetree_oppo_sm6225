@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include "../qcom/bengal-qrd-nopmi-overlay.dts"
+#include "Avatar-B4_overlay_common.dtsi"
+#include "oplus_chg/oplus-chg-23311-23312-23313.dtsi"
+#include "oplus_chg/oplus-chg-23311-23312-23313-pps.dtsi"
+#include "nfc/avatarB4-nfc-pn560.dtsi"
+#include "sensor/Avatar-B4-23311-sensor-mtp.dtsi"
+
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL QRD nopmi overlay, Avatar-B4 GDPR";
+    oplus,dtsi_no = <23312 23317>;
+    oplus,project-id = <23312 23317>;
+};

@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-khaje.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/msm-camera.h>
+#include <dt-bindings/interconnect/qcom,bengal.h>
+
+#include "regulator/aw37004.dtsi"
+#include "../khaje-camera.dtsi"
+#include "../khaje-camera-sensor-qrd-baikalb4.dtsi"
+#include "../khaje-camera-sensor-nopmi.dtsi"
+#include "camera/khaje-baikalb4lx-camera-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Baikal-B4LX";
+    oplus,dtsi_no = <25031 25248 25249 25258 25259>;
+    oplus,project-id = <25031 25248 25249 25258 25259>;
+};

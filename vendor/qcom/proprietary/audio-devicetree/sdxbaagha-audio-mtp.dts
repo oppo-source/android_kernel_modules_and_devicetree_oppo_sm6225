@@ -1,0 +1,17 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sdxbaagha.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/interconnect/qcom,sdxbaagha.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "sdxbaagha-audio-mtp.dtsi"
+
+/ {
+
+	model = "Qualcomm Technologies, Inc. SDXBAAGHA";
+	compatible = "qcom,sdxbaagha-rcm", "qcom,sdxbaagha", "qcom,rcm";
+	qcom,msm-id = <570 0x10000>, <571 0x10000>;
+	qcom,board-id = <0x10008 0x103>, <0x10008 0x203>;
+};

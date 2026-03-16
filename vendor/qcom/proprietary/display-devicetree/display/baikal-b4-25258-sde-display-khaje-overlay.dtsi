@@ -1,0 +1,22 @@
+
+&qupv3_se1_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "ok";
+	ocp2130@3e {
+		compatible = "qcom,ocp2130_bias";
+		reg = <0x3e>;
+		lcm-enp-gpio = <&tlmm 105 0>;
+		lcm-enn-gpio = <&tlmm 54 0>;
+		//lcm-vddio-gpio = <&tlmm 105 0>;
+		status = "okay";
+	};
+
+	lcd_bias_i2c@3e {
+		compatible = "qualcomm,i2c_lcd_bias";
+		reg = <0x3e>;
+		qualcomm,enp = <&tlmm 43 0x0>;
+		qualcomm,enn = <&tlmm 54 0x0>;
+		status = "disabled";
+	};
+};

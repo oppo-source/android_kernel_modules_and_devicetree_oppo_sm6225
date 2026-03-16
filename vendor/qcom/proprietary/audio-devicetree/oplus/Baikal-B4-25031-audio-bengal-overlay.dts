@@ -1,0 +1,9 @@
+/dts-v1/;
+/plugin/;
+#include "../bengal-audio-overlay.dtsi"
+#include "bengal-audio-overlay-common.dtsi"
+#include "Baikal-B4-25031-audio-bengal-overlay.dtsi"
+/ {
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Baikal-B4";
+    oplus,project-id = <25031 25248 25249 25258 25259>;
+};

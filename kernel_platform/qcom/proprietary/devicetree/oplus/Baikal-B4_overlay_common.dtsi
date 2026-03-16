@@ -1,0 +1,9 @@
+#include "fingerprint/uff_sm6225_Baikal_B4_25031_25248_25249_25258_25259.dtsi"
+#include "oplus_thermal/oplus_thermal.dtsi"
+#include "tp/BaikalB4_touchpanel.dtsi"
+
+&soc {
+	midas_pdev {
+		compatible = "oplus,midas-pdev";
+	};
+};

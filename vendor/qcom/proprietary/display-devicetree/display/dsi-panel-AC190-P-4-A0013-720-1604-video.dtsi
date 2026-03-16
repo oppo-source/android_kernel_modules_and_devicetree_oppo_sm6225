@@ -1,0 +1,137 @@
+&mdss_mdp {
+	dsi_panel_AC190_P_4_A0013_720_1604_video: qcom,mdss_dsi_panel_AC190_P_4_A0013_720_1604_video {
+		qcom,mdss-dsi-panel-name =
+				"AC190 P 4 A0013 video mode dsi panel";
+		oplus,mdss-dsi-vendor-name = "A0013";
+		oplus,mdss-dsi-manufacture = "P_4";
+		qcom,mdss-dsi-panel-type = "dsi_video_mode";
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-border-color = <0>;
+		qcom,mdss-dsi-h-sync-pulse = <0>;
+		qcom,mdss-dsi-traffic-mode = "non_burst_sync_pulse";
+		qcom,mdss-dsi-bllp-power-mode;
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-lp11-init;
+		qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+		qcom,mdss-dsi-bl-min-level = <1>;
+		qcom,mdss-dsi-bl-max-level = <4095>;
+		qcom,mdss-dsi-reset-sequence = <1 10>, <0 10>, <1 10>;
+		qcom,mdss-pan-physical-width-dimension = <69>;
+		qcom,mdss-pan-physical-height-dimension = <155>;
+		qcom,mdss-dsi-display-timings {
+			timing@0 {
+				qcom,mdss-dsi-panel-width = <720>;
+				qcom,mdss-dsi-panel-height = <1604>;
+				qcom,mdss-dsi-h-front-porch = <55>;
+				qcom,mdss-dsi-h-back-porch = <54>;
+				qcom,mdss-dsi-h-pulse-width = <12>;
+				qcom,mdss-dsi-h-sync-skew = <0>;
+				qcom,mdss-dsi-v-back-porch = <28>;
+				qcom,mdss-dsi-v-front-porch = <364>;
+				qcom,mdss-dsi-v-pulse-width = <4>;
+				qcom,mdss-dsi-panel-framerate = <90>;
+				qcom,mdss-dsi-on-command = [
+					39 01 00 00 00 00 04 FF 98 83 06
+					15 01 00 00 00 00 02 06 A4
+					15 01 00 00 00 00 02 3E E2
+
+					39 01 00 00 00 00 04 FF 98 83 02
+					15 01 00 00 00 00 02 01 35
+					39 01 00 00 00 00 04 FF 98 83 06
+					15 01 00 00 00 00 02 48 05
+					15 01 00 00 00 00 02 4D 80
+					15 01 00 00 00 00 02 4E 40
+					15 01 00 00 00 00 02 C7 05
+
+					39 01 00 00 00 00 04 FF 98 83 03
+					15 01 00 00 00 00 02 83 20          //PWM 12bit
+					15 01 00 00 00 00 02 84 00
+
+					39 01 00 00 00 00 04 FF 98 83 03    //CABC
+					15 01 00 00 00 00 02 86 6C
+					15 01 00 00 00 00 02 88 E1    //hei 80%
+					15 01 00 00 00 00 02 89 e8   //hui 89.84%
+					15 01 00 00 00 00 02 8A F0   //shuiguo 92.97%
+					15 01 00 00 00 00 02 8B F7
+					15 01 00 00 00 00 02 8C BF   //hei 60.94%
+					15 01 00 00 00 00 02 8D C5
+					15 01 00 00 00 00 02 8E C8
+					15 01 00 00 00 00 02 8F CE
+					15 01 00 00 00 00 02 90 D1   //hui 69.92%
+					15 01 00 00 00 00 02 91 D6
+					15 01 00 00 00 00 02 92 DC
+					15 01 00 00 00 00 02 93 E3
+					15 01 00 00 00 00 02 94 ED
+					15 01 00 00 00 00 02 95 FA   //shuiguo 73%->83.6%
+					15 01 00 00 00 00 02 AF 18
+
+					39 01 00 00 00 00 04 FF 98 83 00
+					15 01 00 00 00 00 02 53 24            //enable pwm
+					39 01 00 00 00 00 03 51 00 00
+					15 01 00 00 00 00 02 55 01
+					15 01 00 00 00 00 02 35 00
+					39 01 00 00 00 00 03 68 05 01
+					15 01 00 00 42 00 02 11 00
+					15 01 00 00 1F 00 02 29 00
+				];
+				qcom,mdss-dsi-off-command = [
+					39 01 00 00 05 00 04 FF 98 83 00
+					15 01 00 00 14 00 02 28 00
+					15 01 00 00 78 00 02 10 00
+				];
+				qcom,mdss-dsi-cabc-mode1-command = [
+					39 01 00 00 00 00 04 FF 98 83 00
+					15 01 00 00 00 00 02 55 01
+				];
+				qcom,mdss-dsi-cabc-mode2-command = [
+					39 01 00 00 00 00 04 FF 98 83 00
+					15 01 00 00 00 00 02 55 02
+				];
+				qcom,mdss-dsi-cabc-mode3-command = [
+					39 01 00 00 00 00 04 FF 98 83 00
+					15 01 00 00 00 00 02 55 03
+				];
+				qcom,mdss-dsi-cabc-off-command = [
+					39 01 00 00 00 00 04 FF 98 83 00
+					15 01 00 00 00 00 02 55 00
+				];
+				qcom,mdss-dsi-switch-to-page0-command = [
+					39 01 00 00 00 00 04 FF 98 83 00
+				];
+				qcom,mdss-dsi-backlight-gamma-enter-command = [
+					39 01 00 00 00 00 04 FF 98 83 08
+					39 01 00 00 00 00 1E E0 55 66 69 71 7C 55 8D A0 B1 C9 A9 DE 04 28 4C AA 70 99 CA E9 FF 10 2F 58 88 3F AF C7 DB
+					39 01 00 00 00 00 1E E1 55 66 69 71 7C 55 8D A0 B1 C9 A9 DE 04 28 4C AA 70 99 CA E9 FF 10 2F 58 88 3F AF C7 DB
+					39 01 00 00 00 00 04 FF 98 83 00
+				];
+				qcom,mdss-dsi-backlight-gamma-exit-command = [
+					39 01 00 00 00 00 04 FF 98 83 08
+					39 01 00 00 00 00 1E E0 00 00 18 50 85 50 C7 FF 2A 5D 95 85 C5 F8 25 AA 50 7D B2 D2 FE FB 1D 48 7C 3F A6 C7 DB
+					39 01 00 00 00 00 1E E1 00 00 18 50 85 50 C7 FF 2A 5D 95 85 C5 F8 25 AA 50 7D B2 D2 FE FB 1D 48 7C 3F A6 C7 DB
+					39 01 00 00 00 00 04 FF 98 83 00
+				];
+				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-off-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-cabc-mode1-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-mode2-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-mode3-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-off-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-switch-to-page0-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-backlight-gamma-enter-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-backlight-gamma-exit-command-state = "dsi_hs_mode";
+			};
+		};
+	};
+};

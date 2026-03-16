@@ -1,0 +1,8 @@
+/dts-v1/;
+/plugin/;
+
+#include "baikal-b4-25258-sde-display-khaje-overlay.dtsi"
+
+/ {
+	oplus,project-id = <25251 25252 25256 25253 25250 25246 25254 25257 25255 25248 25258 25259 25031 25249 25310 25245 25244 25243>;
+};

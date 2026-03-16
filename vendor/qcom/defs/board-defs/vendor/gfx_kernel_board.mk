@@ -1,0 +1,1 @@
+../../../opensource/graphics-kernel/gfx_kernel_board.mk

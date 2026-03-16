@@ -1,0 +1,17 @@
+/dts-v1/;
+/plugin/;
+
+#include "../qcom/bengal-qrd-nopmi-overlay.dts"
+#include "Alpha-B4_overlay_common.dtsi"
+#include "sensor/Alpha-B4-24288-sensor-qrd.dtsi"
+#include "oplus_chg/oplus-chg-24300.dtsi"
+#include "../../../../../vendor/qcom/proprietary/camera-devicetree/oplus/regulator/aw37004.dtsi"
+#include "nfc/alphab4-nfc-pn560.dtsi"
+#include "oplus_chg/oplus-chg-24300-pps-33w.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL QRD nopmi overlay, Alpha-B4";
+    oplus,gauge-id = <0>;
+    oplus,dtsi_no = <24289 24300 24301 24304 24306 24307 24309>;
+    oplus,project-id = <24289 24300 24301 24304 24306 24307 24309>;
+};
