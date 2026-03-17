@@ -1,0 +1,193 @@
+
+&tlmm {
+	nfcid_default: nfcid_default{
+		mux {
+			pins = "gpio107";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio107";
+			drive-strength = <4>;
+			bias-disable;
+		};
+	};
+	nfcid_pulldown: nfcid_pulldown {
+		mux {
+			pins = "gpio107";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio107";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+	};
+	nfcid_pullup: nfcid_pullup {
+		mux {
+			pins = "gpio107";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio107";
+			drive-strength = <8>;
+			bias-pull-up;
+		};
+	};
+};
+
+&soc {
+	//add for nfc_chipset
+	nfc_chipset {
+		compatible = "oplus-nfc-chipset";
+		mixed-chipset = <1>;
+                id-gpio = <&tlmm 107 0x00>;
+		id_count = <3>;
+		id-0-key = <0>;
+                id-0-value-chipset = "PN560";
+                id-0-value-manifest-path = "/odm/etc/vintf/manifest_dsnfc_pn560.xml";
+                id-0-value-feature-path = "/odm/etc/com.oplus.nfc_feature_pn560.xml";
+		id-1-key = <1>;
+		id-1-value-chipset = "none";
+		id-1-value-manifest-path = "/odm/etc/vintf/manifest_empty.xml";
+		id-1-value-feature-path = "/odm/etc/feature_empty.xml";
+                id-2-key = <2>;
+		id-2-value-chipset = "none";
+		id-2-value-manifest-path = "/odm/etc/vintf/manifest_empty.xml";
+		id-2-value-feature-path = "/odm/etc/feature_empty.xml";
+		pinctrl-names = "nfcid_default", "nfcid_pullup","nfcid_pulldown";
+		pinctrl-0 = <&nfcid_default>;
+		pinctrl-1 = <&nfcid_pullup>;
+		pinctrl-2 = <&nfcid_pulldown>;
+	};
+};
+
+&tlmm {
+	nfc {
+		nfc_int_active: nfc_int_active {
+			/* active state */
+			mux {
+				/* GPIO 70 NFC Read Interrupt */
+				pins = "gpio70";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio70";
+				drive-strength = <2>; /* 2 MA */
+				bias-pull-up;
+			};
+		};
+
+		nfc_int_suspend: nfc_int_suspend {
+			/* sleep state */
+			mux {
+				/* GPIO 70 NFC Read Interrupt */
+				pins = "gpio70";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio70";
+				drive-strength = <2>; /* 2 MA */
+				bias-pull-up;
+			};
+		};
+
+		nfc_enable_active: nfc_enable_active {
+			/* active state */
+			mux {
+				/* 36: Enable */
+				pins = "gpio36";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio36";
+				drive-strength = <2>; /* 2 MA */
+				bias-pull-up;
+			};
+		};
+
+		nfc_enable_suspend: nfc_enable_suspend {
+			/* sleep state */
+			mux {
+				/* 36: Enable */
+				pins = "gpio36";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio36";
+				drive-strength = <2>; /* 2 MA */
+				bias-disable;
+			};
+		};
+
+		nfc_clk_req_active: nfc_clk_req_active {
+			/* active state */
+			mux {
+				/* GPIO 86: NFC CLOCK REQUEST */
+				pins = "gpio86";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio86";
+				drive-strength = <2>; /* 2 MA */
+				bias-pull-up;
+			};
+		};
+
+		nfc_clk_req_suspend: nfc_clk_req_suspend {
+			/* sleep state */
+			mux {
+				/* GPIO 86: NFC CLOCK REQUEST */
+				pins = "gpio86";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio86";
+				drive-strength = <2>; /* 2 MA */
+				bias-disable;
+			};
+		};
+	};
+}; //tlmm
+
+&qupv3_se1_i2c {
+	status = "ok";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	nq@29 {
+		compatible = "qcom,sn-nci";
+		reg = <0x29>;
+                mixed-chipset = <1>;
+                id-gpio = <&tlmm 107 0x00>;
+                id_count = <3>;
+                id-0-key = <0>;
+                id-0-value-chipset = "PN560";
+                id-1-key = <1>;
+                id-1-value-chipset = "none";
+                id-2-key = <2>;
+                id-2-value-chipset = "none";
+		qcom,sn-irq = <&tlmm 70 0x00>;
+		qcom,sn-ven = <&tlmm 36 0x00>;
+		qcom,sn-clkreq = <&tlmm 86 0x00>;
+		qcom,sn-vdd-1p8-supply = <&L9A>;
+		qcom,sn-vdd-1p8-voltage = <1800000 2000000>;
+		qcom,sn-vdd-1p8-current = <157000>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <70 0>;
+		interrupt-names = "nfc_irq";
+		pinctrl-names = "nfc_active", "nfc_suspend","nfc_id_default", "nfc_id_pullup","nfc_id_pulldown";
+		pinctrl-0 = <&nfc_int_active &nfc_enable_active
+				&nfc_clk_req_active>;
+		pinctrl-1 = <&nfc_int_suspend &nfc_enable_suspend
+				&nfc_clk_req_suspend>;
+		pinctrl-2 = <&nfcid_default>;
+		pinctrl-3 = <&nfcid_pullup>;
+		pinctrl-4 = <&nfcid_pulldown>;
+
+	};
+};

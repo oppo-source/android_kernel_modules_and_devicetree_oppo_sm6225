@@ -1,0 +1,4 @@
+60,         // PWM_FLASH_ON_LEVEL1
+100,        // PWM_FLASH_ON_LEVEL2
+130,        // PWM_FLASH_ON_LEVEL3
+160         // PWM_FLASH_ON_LEVEL4

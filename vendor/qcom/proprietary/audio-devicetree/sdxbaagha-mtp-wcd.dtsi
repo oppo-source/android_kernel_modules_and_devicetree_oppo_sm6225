@@ -1,0 +1,10 @@
+&qupv3_se4_i2c {
+	tavil_codec {
+		wcd: wcd_pinctrl@5 {
+			compatible = "qcom,wcd-pinctrl";
+			qcom,gpios-count = <0>;
+			gpio-controller;
+			#gpio-cells = <2>;
+		};
+	};
+};

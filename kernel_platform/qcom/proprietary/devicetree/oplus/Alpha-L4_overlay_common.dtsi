@@ -1,0 +1,237 @@
+#include "fingerprint/oplus_uff_al4_24281_24282.dtsi"
+#include "swtp/rf_cable.dtsi"
+#include "oplus_thermal/ab4_oplus_thermal.dtsi"
+#include "sensor/Alpha-L4-24281-24282-24284-sensor-qrd.dtsi"
+
+&soc {
+	//#ifdef FEATURE_OPPO_NV_BACKUP
+	//add for creating a shared memory with uio for nv backup and restore
+	qcom,oembackup_sharedmem@0 {
+		compatible = "qcom,sharedmem-uio";
+		reg = <0x0 0x00100000>;
+		reg-names = "oembackup";
+		qcom,client-id = <0x00000004>;
+		qcom,guard-memory;
+		qcom,vm-nav-path;
+	};
+	//#endif /* FEATURE_OPPO_NV_BACKUP */
+
+    shell_front {
+        compatible = "oplus,shell-temp";
+    };
+
+    shell_frame {
+        compatible = "oplus,shell-temp";
+    };
+
+    shell_back {
+        compatible = "oplus,shell-temp";
+    };
+
+ 	/*add for midas*/
+ 	midas_pdev {
+ 		compatible = "oplus,midas-pdev";
+ 	};
+
+    //#ifdef CONFIG_OPLUS_OMRG
+    oplus-omrg {
+        compatible = "oplus,oplus-omrg";
+        oplus-omrg0 {
+                oplus,divider-cells = <1>;
+                oplus,omrg-master = <&CPU4 2016000>;
+                oplus,omrg-slave = <&CPU0 1804800>;
+                up_limit_enable;
+                /* down_limit_enable; */
+                /* thermal_enable; */
+        };
+    };
+    //#endif
+
+};
+
+&soc{
+    // #ifdef OPLUS_FEATURE_SECURITY_COMMON
+    oplus_secure_common {
+        compatible = "oplus,secure_common";
+        oplus,sec_reg_num = <0x1B40458>;
+        oplus,sec_en_anti_reg = <0x1B401CC>;
+        oplus,sec_override1_reg = <0x7860C0>;
+        oplus,override1_en_value = <0x1>;
+        oplus,secureboot_compatible = <0x1>;
+    };
+    //#endif /* OPLUS_FEATURE_SECURITY_COMMON */
+};
+
+#include "tp/AlphaL4_touchpanel.dtsi"
+&soc {
+        devinfo {
+                 status = "disabled";
+         };
+         devinfo_al4 {
+                 compatible = "oplus-devinfo";
+
+                 pinctrl-names = "default", "sleep", "active", "idle";
+                 pinctrl-0 = <&hw_pins_default>;
+                  pinctrl-1 = <&aboard_pin_gpio0_sleep>;
+                  pinctrl-2 = <&aboard_pin_gpio0_active>;
+                  pinctrl-3 = <&aboard_pin_gpio0_idle>;
+                  main-sub {
+                          use_tristate_gpio;
+                          compatible = "hw-match, main-sub";
+                          aboard-gpio0 = <&pm6125_gpios 2 0>;
+                          aboard-patterns = <0 0 0 0 >;    /*0[high-resistance] 1[pull-down] 2[pull-up]*/
+			  /*main board*/
+                          match-projects = <24281 24282 24283 24284>;
+                  };
+          };
+
+	bootloader_log {
+	    compatible = "bootloader_log";
+	    linux,contiguous-region = <&bootloader_log_mem>;
+	}; /*CONFIG_BOOTLOADER_LOG*/
+
+        /* #ifdef OPLUS_FEATURE_DUMP_DEVICE_INFO */
+        dump_device_info {
+	    compatible = "dump_device_info";
+	    linux,contiguous-region = <&dump_device_info_mem>;
+	};
+ };
+
+&soc {
+	oplus,blk-mq {
+		kblockd_ux_unbound_enable = "y";
+	};
+};
+
+/* Add for Dump KMSG*/
+&ramoops_mem {
+	/delete-property/ alloc-ranges;
+	reg = <0x0 0x66800000 0x0 0x400000>;
+        size = <0x0 0x240000>;
+	console-size = <0x40000>;
+	pmsg-size = <0x200000>;
+	mem-type = <2>;
+}; /* Dump KMSG end*/
+
+&reserved_memory {
+	/*CONFIG_BOOTLOADER_LOG*/
+        /*
+        This size is from
+        boot_images/boot/QcomPkg/SocPkg/DivarPkg/LAA/uefiplat.cfg
+        0x5FFF7000, 0x00008000, "Log Buffer",        AddMem, SYS_MEM, SYS_MEM_CAP, RtData, WRITE_BACK_XN
+        so we reserve this for bootloader log
+         */
+         bootloader_log_mem: botloader_mem@0x5FFF7000 {
+                 reg = <0 0x5FFF7000 0 0x00008000>;
+                 label = "bootloader_log_mem";
+         };
+	 /*CONFIG_BOOTLOADER_LOG*/
+
+        /* #ifdef OPLUS_FEATURE_DUMP_DEVICE_INFO */
+        dump_device_info_mem: device_info_mem@0x66BFF004 {
+		reg = <0 0x66BFF004 0 0X00000FF8>;
+		label = "dump_device_info_mem";
+	};
+       /* #endif OPLUS_FEATURE_DUMP_DEVICE_INFO */
+};
+ 
+ &pm6125_gpios {
+          aboard_pin {
+                  hw_pins_default:hw_pins_default {
+                  };
+
+                  aboard_pin_gpio0_sleep:aboard_pin_gpio0_sleep {
+                  pins = "gpio2";
+                          function = "normal";
+                          bias-pull-down;
+                          input-enable;
+                          power-source = <0>;
+                  };
+
+                  aboard_pin_gpio0_active:aboard_pin_gpio0_active {
+                  pins = "gpio2";
+                          function = "normal";
+                          bias-pull-up;
+                          input-enable;
+                          power-source = <0>;
+                  };
+
+                  aboard_pin_gpio0_idle:aboard_pin_gpio0_idle {
+                  pins = "gpio2";
+                          function = "normal";
+                          bias-disable;
+                          input-enable;
+                          power-source = <0>;
+                  };
+          };
+ };
+
+&spmi_bus {
+	qcom,pm6125@0 {
+		qcom,power-on@800 {
+			qcom,pon_2 {
+				qcom,pon-type = <1>;
+				qcom,pull-up = <1>;
+				linux,code = <KEY_VOLUMEUP>;
+			};
+		};
+
+		pon_pmicwd@800 {
+			compatible = "oplus,pmicwd_qpnp-power-on";
+			qcom,pmicwd;
+		};
+	};
+};
+
+&sdhc_2{
+	cd-gpios = <&tlmm 88 GPIO_ACTIVE_HIGH>;
+};
+
+&qusb_phy0 {
+	/* USB Eye diagram for device */
+	qcom,qusb-phy-init-seq = <0xF0 0x80
+				  0x03 0x84
+				  0x83 0x88
+				  0xc7 0x8c
+				  0x30 0x08
+				  0x79 0x0c
+				  0x21 0x10
+				  0x14 0x9c
+				  0x80 0x04
+				  0x9f 0x1c
+				  0x00 0x18>;
+
+	/* USB Eye diagram for host */
+	qcom,qusb-phy-host-init-seq = <0xF8 0x80
+				       0x47 0x84
+				       0x81 0x88
+				       0xc7 0x8c
+				       0x30 0x08
+				       0x79 0x0c
+				       0x21 0x10
+				       0x14 0x9c
+				       0x80 0x04
+				       0x9f 0x1c
+				       0x00 0x18>;
+
+	qcom,tune2-efuse-correction = <(-8)>;
+};
+
+/* disable emmc */
+&sdhc_1 {
+	status = "disable";
+};
+
+/* set UFS L11A&L24A voltage */
+&rpm_bus {
+	rpm-regulator-ldoa11 {
+		L11A: pm6125_l11: regulator-l11 {
+			qcom,init-voltage = <1800000>;
+		};
+	};
+	rpm-regulator-ldoa24 {
+		L24A: pm6125_l24: regulator-l24 {
+		qcom,init-voltage = <2960000>;
+		};
+	};
+};

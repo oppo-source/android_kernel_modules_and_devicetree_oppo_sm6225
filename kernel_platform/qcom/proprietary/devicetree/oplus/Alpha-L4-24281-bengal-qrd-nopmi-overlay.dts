@@ -1,0 +1,14 @@
+/dts-v1/;
+/plugin/;
+
+#include "../qcom/bengal-qrd-nopmi-overlay.dts"
+#include "Alpha-L4_overlay_common.dtsi"
+#include "oplus_chg/oplus-chg-24281-24282-24283.dtsi"
+#include "oplus_chg/oplus-chg-24281-24282-24283-24284-pps.dtsi"
+#include "nfc/alphal4-nfc-pn560.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL QRD nopmi overlay, Alpha-L4";
+    oplus,dtsi_no = <24281>;
+    oplus,project-id = <24281>;
+};

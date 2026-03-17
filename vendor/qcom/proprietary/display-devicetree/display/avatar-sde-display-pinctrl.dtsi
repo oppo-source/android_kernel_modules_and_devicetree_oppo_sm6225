@@ -1,0 +1,59 @@
+&tlmm {
+ /* #ifdef OPLUS_FEATURE_DISPLAY */
+	lcd_bias_gpio_enp_1: lcd_bias_gpio_enp_1 {
+		mux {
+			pins = "gpio43";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio43";
+			drive-strength = <8>;
+			output-high;
+			bias-pull-up;
+		};
+	};
+
+	lcd_bias_gpio_enp_0: lcd_bias_gpio_enp_0 {
+		mux {
+			pins = "gpio43";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio43";
+			drive-strength = <2>;
+			output-low;
+			bias-pull-down;
+		};
+	};
+
+	lcd_bias_gpio_enn_1: lcd_bias_gpio_enn_1 {
+		mux {
+			pins = "gpio54";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio54";
+			drive-strength = <8>;
+			output-high;
+			bias-pull-up;
+		};
+	};
+
+	lcd_bias_gpio_enn_0: lcd_bias_gpio_enn_0 {
+		mux {
+			pins = "gpio54";
+			function = "gpio";
+		};
+
+		config {
+			pins = "gpio54";
+			drive-strength = <2>;
+			output-low;
+			bias-pull-down;
+		};
+	};
+/* #endif */
+};

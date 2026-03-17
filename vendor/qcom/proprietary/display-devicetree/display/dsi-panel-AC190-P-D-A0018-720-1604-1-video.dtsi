@@ -1,0 +1,109 @@
+&mdss_mdp {
+	dsi_panel_AC190_P_D_A0018_720_1604_1_video: qcom,mdss_dsi_panel_AC190_P_D_A0018_720_1604_1_video {
+		qcom,mdss-dsi-panel-name =
+				"AC190 P D 1 A0018 video mode dsi panel";
+				qcom,mdss-dsi-panel-type = "dsi_video_mode";
+		oplus,mdss-dsi-vendor-name = "A0018";
+		oplus,mdss-dsi-manufacture = "P_D_1";
+		qcom,dsi-ctrl-num = <0>;
+		qcom,dsi-phy-num = <0>;
+		qcom,mdss-dsi-virtual-channel-id = <0>;
+		qcom,mdss-dsi-stream = <0>;
+		qcom,mdss-dsi-h-left-border = <0>;
+		qcom,mdss-dsi-h-right-border = <0>;
+		qcom,mdss-dsi-v-top-border = <0>;
+		qcom,mdss-dsi-v-bottom-border = <0>;
+		qcom,mdss-dsi-bpp = <24>;
+		qcom,mdss-dsi-color-order = "rgb_swap_rgb";
+		qcom,mdss-dsi-underflow-color = <0xff>;
+		qcom,mdss-dsi-border-color = <0>;
+		qcom,mdss-dsi-h-sync-pulse = <0>;
+		qcom,mdss-dsi-traffic-mode = "non_burst_sync_event";
+		qcom,mdss-dsi-lane-map = "lane_map_0123";
+		qcom,mdss-dsi-bllp-eof-power-mode;
+		qcom,mdss-dsi-bllp-power-mode;
+		qcom,mdss-dsi-tx-eot-append;
+		qcom,mdss-dsi-lane-0-state;
+		qcom,mdss-dsi-lane-1-state;
+		qcom,mdss-dsi-lane-2-state;
+		qcom,mdss-dsi-lane-3-state;
+		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+		qcom,mdss-dsi-mdp-trigger = "none";
+		qcom,mdss-dsi-bl-inverted-dbv;
+		qcom,mdss-dsi-reset-sequence = <1 10>, <0 10>, <1 10>;
+		qcom,mdss-pan-physical-width-dimension = <69>;
+		qcom,mdss-pan-physical-height-dimension = <155>;
+		qcom,mdss-dsi-display-timings {
+			timing@0 {
+				qcom,mdss-dsi-panel-width = <720>;
+				qcom,mdss-dsi-panel-height = <1604>;
+				qcom,mdss-dsi-h-front-porch = <106>;
+				qcom,mdss-dsi-h-back-porch = <98>;
+				qcom,mdss-dsi-h-pulse-width = <4>;
+				qcom,mdss-dsi-h-sync-skew = <0>;
+				qcom,mdss-dsi-v-back-porch = <21>;
+				qcom,mdss-dsi-v-front-porch = <184>;
+				qcom,mdss-dsi-v-pulse-width = <4>;
+				qcom,mdss-dsi-panel-framerate = <90>;
+				qcom,mdss-dsi-on-command = [
+					15 01 00 00 00 00 02 B0 00
+					39 01 00 00 00 00 04 F0 C1 01 81
+					39 01 00 00 00 00 04 F0 C0 02 18
+					39 01 00 00 00 00 06 F0 ED 08 66 86 EA
+					39 01 00 00 00 00 04 F0 EE 2F C0
+					39 01 00 00 00 00 07 B8 02 4A 06 00 04 28
+					39 01 00 00 00 00 07 B9 02 4A 18 00 09 56
+					39 01 00 00 00 00 07 BA 02 00 00 00 00 00
+					39 01 00 00 00 00 19 CE 1E 40 60 88 92 98 A4 AD B8 C0 C1 C2 C3 C4 C5 C6 C7 07 0F 00 00 00 04 8C
+					15 01 00 00 00 00 02 D6 00
+					39 01 00 00 00 00 03 51 00 00
+					15 01 00 00 00 00 02 53 2C
+					15 01 00 00 00 00 02 55 01
+					15 01 00 00 00 00 02 35 00
+					15 01 00 00 00 00 02 B0 03
+					15 01 00 00 78 00 02 11 00
+					15 01 00 00 32 00 02 29 00
+				];
+				qcom,mdss-dsi-off-command = [
+					15 01 00 00 14 00 02 28 00
+					15 01 00 00 78 00 02 10 00
+				];
+				qcom,mdss-dsi-cabc-mode1-command = [
+					39 01 00 00 00 00 02 55 01
+				];
+				qcom,mdss-dsi-cabc-mode2-command = [
+					39 01 00 00 00 00 02 55 02
+				];
+				qcom,mdss-dsi-cabc-mode3-command = [
+					39 01 00 00 00 00 02 55 03
+				];
+				qcom,mdss-dsi-cabc-off-command = [
+					39 01 00 00 00 00 02 55 00
+				];
+
+				qcom,mdss-dsi-backlight-gamma-enter-command = [
+					15 01 00 00 00 00 02 B0 00
+					39 01 00 00 00 00 4D C7 02 20 02 29 02 3C 02 4E 02 6F 02 5D 02 12 01 E3 01 C0
+						01 B7 01 B0 01 B1 01 BC 01 B2 01 BF 02 49 02 7B 02 E8 02 FF
+						02 20 02 29 02 3C 02 4E 02 6F 02 5D 02 12 01 E3 01 C0 01 B7
+						01 B0 01 B1 01 BC 01 B2 01 BF 02 49 02 7B 02 E8 02 FF
+				];
+				qcom,mdss-dsi-backlight-gamma-exit-command = [
+					15 01 00 00 00 00 02 B0 00
+					39 01 00 00 00 00 4D C7 00 6C 00 9B 00 BB 00 F7 01 50 01 7E 01 72 01 7C 01 7C
+						01 87 01 8E 01 96 01 A7 01 9E 01 B0 02 37 02 6F 02 AF 02 DB
+						00 24 00 42 00 AF 00 F7 01 50 01 7E 01 72 01 7C 01 7C 01 87
+						01 8E 01 96 01 A7 01 9E 01 B0 02 37 02 6F 02 93 02 93
+				];
+				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-off-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-cabc-mode1-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-mode2-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-mode3-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-off-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-backlight-gamma-enter-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-backlight-gamma-exit-command-state = "dsi_hs_mode";
+			};
+		};
+	};
+};

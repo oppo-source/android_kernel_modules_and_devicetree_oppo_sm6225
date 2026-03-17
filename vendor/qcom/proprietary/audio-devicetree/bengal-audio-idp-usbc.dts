@@ -1,0 +1,17 @@
+/dts-v1/;
+/plugin/;
+
+#include "bengal-audio-overlay.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. BENGAL IDP USBC Audio";
+	compatible = "qcom,bengal-idp", "qcom,bengal", "qcom,idp";
+	qcom,msm-id = <417 0x10000>, <444 0x10000>;
+	qcom,board-id = <34 1>;
+};
+
+&bengal_snd {
+	qcom,msm-mbhc-usbc-audio-supported = <1>;
+	qcom,msm-mbhc-hphl-swh = <1>;
+	qcom,msm-mbhc-gnd-swh = <1>;
+	fsa4480-i2c-handle = <&fsa4480>;
+};

@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+#include "../bengal-audio-overlay.dtsi"
+#include "bengal-audio-overlay-common.dtsi"
+#include "Alpha-B4-24300-audio-bengal-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL QRD nopmi overlay, Alpha-B4";
+    oplus,dtsi_no = <24300 24301 24302 24303 24304 24306 24307 24308 24309 24288 24289>;
+    oplus,project-id = <24300 24301 24302 24303 24304 24306 24307 24308 24309 24288 24289>;
+};

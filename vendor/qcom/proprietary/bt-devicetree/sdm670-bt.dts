@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sdm845.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/interconnect/qcom,sdm670.h>
+
+#include "sdm670-bt.dtsi"
+
+/ {
+
+	model = "Qualcomm Technologies, Inc. QCS605 PM660 + PM660L MTP";
+	compatible = "qcom,qcs605-mtp", "qcom,qcs605", "qcom,mtp";
+ 	qcom,msm-id = <347 0x0>;
+	qcom,board-id = <0 0>;
+};

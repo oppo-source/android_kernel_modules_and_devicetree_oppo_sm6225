@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+#include "../bengal-audio-overlay.dtsi"
+#include "bengal-audio-overlay-common.dtsi"
+#include "avatarL4-23271-audio-bengal-overlay.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Kalama MTP,aston";
+
+    oplus,project-id = <23271 23273 23274>;
+};

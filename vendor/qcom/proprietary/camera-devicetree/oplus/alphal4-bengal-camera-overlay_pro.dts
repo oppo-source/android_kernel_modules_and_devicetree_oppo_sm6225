@@ -1,0 +1,19 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sm6115.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/msm-camera.h>
+#include <dt-bindings/interconnect/qcom,bengal.h>
+
+#include "regulator/wl2866d.dtsi"
+#include "../bengal-camera.dtsi"
+#include "../khaje-camera-sensor-qrd.dtsi"
+#include "camera/bengal-alphal4-camera-overlay_pro.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. BENGAL QRD nopmi overlay, Alpha-L4";
+    oplus,dtsi_no = <24281 24282 24283 24284>;
+    oplus,project-id = <24281 24282 24283 24284>;
+};

@@ -1,0 +1,9 @@
+#include "fingerprint/uff_sm6225_AMG-4G.dtsi"
+#include "oplus_thermal/oplus_thermal.dtsi"
+#include "tp/AMG-4G_touchpanel.dtsi"
+
+&soc {
+	midas_pdev {
+		compatible = "oplus,midas-pdev";
+	};
+};
