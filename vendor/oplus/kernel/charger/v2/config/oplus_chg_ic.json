@@ -416,6 +416,20 @@
                         "zh": "PD和PPS识别完成中断"
                     },
                     "str": "pd_completed"
+                },
+                {
+                    "lable": "OPLUS_IC_VIRQ_TYPEC_DETACHED",
+                    "desc": {
+                        "zh": "CC断开，TYPEC拔出中断"
+                    },
+                    "str": "typec_detached"
+                },
+                {
+                    "lable": "OPLUS_IC_VIRQ_TYPEC_ATTACHED",
+                    "desc": {
+                        "zh": "CC连接，TYPE插入中断"
+                    },
+                    "str": "typec_attached"
                 }
             ]
         },

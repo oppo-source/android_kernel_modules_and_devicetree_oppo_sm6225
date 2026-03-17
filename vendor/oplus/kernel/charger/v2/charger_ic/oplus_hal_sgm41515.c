@@ -498,11 +498,6 @@ static int sgm41515_enable_hiz_mode(struct sgm41515_chip *chip, bool en)
 		return rc;
 	}
 
-	cancel_delayed_work_sync(&chip->bc12_timeout_work);
-	if (!en)
-		schedule_delayed_work(&chip->bc12_timeout_work,
-				      BC12_TIMEOUT_MS);
-
 	return 0;
 }
 
@@ -1007,14 +1002,13 @@ static void sgm41515_event_work(struct work_struct *work)
 		chip->bc12_complete = false;
 		chip->bc12_retry = 0;
 		chip->bc12_delay_cnt = 0;
-
 		sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_40S);
-
 		if (chip->charge_type == POWER_SUPPLY_TYPE_UNKNOWN)
 			schedule_delayed_work(&chip->bc12_plugin_work, 0);
 
 		goto POWER_CHANGE;
 	} else if (prev_pg && !chip->power_good) {
+		sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_DISABLE);
 		oplus_chg_ic_virq_trigger(chip->ic_dev, OPLUS_IC_VIRQ_PLUGIN);
 		chip->bc12_complete = false;
 		chip->bc12_retried = 0;
@@ -1168,8 +1162,6 @@ static int sgm41515_otg_enable(struct sgm41515_chip *chip)
 	if (atomic_read(&chip->charger_suspended) == 1)
 		return 0;
 
-	sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_DISABLE);
-
 	rc = sgm41515_otg_ilim_set(chip, REG02_SGM41515_BOOSTI_1200MA);
 	if (rc < 0)
 		chg_err("Couldn't sgm41515_otg_ilim_set rc = %d\n", rc);
@@ -1198,8 +1190,6 @@ static int sgm41515_otg_disable(struct sgm41515_chip *chip)
 			REG01_SGM41515_OTG_DISABLE);
 	if (rc < 0)
 		chg_err("Couldn't sgm41515_otg_disable rc = %d\n", rc);
-
-	sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_DISABLE);
 
 	return rc;
 }
@@ -2299,6 +2289,8 @@ static int sgm41515_otg_boost_enable(struct oplus_chg_ic_dev *ic_dev, bool en)
 	else
 		rc = sgm41515_otg_disable(chip);
 
+	sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_DISABLE);
+
 	if (rc < 0)
 		chg_err("can't %s otg boost, rc=%d\n", en ? "enable" : "disable", rc);
 	return rc;
@@ -3072,7 +3064,8 @@ static int sgm41515_hw_init(struct sgm41515_chip *chip)
 	sgm41515_batfet_reset_disable(chip, true);
 	sgm41515_unsuspend_charger(chip);
 	sgm41515_enable_charging(chip);
-	sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_40S);
+	sgm41515_set_wdt_timer(chip, REG05_SGM41515_WATCHDOG_TIMER_DISABLE);
+	sgm41515_enable_hiz_mode(chip, false);
 
 	return 0;
 }
@@ -3858,6 +3851,7 @@ static void sgm41515_shutdown(struct i2c_client *client)
 		sgm41515_set_shipmode(chip, true);
 	}
 	sgm41515_set_stat_dis(chip, true);
+	sgm41515_enable_charging(chip);
 }
 
 static const struct of_device_id sgm41515_match[] = {

@@ -204,6 +204,8 @@ struct oplus_mms_wired {
 	struct work_struct otg_enable_pending_work;
 	struct work_struct pd_completed_handler_work;
 	struct work_struct icl_done_handler_work;
+	struct work_struct typec_detached_handler_work;
+	struct work_struct typec_attached_handler_work;
 
 	struct wakeup_source *usbtemp_wakelock;
 	struct adc_vol_temp_info *adc_vol_temp_info;
@@ -4063,6 +4065,48 @@ static void oplus_wired_icl_done_work(struct work_struct *work)
 	}
 }
 
+static void oplus_wired_typec_detached_work(struct work_struct *work)
+{
+	struct oplus_mms_wired *chip =
+		container_of(work, struct oplus_mms_wired, typec_detached_handler_work);
+	struct mms_msg *msg;
+	int rc;
+
+	msg = oplus_mms_alloc_int_msg(MSG_TYPE_ITEM, MSG_PRIO_HIGH,
+				  WIRED_ITEM_TYPEC_DETACHED, 1);
+	if (msg == NULL) {
+		chg_err("alloc msg error\n");
+		return;
+	}
+
+	rc = oplus_mms_publish_msg(chip->wired_topic, msg);
+	if (rc < 0) {
+		chg_err("publish typec detached msg error, rc=%d\n", rc);
+		kfree(msg);
+	}
+}
+
+static void oplus_wired_typec_attached_work(struct work_struct *work)
+{
+	struct oplus_mms_wired *chip =
+		container_of(work, struct oplus_mms_wired, typec_attached_handler_work);
+	struct mms_msg *msg;
+	int rc;
+
+	msg = oplus_mms_alloc_int_msg(MSG_TYPE_ITEM, MSG_PRIO_HIGH,
+				  WIRED_ITEM_TYPEC_ATTACHED, 1);
+	if (msg == NULL) {
+		chg_err("alloc msg error\n");
+		return;
+	}
+
+	rc = oplus_mms_publish_msg(chip->wired_topic, msg);
+	if (rc < 0) {
+		chg_err("publish typec attached msg error, rc=%d\n", rc);
+		kfree(msg);
+	}
+}
+
 static void oplus_wired_vooc_subs_callback(struct mms_subscribe *subs,
 					   enum mms_msg_type type, u32 id, bool sync)
 {
@@ -4936,6 +4980,22 @@ static void oplus_wired_pd_completed_notify_handler(struct oplus_chg_ic_dev *ic_
 	schedule_work(&chip->pd_completed_handler_work);
 }
 
+static void oplus_wired_typec_detached_handler(struct oplus_chg_ic_dev *ic_dev,
+					   void *virq_data)
+{
+	struct oplus_mms_wired *chip = virq_data;
+
+	schedule_work(&chip->typec_detached_handler_work);
+}
+
+static void oplus_wired_typec_attached_handler(struct oplus_chg_ic_dev *ic_dev,
+					   void *virq_data)
+{
+	struct oplus_mms_wired *chip = virq_data;
+
+	schedule_work(&chip->typec_attached_handler_work);
+}
+
 static int oplus_mms_wired_virq_register(struct oplus_mms_wired *chip)
 {
 	int rc;
@@ -4996,6 +5056,15 @@ static int oplus_mms_wired_virq_register(struct oplus_mms_wired *chip)
 	if (rc < 0)
 		chg_err("register OPLUS_IC_VIRQ_DATA_ROLE_CHANGED error, rc=%d",
 			rc);
+
+	rc = oplus_chg_ic_virq_register(chip->buck_ic, OPLUS_IC_VIRQ_TYPEC_DETACHED,
+		oplus_wired_typec_detached_handler, chip);
+	if (rc < 0)
+		chg_err("register OPLUS_IC_VIRQ_TYPEC_DETACHED error, rc=%d", rc);
+	rc = oplus_chg_ic_virq_register(chip->buck_ic, OPLUS_IC_VIRQ_TYPEC_ATTACHED,
+		oplus_wired_typec_attached_handler, chip);
+	if (rc < 0)
+		chg_err("register OPLUS_IC_VIRQ_TYPEC_ATTACHED error, rc=%d", rc);
 
 	return 0;
 }
@@ -5900,6 +5969,26 @@ static struct mms_item oplus_mms_wired_item[] = {
 			.update = oplus_mms_wired_update_icl_status,
 		}
 	},
+	{
+		.desc = {
+			.item_id = WIRED_ITEM_TYPEC_DETACHED,
+			.str_data = false,
+			.up_thr_enable = false,
+			.down_thr_enable = false,
+			.dead_thr_enable = false,
+			.update = NULL,
+		}
+	},
+	{
+		.desc = {
+			.item_id = WIRED_ITEM_TYPEC_ATTACHED,
+			.str_data = false,
+			.up_thr_enable = false,
+			.down_thr_enable = false,
+			.dead_thr_enable = false,
+			.update = NULL,
+		}
+	},
 };
 
 static const struct oplus_mms_desc oplus_mms_wired_desc = {
@@ -6353,6 +6442,8 @@ static int oplus_mms_wired_probe(struct platform_device *pdev)
 	INIT_WORK(&chip->wls_upgrading_work, oplus_wls_upgrading_work);
 	INIT_WORK(&chip->pd_completed_handler_work, oplus_wired_pd_completed_work);
 	INIT_WORK(&chip->icl_done_handler_work, oplus_wired_icl_done_work);
+	INIT_WORK(&chip->typec_detached_handler_work, oplus_wired_typec_detached_work);
+	INIT_WORK(&chip->typec_attached_handler_work, oplus_wired_typec_attached_work);
 
 	oplus_wired_clear_sbu_info(chip);
 	chip->dischg_flag = false;

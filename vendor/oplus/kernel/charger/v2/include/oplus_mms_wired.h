@@ -30,6 +30,8 @@ enum wired_topic_item {
 	WIRED_ITEM_COEXISTENCE,
 	WIRED_ITEM_PD_COMPLETED,
 	WIRED_ITEM_ICL_DONE_STATUS,
+	WIRED_ITEM_TYPEC_DETACHED,
+	WIRED_ITEM_TYPEC_ATTACHED,
 };
 
 enum oplus_wired_cc_detect_status {

@@ -750,6 +750,7 @@ static int pd_tcp_notifier_call(struct notifier_block *nb, unsigned long event,
 		     new_state == TYPEC_ATTACHED_DBGACC_SNK)) {
 			chg_info("Charger plug in, polarity = %d\n",
 				 noti->typec_state.polarity);
+			oplus_chg_ic_virq_trigger(chip->ic_dev, OPLUS_IC_VIRQ_TYPEC_ATTACHED);
 			/*
 			 * start charger type detection,
 			 * and enable device connection
@@ -783,6 +784,7 @@ static int pd_tcp_notifier_call(struct notifier_block *nb, unsigned long event,
 			    old_state == TYPEC_ATTACHED_DBGACC_SNK) &&
 			   new_state == TYPEC_UNATTACHED) {
 			chg_info("Charger plug out\n");
+			oplus_chg_ic_virq_trigger(chip->ic_dev, OPLUS_IC_VIRQ_TYPEC_DETACHED);
 			/*
 			 * report charger plug-out,
 			 * and disable device connection
@@ -1921,6 +1923,8 @@ struct oplus_chg_ic_virq pd_manager_virq_table[] = {
 	{ .virq_id = OPLUS_IC_VIRQ_CURRENT_CHANGED },
 	{ .virq_id = OPLUS_IC_VIRQ_OTG_ENABLE },
 	{ .virq_id = OPLUS_IC_VIRQ_DATA_ROLE_CHANGED },
+	{ .virq_id = OPLUS_IC_VIRQ_TYPEC_DETACHED },
+	{ .virq_id = OPLUS_IC_VIRQ_TYPEC_ATTACHED },
 };
 
 static void tcpc_wired_subs_callback(struct mms_subscribe *subs,

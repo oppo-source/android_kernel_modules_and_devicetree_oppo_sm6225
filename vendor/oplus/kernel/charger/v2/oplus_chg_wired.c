@@ -199,6 +199,13 @@ struct oplus_chg_wired {
 	struct oplus_cfg spec_debug_cfg;
 	struct oplus_cfg normal_debug_cfg;
 #endif
+
+	bool typec_is_attached;
+	int abnormal_plug_out_counter;
+	unsigned int typec_attached_time_ms;
+	bool charger_plugout_during_attached;
+	struct delayed_work typec_datach_check_work;
+	struct delayed_work clear_abnormal_plug_work;
 };
 
 /* default parameters used when dts is not configured */
@@ -243,6 +250,9 @@ static const char *const oplus_wired_chg_mode_text[] = {
 	[OPLUS_WIRED_CHG_MODE_PD] = "pd",
 	[OPLUS_WIRED_CHG_MODE_MAX] = "invalid",
 };
+
+static void oplus_chg_wired_typec_detached_handle(struct oplus_chg_wired *chip);
+static void oplus_chg_wired_typec_attached_handle(struct oplus_chg_wired *chip);
 
 __maybe_unused static bool is_usb_psy_available(struct oplus_chg_wired *chip)
 {
@@ -1259,6 +1269,12 @@ static void oplus_wired_wired_subs_callback(struct mms_subscribe *subs,
 		case WIRED_ITEM_CHARGER_VOL_MAX:
 			/* TODO */
 			break;
+		case WIRED_ITEM_TYPEC_DETACHED:
+			oplus_chg_wired_typec_detached_handle(chip);
+			break;
+		case WIRED_ITEM_TYPEC_ATTACHED:
+			oplus_chg_wired_typec_attached_handle(chip);
+			break;
 		default:
 			break;
 		}
@@ -1333,6 +1349,92 @@ static void oplus_common_power_check(struct oplus_chg_wired *chip)
 	}
 }
 
+#define TYPEC_DETACH_WORK_DELAY_MS			1000
+#define TYPEC_DETACH_WORK_SHORT_DELAY_MS	290
+#define ABNORMAL_PLUG_OUT_CNT				2
+#define ABNORMAL_PLUG_ICL_MA				2000
+#define PLUG_IN_CLEAR_ABNORMAL_PLUG_MS		3000
+#define PLUG_OUT_CLEAR_ABNORMAL_PLUG_MS		5000
+
+
+static void oplus_chg_wired_typec_detached_handle(struct oplus_chg_wired *chip)
+{
+	cancel_delayed_work(&chip->typec_datach_check_work);
+	chip->typec_is_attached = false;
+}
+
+static void oplus_chg_wired_typec_attached_handle(struct oplus_chg_wired *chip)
+{
+	chip->typec_is_attached = true;
+	chip->typec_attached_time_ms = ktime_to_ms(ktime_get_boottime());
+}
+
+static void oplus_chg_wired_charger_plug_out_handle(struct oplus_chg_wired *chip)
+{
+	chg_info("charger_plugout_during_attached = %d\n",
+			chip->charger_plugout_during_attached);
+
+	if (chip->charger_plugout_during_attached) {
+		schedule_delayed_work(&chip->typec_datach_check_work,
+				msecs_to_jiffies(TYPEC_DETACH_WORK_SHORT_DELAY_MS));
+	} else {
+		schedule_delayed_work(&chip->typec_datach_check_work,
+				msecs_to_jiffies(TYPEC_DETACH_WORK_DELAY_MS));
+	}
+
+	cancel_delayed_work(&chip->clear_abnormal_plug_work);
+	schedule_delayed_work(&chip->clear_abnormal_plug_work,
+			msecs_to_jiffies(PLUG_OUT_CLEAR_ABNORMAL_PLUG_MS));
+}
+
+static void oplus_chg_wired_charger_plug_in_handle(struct oplus_chg_wired *chip)
+{
+	unsigned int current_time_ms = ktime_to_ms(ktime_get_boottime());
+
+	cancel_delayed_work(&chip->typec_datach_check_work);
+	chg_info("abnormal_plug_out_counter = %d, typec_attached_time_ms = %d, current_time_ms = %d\n",
+			chip->abnormal_plug_out_counter, chip->typec_attached_time_ms, current_time_ms);
+
+	if (chip->abnormal_plug_out_counter >= ABNORMAL_PLUG_OUT_CNT)  {
+		vote(chip->icl_votable, REPEAT_PLUG_VOTER, true, ABNORMAL_PLUG_ICL_MA, true);
+	} else {
+		vote(chip->icl_votable, REPEAT_PLUG_VOTER, false, ABNORMAL_PLUG_ICL_MA, true);
+	}
+
+	cancel_delayed_work(&chip->clear_abnormal_plug_work);
+	schedule_delayed_work(&chip->clear_abnormal_plug_work,
+			msecs_to_jiffies(PLUG_IN_CLEAR_ABNORMAL_PLUG_MS));
+
+	if (chip->typec_is_attached &&
+			current_time_ms > chip->typec_attached_time_ms &&
+			current_time_ms - chip->typec_attached_time_ms > 2000) {
+		chip->charger_plugout_during_attached = true;
+	} else {
+		chip->charger_plugout_during_attached = false;
+	}
+}
+
+static void oplus_chg_wired_typec_datach_check_work(struct work_struct *work)
+{
+	struct oplus_chg_wired *chip =
+		container_of(work, struct oplus_chg_wired, typec_datach_check_work.work);
+
+	chg_info("typec_is_attached = %d\n", chip->typec_is_attached);
+
+	if (chip->typec_is_attached) {
+		cancel_delayed_work(&chip->clear_abnormal_plug_work);
+		chip->abnormal_plug_out_counter++;
+	}
+}
+
+static void oplus_chg_wired_clear_abnormal_plug_work(struct work_struct *work)
+{
+	struct oplus_chg_wired *chip =
+		container_of(work, struct oplus_chg_wired, clear_abnormal_plug_work.work);
+	chg_info("\n");
+	chip->abnormal_plug_out_counter = 0;
+}
+
 static void oplus_wired_plugin_work(struct work_struct *work)
 {
 	struct oplus_chg_wired *chip =
@@ -1377,6 +1479,8 @@ static void oplus_wired_plugin_work(struct work_struct *work)
 				schedule_work(&chip->qc_check_work);
 			WRITE_ONCE(chip->disconnect_change, false);
 		}
+
+		oplus_chg_wired_charger_plug_in_handle(chip);
 	} else {
 		/*
 		 * Set during plug out to prevent untimely settings
@@ -1440,6 +1544,7 @@ static void oplus_wired_plugin_work(struct work_struct *work)
 #else
 		oplus_wired_set_awake(chip, false);
 #endif
+		oplus_chg_wired_charger_plug_out_handle(chip);
 	}
 
 	if (chip->gauge_topic != NULL)
@@ -2658,6 +2763,8 @@ static int oplus_wired_probe(struct platform_device *pdev)
 	INIT_WORK(&chip->pd_check_work, oplus_wired_pd_check_work);
 	INIT_WORK(&chip->sale_mode_buckboost_work, oplus_wired_sale_mode_buckboost_work);
 	INIT_WORK(&chip->flash_mode_buckboost_work, oplus_wired_flash_mode_buckboost_work);
+	INIT_DELAYED_WORK(&chip->typec_datach_check_work, oplus_chg_wired_typec_datach_check_work);
+	INIT_DELAYED_WORK(&chip->clear_abnormal_plug_work, oplus_chg_wired_clear_abnormal_plug_work);
 
 	chip->cpa_support = oplus_cpa_support();
 

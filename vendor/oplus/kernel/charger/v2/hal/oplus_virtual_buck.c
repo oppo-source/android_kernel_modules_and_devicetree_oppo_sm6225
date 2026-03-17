@@ -4832,6 +4832,20 @@ static void oplus_vb_typec_state_notify_handler(struct oplus_chg_ic_dev *ic_dev,
 	oplus_chg_ic_virq_trigger(chip->ic_dev, OPLUS_IC_VIRQ_TYPEC_STATE);
 }
 
+static void oplus_vb_typec_detached_handler(struct oplus_chg_ic_dev *ic_dev, void *virq_data)
+{
+	struct oplus_virtual_buck_ic *chip = virq_data;
+
+	oplus_chg_ic_virq_trigger(chip->ic_dev, OPLUS_IC_VIRQ_TYPEC_DETACHED);
+}
+
+static void oplus_vb_typec_attached_handler(struct oplus_chg_ic_dev *ic_dev, void *virq_data)
+{
+	struct oplus_virtual_buck_ic *chip = virq_data;
+
+	oplus_chg_ic_virq_trigger(chip->ic_dev, OPLUS_IC_VIRQ_TYPEC_ATTACHED);
+}
+
 struct oplus_chg_ic_virq oplus_vb_virq_table[] = {
 	{ .virq_id = OPLUS_IC_VIRQ_ERR },
 	{ .virq_id = OPLUS_IC_VIRQ_CC_DETECT },
@@ -4846,6 +4860,8 @@ struct oplus_chg_ic_virq oplus_vb_virq_table[] = {
 	{ .virq_id = OPLUS_IC_VIRQ_BC12_COMPLETED },
 	{ .virq_id = OPLUS_IC_VIRQ_DATA_ROLE_CHANGED },
 	{ .virq_id = OPLUS_IC_VIRQ_TYPEC_STATE},
+	{ .virq_id = OPLUS_IC_VIRQ_TYPEC_DETACHED },
+	{ .virq_id = OPLUS_IC_VIRQ_TYPEC_ATTACHED },
 };
 
 static int oplus_vb_virq_register(struct oplus_virtual_buck_ic *chip)
@@ -4934,6 +4950,18 @@ static int oplus_vb_virq_register(struct oplus_virtual_buck_ic *chip)
 				OPLUS_IC_VIRQ_TYPEC_STATE, oplus_vb_typec_state_notify_handler, chip);
 			if (rc < 0)
 				chg_err("register OPLUS_IC_VIRQ_TYPEC_STATE error, rc=%d", rc);
+		}
+		if (virq_is_support(&chip->child_list[i], OPLUS_IC_VIRQ_TYPEC_DETACHED)) {
+			rc = oplus_chg_ic_virq_register(chip->child_list[i].ic_dev,
+				OPLUS_IC_VIRQ_TYPEC_DETACHED, oplus_vb_typec_detached_handler, chip);
+			if (rc < 0)
+				chg_err("register OPLUS_IC_VIRQ_TYPEC_DETACHED error, rc=%d", rc);
+		}
+		if (virq_is_support(&chip->child_list[i], OPLUS_IC_VIRQ_TYPEC_ATTACHED)) {
+			rc = oplus_chg_ic_virq_register(chip->child_list[i].ic_dev,
+				OPLUS_IC_VIRQ_TYPEC_ATTACHED, oplus_vb_typec_attached_handler, chip);
+			if (rc < 0)
+				chg_err("register OPLUS_IC_VIRQ_TYPEC_ATTACHED error, rc=%d", rc);
 		}
 	}
 	chg_info("vb_virq register success\n");
