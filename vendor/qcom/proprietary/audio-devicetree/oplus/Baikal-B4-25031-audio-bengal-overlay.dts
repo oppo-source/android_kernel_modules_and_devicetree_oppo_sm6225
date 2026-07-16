@@ -5,5 +5,5 @@
 #include "Baikal-B4-25031-audio-bengal-overlay.dtsi"
 / {
     model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Baikal-B4";
-    oplus,project-id = <25031 25248 25249 25258 25259>;
+    oplus,project-id = <25031 25248 25243 25244 25260 25249 25258 25259 25270 25280 25290 25300>;
 };

@@ -399,8 +399,30 @@
                 "write": false,
                 "overwrite": false
             }
+        },
+        {
+            "lable": "OPLUS_IC_FUNC_VOOCPHY_SET_VAC2V2X_UVP",
+            "desc": {
+                "zh": "是否关闭 vac2v2x uvp"
+            },
+            "auto_debug_code": true,
+            "parameter_list": ["bool"],
+            "parameter_desc": [
+                {
+                    "range": "0-1",
+                    "type": "in",
+                    "desc": {
+                        "zh": "1: 关闭, 0: 开启"
+                    }
+                }
+            ],
+            "vict": {
+                "read": false,
+                "write": false,
+                "overwrite": false
+            }
         }
     ],
 
-    "version": "V4.0:18:db9aeec608c5e38b0647e983591261d524739cec54237cf176c42dbe78b09224"
+    "version": "V4.1:19:55485be35e4022fd3f56dc74f2ed3e66127a5def38c8b881ad56e861dda4d757"
 }

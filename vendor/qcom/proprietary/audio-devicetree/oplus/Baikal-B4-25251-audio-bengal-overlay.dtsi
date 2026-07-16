@@ -140,7 +140,7 @@
 	si,sia81xx-aux-devs = <&si_pa_L>, <&si_pa_R>;
 	si,sia81xx-aux-devs-prefix = "SpkrMonoL", "SpkrMonoR";
 	qcom,msm-mbhc-usbc-audio-supported = <1>;
-	oplus,mbhc-check-cross-conn = <0>;
+	oplus,mbhc-check-cross-conn = <1>;
 	oplus,mbhc-headset-micbias-alwayon = <1>;
 	oplus,mbhc-check-irq-en = <1>;
 	oplus,mbhc-headset-detect-mode = <0>;

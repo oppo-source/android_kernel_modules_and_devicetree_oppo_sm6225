@@ -1973,7 +1973,7 @@ static int cam_ope_mgr_process_cmd_io_buf_req(struct cam_ope_hw_mgr *hw_mgr,
 		for (j = 0; j < in_frame_set->num_io_bufs; j++) {
 			in_io_buf = &in_frame_set->io_buf[j];
 			ope_request->io_buf[i][j] =
-				kzalloc(sizeof(struct ope_io_buf), GFP_KERNEL);
+				kvzalloc(sizeof(struct ope_io_buf), GFP_KERNEL);
 			if (!ope_request->io_buf[i][j]) {
 				CAM_ERR(CAM_OPE,
 					"IO config allocation failure");
@@ -2642,7 +2642,7 @@ static int cam_ope_mgr_acquire_hw(void *hw_priv, void *hw_acquire_args)
 		goto end;
 	}
 
-	cdm_acquire = kzalloc(sizeof(struct cam_cdm_acquire_data), GFP_KERNEL);
+	cdm_acquire = kvzalloc(sizeof(struct cam_cdm_acquire_data), GFP_KERNEL);
 	if (!cdm_acquire) {
 		CAM_ERR(CAM_ISP, "Out of memory");
 		goto end;
@@ -2758,7 +2758,7 @@ static int cam_ope_mgr_acquire_hw(void *hw_priv, void *hw_acquire_args)
 		}
 	}
 
-	bw_update = kzalloc(sizeof(struct cam_ope_dev_bw_update), GFP_KERNEL);
+	bw_update = kvzalloc(sizeof(struct cam_ope_dev_bw_update), GFP_KERNEL);
 	if (!bw_update) {
 		CAM_ERR(CAM_ISP, "Out of memory");
 		goto ope_clk_update_failed;
@@ -3260,7 +3260,7 @@ static int cam_ope_mgr_prepare_hw_update(void *hw_priv,
 		return -EINVAL;
 	}
 	ctx_data->req_list[request_idx] =
-		kzalloc(sizeof(struct cam_ope_request), GFP_KERNEL);
+		kvzalloc(sizeof(struct cam_ope_request), GFP_KERNEL);
 	if (!ctx_data->req_list[request_idx]) {
 		CAM_ERR(CAM_OPE, "mem allocation failed ctx:%d req_idx:%d",
 			ctx_data->ctx_id, request_idx);
@@ -3270,7 +3270,7 @@ static int cam_ope_mgr_prepare_hw_update(void *hw_priv,
 
 	ope_req = ctx_data->req_list[request_idx];
 	ope_req->cdm_cmd =
-		kzalloc(((sizeof(struct cam_cdm_bl_request)) +
+		kvzalloc(((sizeof(struct cam_cdm_bl_request)) +
 			((OPE_MAX_CDM_BLS - 1) *
 			sizeof(struct cam_cdm_bl_cmd))),
 			GFP_KERNEL);
@@ -3826,7 +3826,7 @@ static int cam_ope_mgr_alloc_devs(struct device_node *of_node)
 		return -EINVAL;
 	}
 
-	ope_hw_mgr->devices[OPE_DEV_OPE] = kzalloc(
+	ope_hw_mgr->devices[OPE_DEV_OPE] = kvzalloc(
 		sizeof(struct cam_hw_intf *) * num_dev, GFP_KERNEL);
 	if (!ope_hw_mgr->devices[OPE_DEV_OPE])
 		return -ENOMEM;
@@ -3911,7 +3911,7 @@ static int cam_ope_mgr_init_devs(struct device_node *of_node)
 
 	return 0;
 compat_hw_name_failed:
-	kfree(ope_hw_mgr->devices[OPE_DEV_OPE]);
+	kvfree(ope_hw_mgr->devices[OPE_DEV_OPE]);
 	ope_hw_mgr->devices[OPE_DEV_OPE] = NULL;
 	return rc;
 }
@@ -3945,7 +3945,7 @@ static int cam_ope_mgr_create_wq(void)
 	}
 
 	ope_hw_mgr->cmd_work_data =
-		kzalloc(sizeof(struct ope_cmd_work_data) * OPE_WORKQ_NUM_TASK,
+		kvzalloc(sizeof(struct ope_cmd_work_data) * OPE_WORKQ_NUM_TASK,
 		GFP_KERNEL);
 	if (!ope_hw_mgr->cmd_work_data) {
 		rc = -ENOMEM;
@@ -3953,7 +3953,7 @@ static int cam_ope_mgr_create_wq(void)
 	}
 
 	ope_hw_mgr->msg_work_data =
-		kzalloc(sizeof(struct ope_msg_work_data) * OPE_WORKQ_NUM_TASK,
+		kvzalloc(sizeof(struct ope_msg_work_data) * OPE_WORKQ_NUM_TASK,
 		GFP_KERNEL);
 	if (!ope_hw_mgr->msg_work_data) {
 		rc = -ENOMEM;
@@ -3961,7 +3961,7 @@ static int cam_ope_mgr_create_wq(void)
 	}
 
 	ope_hw_mgr->timer_work_data =
-		kzalloc(sizeof(struct ope_clk_work_data) * OPE_WORKQ_NUM_TASK,
+		kvzalloc(sizeof(struct ope_clk_work_data) * OPE_WORKQ_NUM_TASK,
 		GFP_KERNEL);
 	if (!ope_hw_mgr->timer_work_data) {
 		rc = -ENOMEM;
@@ -3983,9 +3983,9 @@ static int cam_ope_mgr_create_wq(void)
 
 
 timer_work_data_failed:
-	kfree(ope_hw_mgr->msg_work_data);
+	kvfree(ope_hw_mgr->msg_work_data);
 msg_work_data_failed:
-	kfree(ope_hw_mgr->cmd_work_data);
+	kvfree(ope_hw_mgr->cmd_work_data);
 cmd_work_data_failed:
 	cam_req_mgr_workq_destroy(&ope_hw_mgr->timer_work);
 timer_work_failed:
@@ -4034,7 +4034,7 @@ int cam_ope_hw_mgr_init(struct device_node *of_node, uint64_t *hw_mgr_hdl,
 	}
 	hw_mgr_intf = (struct cam_hw_mgr_intf *)hw_mgr_hdl;
 
-	ope_hw_mgr = kzalloc(sizeof(struct cam_ope_hw_mgr), GFP_KERNEL);
+	ope_hw_mgr = kvzalloc(sizeof(struct cam_ope_hw_mgr), GFP_KERNEL);
 	if (!ope_hw_mgr) {
 		CAM_ERR(CAM_OPE, "Unable to allocate mem for: size = %d",
 			sizeof(struct cam_ope_hw_mgr));
@@ -4066,7 +4066,7 @@ int cam_ope_hw_mgr_init(struct device_node *of_node, uint64_t *hw_mgr_hdl,
 		ope_hw_mgr->ctx[i].bitmap_size =
 			BITS_TO_LONGS(CAM_CTX_REQ_MAX) *
 			sizeof(long);
-		ope_hw_mgr->ctx[i].bitmap = kzalloc(
+		ope_hw_mgr->ctx[i].bitmap = kvzalloc(
 			ope_hw_mgr->ctx[i].bitmap_size, GFP_KERNEL);
 		if (!ope_hw_mgr->ctx[i].bitmap) {
 			CAM_ERR(CAM_OPE, "bitmap allocation failed: size = %d",
@@ -4085,7 +4085,7 @@ int cam_ope_hw_mgr_init(struct device_node *of_node, uint64_t *hw_mgr_hdl,
 
 	ope_hw_mgr->ctx_bitmap_size =
 		BITS_TO_LONGS(OPE_CTX_MAX) * sizeof(long);
-	ope_hw_mgr->ctx_bitmap = kzalloc(ope_hw_mgr->ctx_bitmap_size,
+	ope_hw_mgr->ctx_bitmap = kvzalloc(ope_hw_mgr->ctx_bitmap_size,
 		GFP_KERNEL);
 	if (!ope_hw_mgr->ctx_bitmap) {
 		rc = -ENOMEM;

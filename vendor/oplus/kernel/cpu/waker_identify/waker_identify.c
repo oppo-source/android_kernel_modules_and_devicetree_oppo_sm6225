@@ -37,7 +37,7 @@ struct proc_dir_entry *waker_identify_dir;
 int handle_current = 1;
 int handle_show = 1;
 int result_search_num = 3;
-int global_enable = 0;
+int global_enable = 1;
 int global_doing_free = 0;
 atomic_t global_debug = ATOMIC_INIT(0);
 

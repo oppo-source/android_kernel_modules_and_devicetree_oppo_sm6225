@@ -34,6 +34,8 @@
 #include "sched_assist_locking.h"
 #endif
 
+#include <trace/hooks/block.h>
+
 #ifndef CONFIG_OPLUS_SYSTEM_KERNEL_QCOM
 /* Ported from walt.c BEGIN */
 static void android_rvh_update_cpus_allowed_handler(void *unused, struct task_struct *p,
@@ -128,6 +130,8 @@ static int register_scheduler_vendor_hooks(void)
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_LOADBALANCE)
 	oplus_loadbalance_init();
 #endif
+
+	REGISTER_TRACE_VH(android_vh_blk_rq_ctx_init, android_vh_blk_rq_ctx_init_handler);
 
 	return 0;
 }

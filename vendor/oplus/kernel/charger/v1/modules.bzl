@@ -106,6 +106,11 @@ conditional_ko_deps = {
              "//vendor/oplus/kernel/dft/bazel:oplus_bsp_dft_kernel_fb",
         ],
     },
+    "CONFIG_OPLUS_FEATURE_OLC": {
+        True: [
+            "//vendor/oplus/kernel/dft/bazel:oplus_bsp_dft_olc",
+        ],
+    },
 }
 
 conditional_hdr_deps = {

@@ -13,6 +13,7 @@
 #include "oplus_display_panel_seed.h"
 #include "oplus/oplus_bl.h"
 #include "oplus_display_interface.h"
+#include "oplus_display_panel_cabc.h"
 
 /*
  * we will create a sysfs which called /sys/kernel/oplus_display,
@@ -2881,7 +2882,7 @@ int oplus_display_set_power(struct drm_connector *connector,
 		}
 
 #ifdef OPLUS_FEATURE_DISPLAY_ONSCREENFINGERPRINT
-		if (oplus_ofp_is_supported()) {
+		if (oplus_ofp_is_supported() || oplus_ofp_lcd_aod_is_enabled()) {
 			oplus_ofp_power_mode_handle(display, power_mode);
 		}
 #endif /* OPLUS_FEATURE_DISPLAY_ONSCREENFINGERPRINT */
@@ -2909,8 +2910,13 @@ int oplus_display_set_power(struct drm_connector *connector,
 		    lcd_cabc_flag = true;
 		}
 
+		if (display->panel->oplus_priv.restore_cabc_enable) {
+			panel_cabc_restore(display->panel);
+			LCD_INFO("[oplus] dsi_display->panel->name:%s restore cabc \n", display->panel->name);
+		}
+
 #ifdef OPLUS_FEATURE_DISPLAY_ONSCREENFINGERPRINT
-		if (oplus_ofp_is_supported()) {
+		if (oplus_ofp_is_supported() || oplus_ofp_lcd_aod_is_enabled()) {
 			oplus_ofp_power_mode_handle(display, SDE_MODE_DPMS_ON);
 		}
 #endif /* OPLUS_FEATURE_DISPLAY_ONSCREENFINGERPRINT */
@@ -2934,7 +2940,7 @@ int oplus_display_set_power(struct drm_connector *connector,
 		    lcd_cabc_flag = false;
 		}
 #ifdef OPLUS_FEATURE_DISPLAY_ONSCREENFINGERPRINT
-		if (oplus_ofp_is_supported()) {
+		if (oplus_ofp_is_supported() || oplus_ofp_lcd_aod_is_enabled()) {
 			oplus_ofp_power_mode_handle(display, SDE_MODE_DPMS_OFF);
 		}
 #endif /* OPLUS_FEATURE_DISPLAY_ONSCREENFINGERPRINT */

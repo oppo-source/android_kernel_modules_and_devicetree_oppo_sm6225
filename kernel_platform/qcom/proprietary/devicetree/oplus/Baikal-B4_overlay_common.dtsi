@@ -1,9 +1,48 @@
 #include "fingerprint/uff_sm6225_Baikal_B4_25031_25248_25249_25258_25259.dtsi"
-#include "oplus_thermal/oplus_thermal.dtsi"
+#include "oplus_thermal/Baikal_B4_oplus_thermal.dtsi"
 #include "tp/BaikalB4_touchpanel.dtsi"
+
+&soc {
+	oplus_mm_config: oplus,mm_config {
+		compatible = "oplus,mm_osvelte-config";
+		ram-4g {
+			oplus_boost_pool {
+				feature-disable;
+			};
+			kcompressed {
+				feature-enable;
+			};
+		};
+		ram-6g {
+			kcompressed {
+				feature-enable;
+			};
+		};
+		ram-8g {
+			kcompressed {
+				feature-enable;
+			};
+		};
+	};
+};
+
+&soc {
+/* Add for low_mem_optimize */
+	low_mem_optimize {
+		compatible = "oplus,extra_free_kbytes";
+		extra_free_kbytes;
+	};
+};
 
 &soc {
 	midas_pdev {
 		compatible = "oplus,midas-pdev";
+	};
+};
+
+&soc {
+	//@Kernel.Storage, 2025/09/16, add for blk-mq.c kblockd_ux_unbound_enable
+	oplus,blk-mq {
+		kblockd_ux_unbound_enable = "y";
 	};
 };

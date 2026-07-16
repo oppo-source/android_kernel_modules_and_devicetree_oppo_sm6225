@@ -6,6 +6,7 @@
 #include "cam_eeprom_core.h"
 #include "cam_debug_util.h"
 #define QVGA_GC6133_SLAVE_ADDR      0x80
+#define QVGA_GC6133_ID              0xBA
 #define QVGA_GC6133_SLAVE_ADDR_REG  0xf0
 #define QVGA_GC6133_LUX_DATA_REG            0x93
 #define QVGA_GC6133_LUX_DATA_EN_REG         0xfe

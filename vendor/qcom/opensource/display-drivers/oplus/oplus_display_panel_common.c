@@ -1686,7 +1686,9 @@ int oplus_display_panel_get_cabc_status(void *buf)
 	panel = display->panel;
 
 	if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel")
-		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")) {
+		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")) {
 		rc = oplus_display_panel_get_cabc(buf);
 		return rc;
 	}
@@ -1735,7 +1737,9 @@ int oplus_display_panel_set_cabc_status(void *buf)
 	panel = display->panel;
 
 	if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel")
-		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")) {
+		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")) {
 		rc = oplus_display_panel_set_cabc(buf);
 		return rc;
 	}

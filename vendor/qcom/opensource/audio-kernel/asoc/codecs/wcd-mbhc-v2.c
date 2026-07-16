@@ -2680,6 +2680,12 @@ void wcd_mbhc_stop(struct wcd_mbhc *mbhc)
 		mbhc->mbhc_cal = NULL;
 	}
 
+#if IS_ENABLED(CONFIG_OPLUS_HS_G_DET)
+	if (gpio_is_valid(mbhc->usbc_insert_pin)) {
+		gpio_free(mbhc->usbc_insert_pin);
+		pr_info("%s: usbc_insert_pin is free \n", __func__);
+	}
+#endif /* CONFIG_OPLUS_HS_G_DET */
 	#if IS_ENABLED(CONFIG_QCOM_FSA4480_I2C)
 	if (mbhc->mbhc_cfg->enable_usbc_analog &&
 		mbhc->mbhc_cfg->fsa4480_support) {

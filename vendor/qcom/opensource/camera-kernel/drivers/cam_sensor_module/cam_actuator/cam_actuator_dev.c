@@ -9,6 +9,11 @@
 #include "cam_actuator_core.h"
 #include "cam_trace.h"
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+#include "cam_compat.h"
+static bool gProbe_done;
+#endif
+
 static long cam_actuator_subdev_ioctl(struct v4l2_subdev *sd,
 	unsigned int cmd, void *arg)
 {
@@ -373,6 +378,10 @@ static int32_t cam_actuator_driver_platform_probe(
 	platform_set_drvdata(pdev, a_ctrl);
 	a_ctrl->cam_act_state = CAM_ACTUATOR_INIT;
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+	gProbe_done = true;
+#endif
+
 	return rc;
 
 free_mem:
@@ -417,6 +426,11 @@ int cam_actuator_driver_init(void)
 {
 	int32_t rc = 0;
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+		void *drv_ptr = NULL;
+		gProbe_done = false;
+#endif
+
 	rc = platform_driver_register(&cam_actuator_platform_driver);
 	if (rc < 0) {
 		CAM_ERR(CAM_ACTUATOR,
@@ -427,6 +441,13 @@ int cam_actuator_driver_init(void)
 	if (rc)
 		CAM_ERR(CAM_ACTUATOR, "i2c_add_driver failed rc = %d", rc);
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+	if (gProbe_done == false) {
+		CAM_ERR(CAM_SENSOR, "%s deferred probe", cam_actuator_platform_driver.driver.name);
+		drv_ptr = (void*)&(cam_actuator_platform_driver.driver);
+		dev_defer_supplier_debug(drv_ptr);
+	}
+#endif
 	return rc;
 }
 

@@ -20,8 +20,10 @@ OPLUS_KHAJE_BOARDS += \
 		Baikal-B4-25031-khaje-qrd-nopmi-overlay.dtbo \
 		Baikal-B4-25258-khaje-qrd-nopmi-overlay.dtbo \
 		Baikal-B4-25258-khaje-qrd-nopmi-overlay-gdpr.dtbo \
-		BB4_25310-khaje-qrd-nopmi-overlay.dtbo \
-		Baikal-B4-25243-khaje-qrd-nopmi-overlay.dtbo
+		Baikal-B4-25243-khaje-qrd-nopmi-overlay.dtbo \
+		Baikal-B4-25243-khaje-qrd-nopmi-overlay-gdpr.dtbo \
+		Baikal-B4-25280-khaje-qrd-nopmi-overlay.dtbo \
+		Baikal-B4-25280-khaje-qrd-nopmi-overlay-gdpr.dtbo
 
 bengal-dtb-$(CONFIG_ARCH_KHAJE) += $(OPLUS_KHAJE_BOARDS) $(KHAJE_BASE_DTB)
 bengal-overlays-dtb-$(CONFIG_ARCH_KHAJE) += $(OPLUS_KHAJE_BOARDS) $(KHAJE_BASE_DTB)

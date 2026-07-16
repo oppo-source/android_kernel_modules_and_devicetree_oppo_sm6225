@@ -50,5 +50,8 @@ int cam_compat_util_get_dmabuf_va(struct dma_buf *dmabuf, uintptr_t *vaddr);
 void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr);
 void cam_smmu_util_iommu_custom(struct device *dev,
 	dma_addr_t discard_start, size_t discard_length);
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+void dev_defer_supplier_debug(void *drv_ptr);
+#endif
 
 #endif /* _CAM_COMPAT_H_ */

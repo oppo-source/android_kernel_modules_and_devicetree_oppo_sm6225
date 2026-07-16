@@ -39,9 +39,9 @@
 			timing@0 {
 				qcom,mdss-dsi-panel-width = <720>;
 				qcom,mdss-dsi-panel-height = <1570>;
-				qcom,mdss-dsi-h-front-porch = <18>;
+				qcom,mdss-dsi-h-front-porch = <20>;
 				qcom,mdss-dsi-h-back-porch = <16>;
-				qcom,mdss-dsi-h-pulse-width = <10>;
+				qcom,mdss-dsi-h-pulse-width = <8>;
 				qcom,mdss-dsi-h-sync-skew = <0>;
 				qcom,mdss-dsi-v-back-porch = <20>;
 				qcom,mdss-dsi-v-front-porch = <358>;
@@ -124,7 +124,6 @@
 					39 01 00 00 00 00 04 FF 5A A5 00
 					15 01 00 00 00 00 02 53 2C
 					39 01 00 00 00 00 03 51 00 00
-					15 01 00 00 00 00 02 55 03
 					15 01 00 00 00 00 02 35 00
 					39 01 00 00 00 00 03 68 04 00
 					15 01 00 00 42 00 02 11 00
@@ -167,7 +166,6 @@
 				/* lcd aod end */
 
 				qcom,mdss-dsi-nolp-command = [
-					15 01 00 00 00 00 02 55 03
 					15 00 00 40 00 00 02 53 2C
 				];
 
@@ -212,7 +210,7 @@
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
 	qcom,bl-pmic-pwm-period-usecs = <100>;
 	qcom,bl-update-flag = "delay_until_first_frame";
-	qcom,mdss-dsi-bl-min-level = <8>;
+	qcom,mdss-dsi-bl-min-level = <6>;
 	qcom,mdss-dsi-bl-max-level = <4095>;
 	qcom,mdss-brightness-max-level = <4095>;
 	oplus,dsi-bl-normal-max-level = <3319>;
@@ -226,7 +224,7 @@
 	oplus,mdss-dsi-vspn-voltage = <6000>;
 
 	/* ofp config*/
-	oplus,ofp-fp-type = <0x200>;
+	oplus,ofp-fp-type = <0x1000>;
 
 	/* gamma switch */
 	oplus,mdss-dsi-gamma-switch-enabled;
@@ -248,6 +246,8 @@
 
 	/* Dimming Setting config*/
 	oplus,dsi-dimming-setting-before-bl-0-enable;
+
+	oplus,restore-cabc-enable;
 
 	/* dynamic fps config */
 	qcom,mdss-dsi-pan-enable-dynamic-fps;

@@ -372,7 +372,7 @@ static int wcd_check_cross_conn(struct wcd_mbhc *mbhc)
 
 	#ifndef OPLUS_ARCH_EXTENDS
 	/* Add for log cross conn switch pop noise */
-	if (hphl_adc_res > mbhc->hphl_cross_conn_thr ||
+	if (hphl_adc_res > mbhc->hphl_cross_conn_thr &&
 	    hphr_adc_res > mbhc->hphr_cross_conn_thr) {
 		plug_type = MBHC_PLUG_TYPE_GND_MIC_SWAP;
 		pr_debug("%s: Cross connection identified\n", __func__);
@@ -386,7 +386,7 @@ static int wcd_check_cross_conn(struct wcd_mbhc *mbhc)
 	hphr_cross_conn_thr = (mbhc->hphr_cross_conn_thr * micbias_mv) / WCD_MBHC_ADC_MICBIAS_MV;
 	pr_debug("%s: hphl_cross_conn_thr = %d\n", __func__, hphl_cross_conn_thr);
 	pr_debug("%s: hphr_cross_conn_thr = %d\n", __func__, hphr_cross_conn_thr);
-	if (hphl_adc_res > hphl_cross_conn_thr ||
+	if (hphl_adc_res > hphl_cross_conn_thr &&
 	    hphr_adc_res > hphr_cross_conn_thr) {
 		plug_type = MBHC_PLUG_TYPE_GND_MIC_SWAP;
 		pr_debug("%s: Cross connection identified\n", __func__);
@@ -1025,7 +1025,6 @@ static void wcd_correct_swch_plug(struct work_struct *work)
 	if (((plug_type != MBHC_PLUG_TYPE_HEADSET) ||
 			(output_mv < TRY_SWITCH_THRESHOLD_MV)) &&
 	    (mbhc->mbhc_cfg->enable_usbc_analog) &&
-	    (!mbhc->need_cross_conn) &&
 	    (!wcd_swch_level_remove(mbhc))) {
 	    if (mbhc->mbhc_cfg->swap_gnd_mic &&
 			mbhc->mbhc_cfg->swap_gnd_mic(component, true)) {

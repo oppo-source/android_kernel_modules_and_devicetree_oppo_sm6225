@@ -4,8 +4,12 @@
 #include "oplus_cam_sensor_dev.h"
 
 #define SC800CSA_CHECK_NUM_MAX 5
-#define SC800CSA_EEPROM_MEMORY_MAP_MAX_SIZE  300
+#define SC800CSA_EEPROM_MEMORY_MAP_MAX_SIZE  10
+#define SC800CSA_EEPROM_THRESHOLD_PARAMS_NUM 3
 #define SC800CSA_RETRY_GROUP_NUM 6
+#define sc800CSA_MAP_SIZE 0x1000
+#define sc800CSA_PAGNUM   5
+#define RETRY_NUM         5
 
 struct sc800csa_OtpGroupInfo
 {
@@ -51,4 +55,5 @@ struct sc800csa_PagReadOtpInfo
 
 int sc800csa_eeprom_memory_map_read_data(struct cam_eeprom_ctrl_t *e_ctrl,uint8_t *memptr);
 int sc800csa_eeprom_memory_map_read_data_oem(struct cam_eeprom_ctrl_t *e_ctrl,uint8_t *memptr);
+int sc800csa_eeprom_memory_map_read_data_oem_retry(struct cam_eeprom_ctrl_t *e_ctrl,uint8_t *memptr, int* threshold_retry_num);
 #endif

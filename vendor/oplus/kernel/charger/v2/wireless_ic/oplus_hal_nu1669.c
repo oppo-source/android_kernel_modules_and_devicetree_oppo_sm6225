@@ -1139,7 +1139,7 @@ static int nu1669_set_tx_enable(struct oplus_chg_ic_dev *dev, bool en)
 	return rc;
 }
 
-static int nu1669_set_tx_start(struct oplus_chg_ic_dev *dev, bool start)
+static int nu1669_set_tx_start(struct oplus_chg_ic_dev *dev, enum oplus_chg_wls_tx_start_type start)
 {
 	struct oplus_nu1669 *chip;
 	int rc;
@@ -1151,7 +1151,7 @@ static int nu1669_set_tx_start(struct oplus_chg_ic_dev *dev, bool start)
 	}
 	chip = oplus_chg_ic_get_drvdata(dev);
 
-	if (start) {
+	if (start != OPLUS_CHG_WLS_TX_STOP) {
 		nu1669_disable_standby(chip);
 		msleep(10);
 		if (nu1669_ic_fw_is_valid(chip)) {
@@ -1173,10 +1173,9 @@ static int nu1669_set_tx_start(struct oplus_chg_ic_dev *dev, bool start)
 		chg_err("set tx start err, rc=%d\n", rc);
 		return rc;
 	}
-	if (start) {
-		chg_info("set tx start ok\n");
+	if (start)
 		chip->tx_status = TX_STATUS_ON;
-	}
+	chg_info("set tx start %d\n", start);
 
 	return rc;
 }
@@ -2715,7 +2714,7 @@ static void nu1669_shutdown(struct i2c_client *client)
 
 	/*set TX_EN=0 when shutdown*/
 	if (nu1669_get_wls_type(chip) == OPLUS_CHG_WLS_TRX)
-		nu1669_set_tx_start(chip->ic_dev, false);
+		nu1669_set_tx_start(chip->ic_dev, OPLUS_CHG_WLS_TX_STOP);
 
 	nu1669_rx_is_connected(chip->ic_dev, &is_connected);
 	if (is_connected &&

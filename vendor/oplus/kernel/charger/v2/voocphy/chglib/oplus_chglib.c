@@ -514,6 +514,11 @@ void oplus_chglib_set_vooc_startup(struct device *dev, int status)
 	}
 }
 
+void oplus_chglib_set_ovp_forced(bool enable)
+{
+	oplus_set_ovp_forced(enable);
+}
+
 int oplus_chglib_push_break_code(struct device *dev, int code)
 {
 	struct vphy_chip *chip = oplus_chglib_get_vphy_chip(dev);
@@ -1276,6 +1281,20 @@ static int vphy_set_chg_auto_mode(struct oplus_chg_ic_dev *ic_dev, bool enable)
 	return 0;
 }
 
+static int vphy_set_chg_vac2v2x_uvp(struct oplus_chg_ic_dev *ic_dev, bool disable)
+{
+	struct vphy_chip *chip;
+
+	if (!ic_dev->online)
+		return 0;
+	chip = oplus_chglib_get_vphy_chip(ic_dev->dev);
+
+	if (chip && chip->vinf && chip->vinf->vphy_set_chg_vac2v2x_uvp)
+		chip->vinf->vphy_set_chg_vac2v2x_uvp(chip->dev, disable);
+
+	return 0;
+}
+
 static int vphy_get_curve_current(struct oplus_chg_ic_dev *ic_dev, int *curr)
 {
 	struct vphy_chip *chip;
@@ -1471,6 +1490,10 @@ static void *vphy_get_func(struct oplus_chg_ic_dev *ic_dev,
 	case OPLUS_IC_FUNC_VOOCPHY_GET_FASTCHG_COMMU_ING:
 		func = OPLUS_CHG_IC_FUNC_CHECK(OPLUS_IC_FUNC_VOOCPHY_GET_FASTCHG_COMMU_ING,
 					       vphy_get_fastchg_commu_ing);
+		break;
+	case OPLUS_IC_FUNC_VOOCPHY_SET_VAC2V2X_UVP:
+		func = OPLUS_CHG_IC_FUNC_CHECK(OPLUS_IC_FUNC_VOOCPHY_SET_VAC2V2X_UVP,
+					       vphy_set_chg_vac2v2x_uvp);
 		break;
 	default:
 		chg_err("this func(=%d) is not supported\n", func_id);

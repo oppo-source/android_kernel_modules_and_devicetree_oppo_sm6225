@@ -83,6 +83,8 @@ bool is_cluster_cpu(u32 cpu)
 	struct cpufreq_policy *policy;
 
 	policy = cpufreq_cpu_get(cpu);
+	if(!policy)
+		return false;
 	start_cpu = cpumask_first(policy->related_cpus);
 	cpufreq_cpu_put(policy);
 	if (start_cpu == cpu)

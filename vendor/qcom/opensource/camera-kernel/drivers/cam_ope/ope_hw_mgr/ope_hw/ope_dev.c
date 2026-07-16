@@ -121,13 +121,13 @@ int cam_ope_probe(struct platform_device *pdev)
 	of_property_read_u32(pdev->dev.of_node,
 		"cell-index", &hw_idx);
 
-	ope_dev_intf = kzalloc(sizeof(struct cam_hw_intf), GFP_KERNEL);
+	ope_dev_intf = kvzalloc(sizeof(struct cam_hw_intf), GFP_KERNEL);
 	if (!ope_dev_intf)
 		return -ENOMEM;
 
 	ope_dev_intf->hw_idx = hw_idx;
 	ope_dev_intf->hw_type = OPE_DEV_OPE;
-	ope_dev = kzalloc(sizeof(struct cam_hw_info), GFP_KERNEL);
+	ope_dev = kvzalloc(sizeof(struct cam_hw_info), GFP_KERNEL);
 	if (!ope_dev) {
 		rc = -ENOMEM;
 		goto ope_dev_alloc_failed;
@@ -155,7 +155,7 @@ int cam_ope_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, ope_dev_intf);
 
-	ope_dev->core_info = kzalloc(sizeof(struct cam_ope_device_core_info),
+	ope_dev->core_info = kvzalloc(sizeof(struct cam_ope_device_core_info),
 		GFP_KERNEL);
 	if (!ope_dev->core_info) {
 		rc = -ENOMEM;
@@ -240,11 +240,11 @@ enable_soc_failed:
 register_cpas_failed:
 init_soc_failed:
 ope_match_dev_failed:
-	kfree(ope_dev->core_info);
+	kvfree(ope_dev->core_info);
 ope_core_alloc_failed:
-	kfree(ope_dev);
+	kvfree(ope_dev);
 ope_dev_alloc_failed:
-	kfree(ope_dev_intf);
+	kvfree(ope_dev_intf);
 	return rc;
 }
 

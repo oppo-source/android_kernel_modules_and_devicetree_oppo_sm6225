@@ -15,6 +15,6 @@
 
 / {
     model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Baikal-B4LX";
-    oplus,dtsi_no = <25031 25248 25249 25258 25259>;
-    oplus,project-id = <25031 25248 25249 25258 25259>;
+    oplus,dtsi_no = <25031 25248 25249 25258 25259 25243 25280>;
+    oplus,project-id = <25031 25248 25249 25258 25259 25243 25280>;
 };

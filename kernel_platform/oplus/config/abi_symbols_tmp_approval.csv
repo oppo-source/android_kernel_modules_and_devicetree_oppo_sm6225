@@ -1,6 +1,9 @@
 clk_set_duty_cycle
 __tracepoint_android_vh_binder_buffer_release
 __tracepoint_android_vh_do_swap_page_spf
+__tracepoint_android_vh_binder_desc_init
+__tracepoint_android_vh_binder_find_desc
+__tracepoint_android_vh_binder_set_desc_bit
 
 gnet_stats_copy_basic
 gnet_stats_copy_queue
@@ -22,6 +25,7 @@ schedtune_task_boost
 tcf_block_get
 tcf_block_put
 tcf_classify
+rtnl_kfree_skbs
 __traceiter_android_vh_lru_gen_add_page_skip
 __traceiter_android_vh_lru_gen_del_page_skip
 __traceiter_android_vh_evict_pages_bypass

@@ -54,11 +54,11 @@ int global_sched_assist_scene;
 EXPORT_SYMBOL(global_sched_assist_scene);
 int global_lowend_plat_opt;
 EXPORT_SYMBOL(global_lowend_plat_opt);
-/*group sched default disable*/
-int global_sched_group_enabled = 0;
+/*group sched default enabled*/
+int global_sched_group_enabled = 3;
 EXPORT_SYMBOL(global_sched_group_enabled);
-/*DDL default disable*/
-int global_sched_ddl_enabled = 0;
+/*DDL default enabled*/
+int global_sched_ddl_enabled = 1;
 EXPORT_SYMBOL(global_sched_ddl_enabled);
 
 pid_t global_ux_task_pid = -1;

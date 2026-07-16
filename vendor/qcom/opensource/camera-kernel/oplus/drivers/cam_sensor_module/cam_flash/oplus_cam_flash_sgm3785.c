@@ -34,7 +34,7 @@ int cam_flash_pwm_clk_enable_sgm3785(struct cam_flash_ctrl *flash_ctrl, int flas
 	} else {
 		CAM_DBG(CAM_FLASH, "clk prepare and enable success");
 	}
-
+	CAM_DBG(CAM_FLASH, "flash_duty %d PWM_DEN %d",flash_duty,PWM_DEN);
 	ret = cam_soc_util_set_clk_duty_cycle(pwm_clk, soc_info.clk_name[0], flash_duty, PWM_DEN);
 	if (ret) {
 		CAM_ERR(CAM_FLASH, "clk duty cycle set fail");
@@ -71,28 +71,43 @@ int cam_flash_pwm_selected_sgm3785(struct cam_flash_ctrl *flash_ctrl, bool is_pw
 	return ret;
 }
 
-int cam_flash_pwm_get_duty(int flash_current)
+int cam_flash_pwm_get_duty(struct cam_hw_soc_info *soc_info, int flash_current)
 {
-	int pwm_duty = 0;
-	CAM_INFO(CAM_FLASH,"sgm3785_flash_mode is %d",sgm3785_flash_mode);
-	if (sgm3785_flash_mode == FLASH_MODE) {
-		pwm_duty = flash_current*100/MAX_FLASH_CURRENT;
-		if (pwm_duty > 100)
-		pwm_duty = 100;
-	}
-	if (sgm3785_flash_mode == TORCH_MODE) {
-		pwm_duty = flash_current*100/MAX_TORCH_CURRENT;
-		if (pwm_duty > 100) {
-		pwm_duty = 100;
-		}
-		else if (pwm_duty == TORCH_SET_DUTY) {
-		pwm_duty = TORCH_TRUE_DUTY;
-		}
-	}
-	sgm3785_flash_mode = 0;
-	CAM_INFO(CAM_FLASH,"flash_current is %d",flash_current);
-	CAM_INFO(CAM_FLASH,"pwm_duty is %d",pwm_duty);
-	return pwm_duty;
+        struct device_node *of_node = NULL;
+        int pwm_duty = 0;
+        int flash_curr = 0;
+        int torch_curr = 0;
+        if (soc_info != NULL) {
+            of_node = soc_info->dev->of_node;
+            of_property_read_u32(of_node, "flash-current", &flash_curr);
+            of_property_read_u32(of_node, "torch-current", &torch_curr);
+            CAM_INFO(CAM_UTIL, "flashdev read val %d %d", flash_curr, torch_curr);
+        }
+        CAM_INFO(CAM_FLASH,"sgm3785_flash_mode is %d",sgm3785_flash_mode);
+        if (sgm3785_flash_mode == FLASH_MODE) {
+            pwm_duty = flash_current*100/MAX_FLASH_CURRENT;
+            if (flash_curr) {
+                pwm_duty = flash_current*100/flash_curr;
+            }
+            if (pwm_duty > 100)
+                pwm_duty = 100;
+        }
+        if (sgm3785_flash_mode == TORCH_MODE) {
+            pwm_duty = flash_current*100/MAX_TORCH_CURRENT;
+            if (torch_curr) {
+                pwm_duty = flash_current*100/torch_curr;
+            }
+            if (pwm_duty > 100) {
+                pwm_duty = 100;
+            }
+            else if (pwm_duty == TORCH_SET_DUTY) {
+                pwm_duty = TORCH_TRUE_DUTY;
+            }
+        }
+        sgm3785_flash_mode = 0;
+        CAM_INFO(CAM_FLASH,"flash_current is %d",flash_current);
+        CAM_INFO(CAM_FLASH,"pwm_duty is %d",pwm_duty);
+        return pwm_duty;
 }
 
 int cam_flash_gpio_off_sgm3785(struct cam_flash_ctrl *flash_ctrl)
@@ -106,7 +121,6 @@ int cam_flash_gpio_off_sgm3785(struct cam_flash_ctrl *flash_ctrl)
 		CAM_ERR(CAM_FLASH, "Flash control Null");
 		return -EINVAL;
 	}
-
 	flash_ctrl->flash_state = CAM_FLASH_STATE_START;
 	CAM_INFO(CAM_FLASH,"cam_flash_gpio_off_sgm3785");
 	if (gpio_num_info->valid[SENSOR_CUSTOM_GPIO1]) {
@@ -142,7 +156,7 @@ int cam_flash_gpio_high_sgm3785(struct cam_flash_ctrl *flash_ctrl,
 		CAM_ERR(CAM_FLASH, "flash select pwm failed");
 		return rc;
 	}
-	pwm_duty = cam_flash_pwm_get_duty(flash_data->led_current_ma[0]);
+	pwm_duty = cam_flash_pwm_get_duty(&soc_info, flash_data->led_current_ma[0]);
 		rc = cam_flash_pwm_clk_enable_sgm3785(flash_ctrl, pwm_duty);
 	if(rc) {
 		CAM_ERR(CAM_FLASH, "pwm clk enable set fail");
@@ -174,8 +188,13 @@ int cam_flash_gpio_low_sgm3785(struct cam_flash_ctrl *flash_ctrl,struct cam_flas
 		CAM_ERR(CAM_FLASH, "Flash Data  is Null");
 		return -EINVAL;
 	}
+	if (gpio_num_info->valid[SENSOR_CUSTOM_GPIO2]) {
+		cam_res_mgr_gpio_set_value(gpio_num_info->gpio_num[SENSOR_CUSTOM_GPIO2], 0);
+		cam_res_mgr_gpio_free(soc_info.dev, gpio_num_info->gpio_num[SENSOR_CUSTOM_GPIO2]);
+	}
+	cam_flash_pwm_clk_disable_sgm3785();
 	flash_current = flash_data->led_current_ma[0];
-	pwm_duty = cam_flash_pwm_get_duty(flash_current);
+	pwm_duty = cam_flash_pwm_get_duty(&soc_info, flash_current);
 	rc = cam_flash_pwm_clk_enable_sgm3785(flash_ctrl, pwm_duty);
 	if (rc) {
 		CAM_ERR(CAM_FLASH, "pwm clk enable set fail");

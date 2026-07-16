@@ -350,7 +350,7 @@ int sensor_start_thread(void *arg) {
             {
                 sensor_init_setting.reg_setting = sensor_init_settings.gc08a8_setting.reg_setting;
                 sensor_init_setting.addr_type   = CAMERA_SENSOR_I2C_TYPE_WORD;
-                sensor_init_setting.data_type   = CAMERA_SENSOR_I2C_TYPE_WORD;
+                sensor_init_setting.data_type   = CAMERA_SENSOR_I2C_TYPE_BYTE;
                 sensor_init_setting.size        = sensor_init_settings.gc08a8_setting.size;
                 sensor_init_setting.delay       = sensor_init_settings.gc08a8_setting.delay;
 

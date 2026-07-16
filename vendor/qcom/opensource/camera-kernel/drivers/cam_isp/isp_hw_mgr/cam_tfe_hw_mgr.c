@@ -29,8 +29,8 @@
 #include "cam_compat.h"
 
 #define CAM_TFE_HW_ENTRIES_MAX  20
-#define CAM_TFE_HW_CONFIG_TIMEOUT 60
-#define CAM_TFE_HW_CONFIG_WAIT_MAX_TRY  3
+#define CAM_TFE_HW_CONFIG_TIMEOUT 180
+#define CAM_TFE_HW_CONFIG_WAIT_MAX_TRY  5
 
 #define TZ_SVC_SMMU_PROGRAM 0x15
 #define TZ_SAFE_SYSCALL_ID  0x3
@@ -2335,7 +2335,7 @@ static int cam_isp_tfe_blob_bw_update(
 			bw_config->axi_path[i].mnoc_ib_bw);
 	}
 
-	bw_upd_args = kzalloc(sizeof(struct cam_tfe_bw_update_args),
+	bw_upd_args = kvzalloc(sizeof(struct cam_tfe_bw_update_args),
 		GFP_KERNEL);
 	if (!bw_upd_args) {
 		CAM_ERR(CAM_ISP, "Out of memory");

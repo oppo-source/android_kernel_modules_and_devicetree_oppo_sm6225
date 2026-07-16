@@ -1683,6 +1683,7 @@ int cam_hw_cdm_handle_error_info(
 
 	/* First pause CDM, If it fails still proceed to dump debug info */
 	cam_hw_cdm_pause_core(cdm_hw, true);
+	usleep_range(1000, 1010);
 
 	rc = cam_cdm_read_hw_reg(cdm_hw,
 			cdm_core->offsets->cmn_reg->current_bl_len,

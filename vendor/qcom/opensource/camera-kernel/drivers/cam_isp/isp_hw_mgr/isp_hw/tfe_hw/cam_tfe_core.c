@@ -995,7 +995,7 @@ static int cam_tfe_top_set_axi_bw_vote(
 		return -EINVAL;
 	}
 
-	agg_vote = kzalloc(sizeof(struct cam_axi_vote), GFP_KERNEL);
+	agg_vote = kvzalloc(sizeof(struct cam_axi_vote), GFP_KERNEL);
 	if (!agg_vote) {
 		CAM_ERR(CAM_ISP, "Out of memory");
 		return -ENOMEM;

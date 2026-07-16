@@ -14,6 +14,9 @@ struct cam_flash_settings flash_ftm_data = {
 	.cur_flash_status = IIC_FLASH_INVALID,
 	{
 		#include "CAM_FLASH_SETTINGS.h"
+	},
+	{
+		#include "SGM3785_FLASH_CURRENT.h"
 	}
 };
 
@@ -550,7 +553,7 @@ ssize_t flash_on_off(struct cam_flash_ctrl *flash_ctrl)
 		CAM_ERR(CAM_FLASH, "camera is opened,not to set flashlight off");
 		return rc;
 	}
-
+	CAM_DBG(CAM_FLASH, "flash_mode = %d",flash_mode);
 	pre_flash_mode = flash_mode;
 	switch (flash_mode)
 	{
@@ -573,6 +576,14 @@ ssize_t flash_on_off(struct cam_flash_ctrl *flash_ctrl)
 		case 3:
 			flash_data.led_current_ma[0] = 60;
 			flash_data.led_current_ma[1] = 60;
+			cam_flash_on(flash_ctrl, &flash_data, 0);
+			break;
+		case PWM_FLASH_ON_LEVEL1:
+		case PWM_FLASH_ON_LEVEL2:
+		case PWM_FLASH_ON_LEVEL3:
+		case PWM_FLASH_ON_LEVEL4:
+			flash_data.led_current_ma[0] = flash_ftm_data.pwm_curr_ma[flash_mode - PWM_FLASH_ON_LEVEL1];
+			flash_data.led_current_ma[1] = flash_ftm_data.pwm_curr_ma[flash_mode - PWM_FLASH_ON_LEVEL1];
 			cam_flash_on(flash_ctrl, &flash_data, 0);
 			break;
 		default:

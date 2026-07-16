@@ -70,6 +70,7 @@
 
 #include "oplus_hal_bq27541.h"
 #include "oplus_hal_nfg8011b.h"
+#include "oplus_hal_sh366002.h"
 #include <oplus_chg_monitor.h>
 #include "../monitor/oplus_chg_track.h"
 
@@ -2126,6 +2127,18 @@ static void bq27541_cntl_cmd(struct chip_bq27541 *chip, int subcmd)
 static int bq28z610_get_2cell_voltage(struct chip_bq27541 *chip);
 /* static int bq28z610_get_2cell_balance_time(void); */
 
+static int __bq27541_get_battery_mvolts(struct chip_bq27541 *chip, int *volt)
+{
+	int ret;
+
+	if (chip->batt_nfg8011b && chip->fast_sampling_enable)
+		ret = bq27541_read_i2c(chip, NFG8011B_REG_REAL_VOLT, volt);
+	else
+		ret = bq27541_read_i2c(chip, chip->cmd_addr.reg_volt, volt);
+
+	return ret;
+}
+
 static int bq27541_get_battery_mvolts(struct chip_bq27541 *chip)
 {
 	int ret = 0;
@@ -2139,7 +2152,7 @@ static int bq27541_get_battery_mvolts(struct chip_bq27541 *chip)
 		return chip->batt_vol_pre;
 	}
 	if (atomic_read(&chip->locked) == 0) {
-		ret = bq27541_read_i2c(chip, chip->cmd_addr.reg_volt, &volt);
+		ret = __bq27541_get_battery_mvolts(chip, &volt);
 		if (ret) {
 			if (is_return_pre_value(chip))
 				return chip->batt_vol_pre;
@@ -2165,7 +2178,7 @@ static int bq27541_get_battery_mvolts(struct chip_bq27541 *chip)
 		while (!normal_range_judge(VOLT_MAX, VOLT_MIN, chip->batt_cell_max_vol) && retry > 0 && !ret) {
 			chg_err("bq27541_get_battery_mvolts %d out of range, retry %d\n", chip->batt_cell_max_vol, retry);
 			usleep_range(10000, 10000);
-			ret = bq27541_read_i2c(chip, chip->cmd_addr.reg_volt, &volt);
+			ret = __bq27541_get_battery_mvolts(chip, &volt);
 			if (ret) {
 				dev_err(chip->dev,
 					"error reading voltage, ret:%d\n", ret);
@@ -3312,6 +3325,18 @@ static int bq27541_get_battery_soc_centi(struct chip_bq27541 *chip)
 	return soc_centi;
 }
 
+static int __bq27541_get_average_current(struct chip_bq27541 *chip, int *curr)
+{
+	int ret;
+
+	if (chip->batt_nfg8011b && chip->fast_sampling_enable)
+		ret = bq27541_read_i2c(chip, NFG8011B_REG_REAL_CURR, curr);
+	else
+		ret = bq27541_read_i2c(chip, chip->cmd_addr.reg_ai, curr);
+
+	return ret;
+}
+
 static int bq27541_get_average_current(struct chip_bq27541 *chip)
 {
 	int ret;
@@ -3326,7 +3351,7 @@ static int bq27541_get_average_current(struct chip_bq27541 *chip)
 		return -chip->current_pre;
 	}
 	if (atomic_read(&chip->locked) == 0) {
-		ret = bq27541_read_i2c(chip, chip->cmd_addr.reg_ai, &curr);
+		ret = __bq27541_get_average_current(chip, &curr);
 		if (!ret && (curr & 0x8000))
 			temp_curr = ((~(curr - 1)) & 0xFFFF);
 		else if (!ret)
@@ -3334,7 +3359,7 @@ static int bq27541_get_average_current(struct chip_bq27541 *chip)
 		while (!normal_range_judge(CURR_MAX, CURR_MIN, temp_curr) && retry > 0 && !ret) {
 			chg_err("bq27541_get_average_current %d out of range, retry %d\n", temp_curr, retry);
 			usleep_range(10000, 10000);
-			ret = bq27541_read_i2c(chip, chip->cmd_addr.reg_ai, &curr);
+			ret = __bq27541_get_average_current(chip, &curr);
 			if (!ret && (curr & 0x8000))
 				temp_curr = ((~(curr - 1)) & 0xFFFF);
 			else if (!ret)
@@ -9372,7 +9397,7 @@ static int oplus_bq27541_set_first_usage_date(struct oplus_chg_ic_dev *ic_dev, c
 
 	if (chip->batt_nfg8011b) {
 		rc = nfg8011b_write_block(chip, NFG8011B_SUBCMD_DEEP_INFO_ADDR, (u8 *)&date, sizeof(date),
-					  NFG8011B_ECO_FIRST_USAGE_DATE_OFFSET, true);
+					  NFG8011B_ECO_FIRST_USAGE_DATE_OFFSET, true, true);
 		if (rc) {
 			chg_err("set fail rc = %d\n", rc);
 			return rc;
@@ -9437,7 +9462,7 @@ static int oplus_bq27541_set_ui_cycle_count(struct oplus_chg_ic_dev *ic_dev, u16
 
 	if (chip->batt_nfg8011b) {
 		rc = nfg8011b_write_block(chip, NFG8011B_SUBCMD_DEEP_INFO_ADDR, (u8 *)&ui_cycle_count,
-					  sizeof(ui_cycle_count), NFG8011B_ECO_UI_CC_OFFSET, true);
+					  sizeof(ui_cycle_count), NFG8011B_ECO_UI_CC_OFFSET, true, true);
 		if (rc) {
 			chg_err("set fail rc = %d\n", rc);
 			return rc;
@@ -9501,7 +9526,7 @@ static int oplus_bq27541_set_ui_soh(struct oplus_chg_ic_dev *ic_dev, u8 ui_soh)
 
 	if (chip->batt_nfg8011b) {
 		rc = nfg8011b_write_block(chip, NFG8011B_SUBCMD_DEEP_INFO_ADDR, (u8 *)&ui_soh, sizeof(ui_soh),
-					  NFG8011B_ECO_UI_SOH_OFFSET, true);
+					  NFG8011B_ECO_UI_SOH_OFFSET, true, true);
 		if (rc) {
 			chg_err("set fail rc = %d\n", rc);
 			return rc;
@@ -9565,7 +9590,7 @@ static int oplus_bq27541_set_used_flag(struct oplus_chg_ic_dev *ic_dev, u8 used_
 
 	if (chip->batt_nfg8011b) {
 		rc = nfg8011b_write_block(chip, NFG8011B_SUBCMD_DEEP_INFO_ADDR, (u8 *)&used_flag, sizeof(used_flag),
-					  NFG8011B_ECO_USED_FLAG_OFFSET, true);
+					  NFG8011B_ECO_USED_FLAG_OFFSET, true, true);
 		if (rc) {
 			chg_err("set fail rc = %d\n", rc);
 			return rc;
@@ -9869,6 +9894,54 @@ static int gauge_get_sili_alg_application_info(
 		ret = nfg8011b_get_sili_alg_application_info(chip, buf, len);
 
 	return ret;
+}
+
+static int oplus_bq27541_set_fast_sampling(
+	struct oplus_chg_ic_dev *ic_dev, bool enable)
+{
+	int ret = 0;
+	struct chip_bq27541 *chip;
+
+	if (ic_dev == NULL) {
+		chg_err("oplus_chg_ic_dev is NULL");
+		return -ENODEV;
+	}
+
+	chip = oplus_chg_ic_get_drvdata(ic_dev);
+	if (is_return_pre_value(chip))
+		return -EINVAL;
+
+	if (chip->batt_nfg8011b)
+		ret = nfg8011b_set_fast_sampling(chip, enable);
+
+	return ret;
+}
+
+static void bq27541_imp_model_check_work(struct work_struct *work)
+{
+	struct chip_bq27541 *chip = container_of(
+		work, struct chip_bq27541, imp_model_check_work);
+
+	if (chip->device_type == DEVICE_ZY0602)
+		oplus_sh36002_check_imp_model(chip);
+}
+
+static int oplus_bq27541_check_imp_model(struct oplus_chg_ic_dev *ic_dev)
+{
+	struct chip_bq27541 *chip;
+
+	if (ic_dev == NULL) {
+		chg_err("oplus_chg_ic_dev is NULL");
+		return -ENODEV;
+	}
+
+	chip = oplus_chg_ic_get_drvdata(ic_dev);
+	if (chip == NULL || is_return_pre_value(chip))
+		return -EINVAL;
+
+	schedule_work(&chip->imp_model_check_work);
+
+	return 0;
 }
 
 static void *oplus_chg_get_func(struct oplus_chg_ic_dev *ic_dev,
@@ -10284,6 +10357,14 @@ static void *oplus_chg_get_func(struct oplus_chg_ic_dev *ic_dev,
 		func = OPLUS_CHG_IC_FUNC_CHECK(OPLUS_IC_FUNC_GAUGE_GET_GAUGE_R_INFO,
 						  oplus_gauge_get_gauge_r_info);
 		break;
+	case OPLUS_IC_FUNC_GAUGE_SET_FAST_SAMPLING:
+		func = OPLUS_CHG_IC_FUNC_CHECK(OPLUS_IC_FUNC_GAUGE_SET_FAST_SAMPLING,
+			oplus_bq27541_set_fast_sampling);
+		break;
+	case OPLUS_IC_FUNC_GAUGE_CHECK_IMP_MODEL:
+		func = OPLUS_CHG_IC_FUNC_CHECK(OPLUS_IC_FUNC_GAUGE_CHECK_IMP_MODEL,
+			oplus_bq27541_check_imp_model);
+		break;
 	default:
 		chg_err("this func(=%d) is not supported\n", func_id);
 		func = NULL;
@@ -10409,6 +10490,7 @@ static int bq27541_driver_probe(struct i2c_client *client,
 	int ic_index;
 	struct oplus_chg_ic_cfg ic_cfg = { 0 };
 	int rc = 0;
+	struct device_node *node = NULL;
 
 	if (bq27541_need_level_shift(client->dev.of_node) &&
 	    !is_level_shift_available(client->dev.of_node)) {
@@ -10437,6 +10519,7 @@ static int bq27541_driver_probe(struct i2c_client *client,
 	mutex_init(&fg_ic->chip_mutex);
 	mutex_init(&fg_ic->calib_time_mutex);
 	mutex_init(&fg_ic->bq28z610_alt_manufacturer_access);
+	mutex_init(&fg_ic->imp_model_lock);
 	bq27541_parse_dt(fg_ic);
 	/* workaround for I2C pull SDA can't trigger error issue 230504153935012779 */
 	fg_ic->err_status = false;
@@ -10458,6 +10541,7 @@ rerun:
 	schedule_delayed_work(&fg_ic->hw_config, 0);
 */
 	INIT_WORK(&fg_ic->fcc_too_small_check_work, bq27541_fcc_too_small_check_work);
+	INIT_WORK(&fg_ic->imp_model_check_work, bq27541_imp_model_check_work);
 	INIT_DELAYED_WORK(&fg_ic->check_iic_recover, bq27541_check_iic_recover);
 	fg_ic->soc_pre = 50;
 	if (fg_ic->batt_bq28z610) {
@@ -10527,13 +10611,14 @@ rerun:
 	oplus_bq27541_init_sn_match(fg_ic);
 	atomic_set(&fg_ic->locked, 0);
 	bq28z610_afi_param_update(fg_ic);
-	rc = of_property_read_u32(fg_ic->dev->of_node, "oplus,ic_type",
+	node = oplus_get_node_by_child_gauge(fg_ic->dev->of_node);
+	rc = of_property_read_u32(node, "oplus,ic_type",
 				  &ic_type);
 	if (rc < 0) {
 		chg_err("can't get ic type, rc=%d\n", rc);
 		goto error;
 	}
-	rc = of_property_read_u32(fg_ic->dev->of_node, "oplus,ic_index",
+	rc = of_property_read_u32(node, "oplus,ic_index",
 				  &ic_index);
 	if (rc < 0) {
 		chg_err("can't get ic index, rc=%d\n", rc);

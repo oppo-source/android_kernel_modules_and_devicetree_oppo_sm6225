@@ -214,6 +214,7 @@ struct dsi_panel_oplus_privite {
 	bool dimming_setting_before_bl_0_enable;
 	bool vidmode_backlight_async_wait_enable;
 	bool set_backlight_not_do_esd_reg_read_enable;
+	bool restore_cabc_enable;
 };
 
 struct dsi_panel_oplus_serial_number {

@@ -168,7 +168,7 @@ static int cam_ope_subdev_probe(struct platform_device *pdev)
 
 	node = (struct cam_node *) g_ope_dev.sd.token;
 
-	hw_mgr_intf = kzalloc(sizeof(*hw_mgr_intf), GFP_KERNEL);
+	hw_mgr_intf = kvzalloc(sizeof(*hw_mgr_intf), GFP_KERNEL);
 	if (!hw_mgr_intf) {
 		rc = -EINVAL;
 		goto hw_alloc_fail;
@@ -212,7 +212,7 @@ ctx_fail:
 	for (--i; i >= 0; i--)
 		cam_ope_context_deinit(&g_ope_dev.ctx_ope[i]);
 hw_init_fail:
-	kfree(hw_mgr_intf);
+	kvfree(hw_mgr_intf);
 hw_alloc_fail:
 	cam_subdev_remove(&g_ope_dev.sd);
 	return rc;

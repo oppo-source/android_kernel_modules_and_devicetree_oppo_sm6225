@@ -626,6 +626,7 @@ struct chip_bq27541 {
 
 	bool fcc_too_small_checking;
 	struct work_struct fcc_too_small_check_work;
+	struct work_struct imp_model_check_work;
 
 	bool modify_soc_smooth;
 	bool modify_soc_calibration;
@@ -647,6 +648,7 @@ struct chip_bq27541 {
 	unsigned int *afi_buf_len;
 	u8 *bq28z610_afi_buf;
 	int bq28z610_afi_cnt;
+	bool fast_sampling_enable;
 	bool batt_bq28z610;
 	bool batt_bq27z561;
 	bool batt_nfg8011b;
@@ -728,6 +730,10 @@ struct chip_bq27541 {
 	int gauge_type;
 	int bq28z610_seal_flag;
 	bool sn_match;
+
+	struct mutex imp_model_lock;
+	u8 *imp_model_data;
+	bool imp_model_checking;
 };
 
 struct gauge_track_info_reg {

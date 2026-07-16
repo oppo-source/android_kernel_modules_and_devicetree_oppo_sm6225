@@ -306,6 +306,16 @@ int dsi_display_set_backlight(struct drm_connector *connector,
 	oplus_printf_backlight_log(dsi_display, bl_lvl);
 #endif /* OPLUS_FEATURE_DISPLAY */
 
+#ifdef OPLUS_FEATURE_DISPLAY
+	if (oplus_ofp_lcd_aod_is_enabled()) {
+		if ((panel->power_mode == SDE_MODE_DPMS_LP2 || panel->power_mode == SDE_MODE_DPMS_LP1)
+			&& (bl_lvl == 1 || bl_lvl == 0)) {
+			mutex_unlock(&panel->panel_lock);
+			return rc;
+		}
+	}
+#endif /* OPLUS_FEATURE_DISPLAY */
+
 	panel->bl_config.bl_level = bl_lvl;
 
 	/* scale backlight */
@@ -334,7 +344,9 @@ int dsi_display_set_backlight(struct drm_connector *connector,
 
 #ifdef OPLUS_BUG_STABILITY
 	if (panel->oplus_priv.gamma_switch_enable && (!strcmp(panel->name,"AC166 P 3 A0013 video mode dsi panel")
-		|| !strcmp(panel->name,"AC166 P D A0018 video mode dsi panel"))) {
+		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel"))) {
 		rc = oplus_display_panel_switch_gamma_mode(panel, bl_lvl);
 		if (rc)
 			DSI_ERR("failed to switch gamma mode\n");

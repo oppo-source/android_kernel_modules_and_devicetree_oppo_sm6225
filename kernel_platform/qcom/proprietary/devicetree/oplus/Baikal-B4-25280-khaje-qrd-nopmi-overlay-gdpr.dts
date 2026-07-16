@@ -3,22 +3,16 @@
 
 #include "../qcom/khaje-qrd-nopmi-overlay.dts"
 #include "khaje_overlay_common.dtsi"
-#include "BB4_25251_25253_overlay_common.dtsi"
-#include "nfc/Baikal-B4-nfc-pn560.dtsi"
-#include "sensor/Baikal-B4-25251-sensor-mtp.dtsi"
-#include "oplus_chg/oplus-chg-25253.dtsi"
-#include "oplus_chg/oplus-chg-25251-25253-pps.dtsi"
-
-&qupv3_se1_i2c {
-	nq@28 {
-		status = "disabled";
-	};
-};
+#include "Baikal-B4_overlay_common.dtsi"
+#include "nfc/Baikal-B4-nfc-pn560_25258.dtsi"
+#include "sensor/Baikal-B4-25031-sensor-mtp.dtsi"
+#include "oplus_chg/oplus-chg-bb4-15w-gdpr.dtsi"
 
 / {
-    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay,  Baikal-B4";
-    oplus,dtsi_no = <25310>;
-    oplus,project-id = <25310>;
+    model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Baikal-B4";
+    oplus,dtsi_no = <25280>;
+    oplus,project-id = <25280>;
+    oplus,gauge-id = <1>;
 };
 &spmi_bus {
 	qcom,pm6125@0 {

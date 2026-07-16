@@ -38,13 +38,15 @@ static int panel_cabc_mode_config(int mode)
 	if (cabc_mode == CABC_ENTER_SPECIAL) {
 		cabc_lock_flag = 1;
 		if (strcmp(display->panel->oplus_priv.vendor_name, "NT36672C")||
-			strcmp(display->panel->oplus_priv.vendor_name, "ILI7807S")) {
+			strcmp(display->panel->oplus_priv.vendor_name, "ILI7807S")||
+			strcmp(display->panel->oplus_priv.vendor_name, "A0030")) {
 			cabc_mode = CABC_MODE_OFF;
 		}
 	} else if (cabc_mode == CABC_EXIT_SPECIAL) {
 		cabc_lock_flag = 0;
 		if (strcmp(display->panel->oplus_priv.vendor_name, "NT36672C")||
-			strcmp(display->panel->oplus_priv.vendor_name, "ILI7807S")) {
+			strcmp(display->panel->oplus_priv.vendor_name, "ILI7807S")||
+			strcmp(display->panel->oplus_priv.vendor_name, "A0030")) {
 			cabc_mode = cabc_mode_backup;
 		}
 	} else {
@@ -116,6 +118,33 @@ static int panel_cabc_cmd_config_unlock(struct dsi_panel *panel, int mode)
 			       panel->name, rc);
 		}
 	}
+
+	return rc;
+}
+
+int panel_cabc_restore(struct dsi_panel *panel)
+{
+	int rc = 0;
+
+	if (!dsi_panel_initialized(panel)) {
+		pr_err("[%s] CABC panel initialized failed \n", panel->name);
+		return -EINVAL;
+	}
+
+	mutex_lock(&oplus_cabc_mode_lock);
+	if(cabc_lock_flag == 1) {
+		pr_info("CABC is locked, skip restore");
+		mutex_unlock(&oplus_cabc_mode_lock);
+		return rc;
+	}
+	mutex_unlock(&oplus_cabc_mode_lock);
+
+	mutex_lock(&panel->panel_lock);
+	rc = panel_cabc_cmd_config_unlock(panel, cabc_mode);
+	if (rc) {
+		pr_err("[%s] panel_cabc_cmd_config_unlock fail, rc=%d\n", panel->name, rc);
+	}
+	mutex_unlock(&panel->panel_lock);
 
 	return rc;
 }

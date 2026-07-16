@@ -11,6 +11,8 @@
 #ifdef OPLUS_FEATURE_CAMERA_COMMON
 #include "oplus_cam_sensor_dev.h"
 #include "oplus_cam_sensor_core.h"
+#include "cam_compat.h"
+static bool gProbe_done;
 extern bool is_ftm_current_test;
 #endif
 
@@ -355,6 +357,10 @@ static int32_t cam_sensor_driver_platform_probe(
 	platform_set_drvdata(pdev, s_ctrl);
 	s_ctrl->sensor_state = CAM_SENSOR_INIT;
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+	gProbe_done = true;
+#endif
+
 	return rc;
 unreg_subdev:
 	cam_unregister_subdev(&(s_ctrl->v4l2_dev_str));
@@ -394,6 +400,11 @@ int cam_sensor_driver_init(void)
 {
 	int32_t rc = 0;
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+	void *drv_ptr = NULL;
+	gProbe_done = false;
+#endif
+
 	rc = platform_driver_register(&cam_sensor_platform_driver);
 	if (rc < 0) {
 		CAM_ERR(CAM_SENSOR, "platform_driver_register Failed: rc = %d",
@@ -407,6 +418,11 @@ int cam_sensor_driver_init(void)
 
 #ifdef OPLUS_FEATURE_CAMERA_COMMON
 	oplus_init_cam_ldo_mutex();
+	if (gProbe_done == false) {
+		CAM_ERR(CAM_SENSOR, "%s deferred probe", cam_sensor_platform_driver.driver.name);
+		drv_ptr = (void*)&(cam_sensor_platform_driver.driver);
+		dev_defer_supplier_debug(drv_ptr);
+	}
 #endif
 
 	return rc;

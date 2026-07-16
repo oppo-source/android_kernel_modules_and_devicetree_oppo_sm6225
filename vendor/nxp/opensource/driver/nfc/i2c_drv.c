@@ -586,6 +586,8 @@ static int checkNfcChip(struct device *dev)
                 err = get_gpio_value_three(dev, &gpio_value);
                 break;
             default:
+                err = -ENOENT;
+                gpio_value = -1;
                 pr_err("Unexpected id_count value: %u\n", id_count);
                 break;
             }

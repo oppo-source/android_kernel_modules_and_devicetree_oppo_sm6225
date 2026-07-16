@@ -232,7 +232,7 @@ int cam_req_mgr_workq_create(char *name, int32_t num_tasks,
 			return -ENOMEM;
 
 		wq_flags |= WQ_UNBOUND;
-		if (flags & CAM_WORKQ_FLAG_HIGH_PRIORITY)
+		//if (flags & CAM_WORKQ_FLAG_HIGH_PRIORITY)
 			wq_flags |= WQ_HIGHPRI;
 
 #ifdef OPLUS_FEATURE_CAMERA_COMMON

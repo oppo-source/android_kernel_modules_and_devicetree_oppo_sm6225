@@ -1070,7 +1070,19 @@ static int msm_register_pm_qos_latency_controls(struct snd_soc_pcm_runtime *rtd)
 	if (!lpass_cdc_component) {
 		pr_err("%s: could not find component for lpass-cdc\n",
 				__func__);
+#ifdef OPLUS_ARCH_EXTENDS
+		//if lpass-cdc driver name is not found, go ahead to loop up bolero_codec drvier name.
+		lpass_cdc_component = snd_soc_rtdcom_lookup(rtd, "bolero_codec");
+		if (!lpass_cdc_component) {
+			pr_err("%s: could not find component for bolero_codec\n",
+					__func__);
+			return -EINVAL;
+		} else {
+			pr_debug("%s: find component for bolero_codec\n", __func__);
+		}
+#else
 		return -EINVAL;
+#endif /* OPLUS_ARCH_EXTENDS */
 	}
 
 	ret = snd_soc_add_component_controls(lpass_cdc_component,

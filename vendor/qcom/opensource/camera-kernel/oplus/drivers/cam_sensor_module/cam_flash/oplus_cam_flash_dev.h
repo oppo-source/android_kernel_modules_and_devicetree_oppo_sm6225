@@ -28,7 +28,13 @@
 #define IIC_FLASH_ON_LEVEL3 8
 #define IIC_FLASH_ON_LEVEL4 9
 
+#define PWM_FLASH_ON_LEVEL1 6
+#define PWM_FLASH_ON_LEVEL2 7
+#define PWM_FLASH_ON_LEVEL3 8
+#define PWM_FLASH_ON_LEVEL4 9
+
 #define IIC_FLASH_ON_LEVEL_NUM 4
+#define PWM_FLASH_ON_LEVEL_NUM 4
 
 #define MAX_PROJID_NUM 15
 
@@ -96,6 +102,7 @@ struct cam_flash_settings {
 	int valid_setting_index;
 	int cur_flash_status;
 	struct cam_flash_ftm_settings flash_ftm_settings[TOTAL_FLASH_NUM];
+	uint32_t pwm_curr_ma[PWM_FLASH_ON_LEVEL_NUM];
 };
 
 int isProjMatch(uint32_t *projID);

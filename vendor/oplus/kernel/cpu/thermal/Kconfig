@@ -14,3 +14,9 @@ config OPLUS_IPA_THERMAL
 	  default n
 	  help
 	    the driver of oplus virtual ipa sensor
+
+config HORAE_FLASH_LED_THERMAL
+	  tristate "horae flash led thermal driver"
+	  default m
+	  help
+	    Provide flash_led thermal zone and ntc switch function

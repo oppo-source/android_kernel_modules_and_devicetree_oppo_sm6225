@@ -657,8 +657,6 @@ if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel") \
 		|| !strcmp(panel->name, "AC190 P 4 A0013 video mode dsi panel")
 		|| !strcmp(panel->name, "AC190 P D A0018 video mode dsi panel")
 		|| !strcmp(panel->name, "AC190 P D 1 A0018 video mode dsi panel")
-		|| !strcmp(panel->name, "td4160 hx alpha l4 video mode dsi panel")
-		|| !strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel")
 		|| !strcmp(panel->name, "td4160 hx alpha b4 video mode dsi panel")
 		|| !strcmp(panel->name, "ili9883c boe alpha b4 video mode dsi panel")
 		|| !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")
@@ -694,8 +692,6 @@ if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel") \
 	if (!strcmp(panel->name, "AC190 P 4 A0013 video mode dsi panel") ||
 		!strcmp(panel->name, "AC190 P D A0018 video mode dsi panel") ||
 		!strcmp(panel->name, "AC190 P D 1 A0018 video mode dsi panel") ||
-		!strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel") ||
-		!strcmp(panel->name, "td4160 hx alpha l4 video mode dsi panel") ||
 		!strcmp(panel->name, "ili9883c boe alpha b4 video mode dsi panel") ||
 		!strcmp(panel->name, "td4160 hx alpha b4 video mode dsi panel") ||
 		!strcmp(panel->name, "AC349 P D A0018 video mode dsi panel") ||
@@ -709,7 +705,9 @@ if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel") \
 #endif
 }
 	if (!strcmp(panel->name, "AE178 p 4 A0030 video mode panel")
-		||  !strcmp(panel->name, "AE178 p 7 A0030 video mode panel")) {
+		||  !strcmp(panel->name, "AE178 p 7 A0030 video mode panel")
+		||  !strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel")
+		||  !strcmp(panel->name, "td4160 hx alpha l4 video mode dsi panel")) {
 		panel_esd_check_failed = atomic_read(&(panel->esd_recovery_pending));
 		if((is_pd_with_guesture == false) || (1 == shutdown_flag) || panel_esd_check_failed) {
 				tp_irq = gpio_to_irq(377);
@@ -762,8 +760,9 @@ if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel") \
 			DSI_INFO("[%s][TP] pull up lcd reset when enable screen off gesture for TD.\n", __func__);
 			gpio_set_value(panel->reset_config.reset_gpio, 1);
 	} else if (!strcmp(panel->name, "AC190 P 4 A0013 video mode dsi panel") ||
-			   !strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel") ||
-			   !strcmp(panel->name, "ili9883c boe alpha b4 video mode dsi panel")) {
+				!strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel") ||
+				!strcmp(panel->name, "ili9883c boe alpha b4 video mode dsi panel") ||
+				!strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel")) {
 		if (gpio_is_valid(panel->reset_config.reset_gpio) &&
 					!panel->reset_gpio_always_on)
 			gpio_set_value(panel->reset_config.reset_gpio, 1);
@@ -775,8 +774,7 @@ if (!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel") \
 			gpio_set_value(panel->reset_config.reset_gpio, 1);
 			DSI_INFO("[%s][TP] pull up lcd reset when enable screen off gesture for TD.\n", __func__);
 	} else if ((!strcmp(panel->name, "td4160 hx alpha l4 video mode dsi panel") ||
-		        !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel") ||
-		        !strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel")) && (is_pd_with_guesture == true)) {
+		        !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")) && (is_pd_with_guesture == true)) {
 		if (gpio_is_valid(panel->reset_config.reset_gpio) && !panel->reset_gpio_always_on) {
 			gpio_set_value(panel->reset_config.reset_gpio, 1);
 			DSI_INFO("[%s][TP] pull up lcd reset when enable screen off gesture for TD.\n", __func__);
@@ -6286,15 +6284,17 @@ int dsi_panel_disable(struct dsi_panel *panel)
 		if (!strcmp(panel->name, "AC190 P 4 A0013 video mode dsi panel")
 			||  !strcmp(panel->name, "AC190 P D A0018 video mode dsi panel")
 			||  !strcmp(panel->name, "AC190 P D 1 A0018 video mode dsi panel")
-			||  !strcmp(panel->name, "td4160 hx alpha l4 video mode dsi panel")
-			||  !strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel")
 			||  !strcmp(panel->name, "td4160 hx alpha b4 video mode dsi panel")
-			||  !strcmp(panel->name, "ili9883c boe alpha b4 video mode dsi panel")) {
+			||  !strcmp(panel->name, "ili9883c boe alpha b4 video mode dsi panel")
+			||  !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")
+			||  !strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel")) {
 			usleep_range(5000, 5000);
 		}
 
 		if (!strcmp(panel->name, "AE178 p 4 A0030 video mode panel")
-			||  !strcmp(panel->name, "AE178 p 7 A0030 video mode panel")) {
+			||  !strcmp(panel->name, "AE178 p 7 A0030 video mode panel")
+			||  !strcmp(panel->name, "ili9883c boe alpha l4 video mode dsi panel")
+			||  !strcmp(panel->name, "td4160 hx alpha l4 video mode dsi panel")) {
 			if(tp_gesture_enable_notifier && tp_gesture_enable_notifier(0)) {
 				is_pd_with_guesture = true;
 				DSI_INFO("[%s][TP] set is_pd_with_guesture to true, shutdown_flag status is %d\n", __func__, shutdown_flag);

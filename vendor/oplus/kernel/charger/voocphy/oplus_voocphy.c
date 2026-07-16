@@ -3454,6 +3454,7 @@ int oplus_voocphy_reply_adapter_mesg(struct oplus_voocphy_manager *chip)
 	switch (chip->fastchg_adapter_ask_cmd) {
 	case VOOC_CMD_ASK_FASTCHG_ORNOT:
 		status = oplus_voocphy_handle_ask_fastchg_ornot_cmd(chip);
+		chip->twice_request_current_enable = true;
 		break;
 	case VOOC_CMD_IDENTIFICATION:
 		status = oplus_voocphy_handle_identification_cmd(chip);
@@ -3481,6 +3482,10 @@ int oplus_voocphy_reply_adapter_mesg(struct oplus_voocphy_manager *chip)
 		break;
 	case VOOC_CMD_GET_BATT_VOL:
 		status = oplus_voocphy_handle_get_batt_vol_cmd(chip);
+		if (chip->twice_request_current_enable) {
+			chip->twice_request_current_enable = false;
+			chip->ap_need_change_current = 5;
+		}
 		break;
 	case VOOC_CMD_NULL:
 	case VOOC_CMD_RECEVICE_DATA_0E:

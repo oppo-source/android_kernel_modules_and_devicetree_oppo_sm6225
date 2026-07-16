@@ -697,7 +697,7 @@ int cam_hfi_init(uint8_t event_driven_mode, struct hfi_mem_info *hfi_mem,
 	mutex_lock(&hfi_msg_q_mutex);
 
 	if (!g_hfi) {
-		g_hfi = kzalloc(sizeof(struct hfi_info), GFP_KERNEL);
+		g_hfi = kvzalloc(sizeof(struct hfi_info), GFP_KERNEL);
 		if (!g_hfi) {
 			rc = -ENOMEM;
 			goto alloc_fail;
@@ -927,7 +927,7 @@ int cam_hfi_init(uint8_t event_driven_mode, struct hfi_mem_info *hfi_mem,
 
 	return rc;
 regions_fail:
-	kfree(g_hfi);
+	kvfree(g_hfi);
 	g_hfi = NULL;
 alloc_fail:
 	mutex_unlock(&hfi_cmd_q_mutex);

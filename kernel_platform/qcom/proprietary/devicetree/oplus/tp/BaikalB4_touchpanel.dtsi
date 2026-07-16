@@ -1,3 +1,10 @@
+&qupv3_se2_spi{
+	/delete-property/ pinctrl-0;
+	/delete-property/ pinctrl-1;
+	pinctrl-0 = <&qupv3_se2_spi_active>;
+	pinctrl-1 = <&qupv3_se2_spi_sleep>, <&qupv3_se2_spi_cs_sleep>;
+};
+
 &tlmm {
 	ts_int_active {
  		ts_int_active: ts_int_active {
@@ -118,7 +125,7 @@
 		touchpanel,irq_need_dev_resume_time = <500>;
 		touchpanel,max-num-support = <10>;
 		touchpanel,tx-rx-num = <18 32>;
-		touchpanel,panel-coords = <2880 6280>;
+		touchpanel,panel-coords = <11520 25120>;
 		touchpanel,display-coords = <720 1570>;
 		touchpanel,touchmajor-limit = <0 54>;
 		touchpanel,single-optimized-time = <8>;
@@ -127,8 +134,8 @@
 
 		panel_type = <19>;
 		firmware_name = "AC349tI0";
-		platform_support_project = <25031 25248 25249 25258 25259 25251 25253 25310 25243>;
-		platform_support_project_dir = <25031 25031 25031 25031 25031 25031 25031 25031 25031>;
+		platform_support_project = <25031 25248 25249 25258 25259 25251 25253 25310 25243 25280 25891>;
+		platform_support_project_dir = <25031 25031 25031 25031 25031 25031 25031 25031 25031 25031 25031>;
 		platform_support_project_commandline = "mdss_dsi_panel_AC349_P_4_A0030_video";
 
 		incell_screen;
@@ -153,6 +160,7 @@
 		exception_upload_support;
 		tp_data_record_support;
 		waterproof_support;
+		disable_touch_event_support;
 
 		/*
 		*Virtual Key Config:
@@ -192,9 +200,10 @@
 		pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
 
 		touchpanel,irq_need_dev_resume_time = <500>;
+		touchpanel,bus_ready_wait_dev_spend_time = <1000>;
 		touchpanel,max-num-support = <10>;
 		touchpanel,tx-rx-num = <18 32>;
-		touchpanel,panel-coords = <2880 6280>;
+		touchpanel,panel-coords = <11520 25120>;
 		touchpanel,display-coords = <720 1570>;
 		touchpanel,touchmajor-limit = <0 54>;
 		touchpanel,single-optimized-time = <8>;
@@ -202,10 +211,11 @@
 		touchpanel,sensitive-level = <255 1 2 3 4 5>;
 		touchpanel,int-mode = <1>;
 
+		touchpanel,tp_ic_type = <2>;
 		panel_type = <15>;
 		firmware_name = "0xAC349CT";
-		platform_support_project = <25031 25248 25249 25258 25259 25251 25253 25310 25243>;
-		platform_support_project_dir = <25031 25031 25031 25031 25031 25031 25031 25031 25031>;
+		platform_support_project = <25031 25248 25249 25258 25259 25251 25253 25310 25243 25280 25891>;
+		platform_support_project_dir = <25031 25031 25031 25031 25031 25031 25031 25031 25031 25031 25031>;
 		platform_support_project_commandline = "mdss_dsi_panel_AC349_P_D_A0018_video";
 
 		incell_screen;
@@ -231,6 +241,8 @@
 		lpwg_fw_support;
 		game_switch_support;
 		waterproof_support;
+		disable_touch_event_support;
+		bus_ready_check_support;
 
 		/*
 		*Virtual Key Config:
@@ -248,6 +260,56 @@
 		touchpanel,button-type = <4>;
 		touchpanel.button-TRx = <0 0>;
 	};
+};
+
+&tlmm {
+//#ifdef OPLUS_FEATURE_TP_BASIC
+	qupv3_se2_spi_pins: qupv3_se2_spi_pins {
+		qupv3_se2_spi_active: qupv3_se2_spi_active {
+			mux {
+				pins = "gpio6", "gpio7",
+					"gpio71", "gpio80";
+				function = "qup2";
+			};
+
+			config {
+				pins = "gpio6", "gpio7",
+					"gpio71", "gpio80";
+				drive-strength = <6>;
+				bias-disable;
+			};
+		};
+
+		qupv3_se2_spi_sleep: qupv3_se2_spi_sleep {
+			mux {
+				pins = "gpio6", "gpio7",
+					"gpio71";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio6", "gpio7",
+					"gpio71";
+				drive-strength = <6>;
+				//bias-disable;
+				bias-pull-down;
+			};
+		};
+		qupv3_se2_spi_cs_sleep: qupv3_se2_spi_cs_sleep {
+			mux {
+				pins = "gpio80";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio80";
+				drive-strength = <6>;
+				//bias-disable;
+				output-high;
+			};
+		};
+	};
+//#endif /*OPLUS_FEATURE_TP_BASIC*/
 };
 
 #include "BaikalB4-25031-tpfw.dtsi"
@@ -273,9 +335,9 @@
 				 use_tristate_gpio;
 				 compatible = "hw-match, main-sub";
 				 aboard-gpio0 = <&pm6125_gpios 2 0>;
-				 aboard-patterns = <0 0 0 0 0>;    /*0[high-resistance] 1[pull-down] 2[pull-up]*/
+				 aboard-patterns = <0 0 0 0 0 0 0 0>;    /*0[high-resistance] 1[pull-down] 2[pull-up]*/
 				 /*main board*/
-				 match-projects = <25031 25258 25251 25253 25310>;
+				 match-projects = <25031 25258 25243 25280 25251 25253 25310 25891>;
 		 };
 	};
      gpio_keys {

@@ -60,17 +60,39 @@
 					15 00 00 00 78 00 02 11 00
 					15 00 00 00 14 00 02 29 00
 				];
+				qcom,mdss-dsi-backlight-gamma-enter-command = [
+					15 01 00 00 00 00 02 B0 00
+					39 01 00 00 00 00 4D C7 02 AF 02 B6 02 C3 02 D0 02 E8 02 CD 02 70 02 2E 01 FA 01 E7 01 D7 01 D3 01 D8 01 C9 01 CC 02 4E 02 79 02 A1 02 B4 02 AF 02 B6 02 C3 02 D0 02 E8 02 CD 02 70 02 2E 01 FA 01 E7 01 D7 01 D3 01 D8 01 C9 01 CC 02 4E 02 88 02 D9 02 FC
+				];
+				qcom,mdss-dsi-backlight-gamma-exit-command = [
+					15 01 00 00 00 00 02 B0 00
+					39 01 00 00 00 00 4D C7 00 6C 00 A0 00 BD 00 F8 01 55 01 7D 01 79 01 84 01 83 01 8D 01 94 01 9C 01 AA 01 A0 01 B2 02 3C 02 6C 02 8E 02 93 00 24 00 45 00 BB 00 F8 01 55 01 7D 01 79 01 84 01 83 01 8D 01 94 01 9C 01 AA 01 A0 01 B2 02 3C 02 6C 02 93 02 DB
+				];
 				qcom,mdss-dsi-off-command = [
 					15 01 00 00 14 00 02 28 00
 					15 01 00 00 78 00 02 10 00
 				];
+				qcom,mdss-dsi-cabc-mode1-command = [
+					15 01 00 00 00 00 02 55 01
+				];
+				qcom,mdss-dsi-cabc-mode2-command = [
+					15 01 00 00 00 00 02 55 02
+				];
+				qcom,mdss-dsi-cabc-off-command = [
+					15 01 00 00 00 00 02 55 03
+				];
 				qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-backlight-gamma-enter-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-backlight-gamma-exit-command-state = "dsi_hs_mode";
 				qcom,mdss-dsi-off-command-state = "dsi_lp_mode";
+				qcom,mdss-dsi-cabc-mode1-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-mode2-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-mode3-command-state = "dsi_hs_mode";
+				qcom,mdss-dsi-cabc-off-command-state = "dsi_hs_mode";
 			};
 		};
 	};
 };
-
 &dsi_panel_AC349_P_D_A0018_video {
 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_no_labibb>;
 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
@@ -87,15 +109,13 @@
 	qcom,platform-panel-P5V-gpio = <&tlmm 105 0>;
 	qcom,platform-panel-N5V-gpio = <&tlmm 54 0>;
 	oplus,mdss-dsi-vspn-voltage = <5500>;
-
-
+	oplus,mdss-dsi-gamma-switch-enabled;
 	qcom,dsi-supported-dfps-list = <120 90 60>;
 	qcom,mdss-dsi-pan-enable-dynamic-fps;
 	qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_vfp";
 	qcom,mdss-dsi-min-refresh-rate = <60>;
 	qcom,mdss-dsi-max-refresh-rate = <120>;
 	oppo,dfps-idle-off;
-
 	qcom,esd-check-enabled;
 	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
 	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0A];
@@ -103,10 +123,8 @@
 	qcom,mdss-dsi-panel-status-value = <0x9C>;
 	qcom,mdss-dsi-panel-on-check-value = <0x9C>;
 	qcom,mdss-dsi-panel-status-read-length = <1>;
-
 	/* MIPI dyn clk */
-	qcom,dsi-dyn-clk-enable;
-
+	//qcom,dsi-dyn-clk-enable;
 	qcom,dsi-select-clocks = "pll_byte_clk0", "pll_dsi_clk0";
 	qcom,mdss-dsi-display-timings {
 		timing@0 {

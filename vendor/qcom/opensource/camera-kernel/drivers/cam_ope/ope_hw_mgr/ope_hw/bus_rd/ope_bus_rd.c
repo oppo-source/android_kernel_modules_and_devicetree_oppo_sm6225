@@ -723,7 +723,7 @@ static int cam_ope_bus_rd_probe(struct ope_hw *ope_hw_info,
 		CAM_ERR(CAM_OPE, "Invalid ope_hw_info");
 		return -EINVAL;
 	}
-	bus_rd = kzalloc(sizeof(struct ope_bus_rd), GFP_KERNEL);
+	bus_rd = kvzalloc(sizeof(struct ope_bus_rd), GFP_KERNEL);
 	if (!bus_rd) {
 		CAM_ERR(CAM_OPE, "Out of memory");
 		return -ENOMEM;

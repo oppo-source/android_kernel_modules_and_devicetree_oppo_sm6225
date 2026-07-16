@@ -3,7 +3,7 @@
 	.need_boost_check = 1,
 	.flashprobeinfo =
 	{
-		.projID = {25665,25666,25667},
+		.projID = {25665,25666,25667,25695,25696,25697},
 		.flash_name = "sc6607_MOSCOW",
 		.slave_write_address = 0x64,
 		.chip_id_slave_address = 0x61,

@@ -40,6 +40,7 @@
 #define OPLUS_OFP_FP_TYPE_ULTRASONIC						(BIT(6))
 #define OPLUS_OFP_FP_TYPE_ULTRA_LOW_POWER_AOD				(BIT(7))
 #define OPLUS_OFP_FP_TYPE_VIDEO_MODE_AOD_FOD				(BIT(9))
+#define OPLUS_OFP_FP_TYPE_LCD_AOD                           (BIT(12))
 /* get fp type config */
 #define OPLUS_OFP_GET_LCD_CAPACITIVE_CONFIG(fp_type)		((fp_type) & OPLUS_OFP_FP_TYPE_LCD_CAPACITIVE)
 #define OPLUS_OFP_GET_OLED_CAPACITIVE_CONFIG(fp_type)		((fp_type) & OPLUS_OFP_FP_TYPE_OLED_CAPACITIVE)
@@ -50,6 +51,7 @@
 #define OPLUS_OFP_GET_ULTRASONIC_CONFIG(fp_type)			((fp_type) & OPLUS_OFP_FP_TYPE_ULTRASONIC)
 #define OPLUS_OFP_GET_ULTRA_LOW_POWER_AOD_CONFIG(fp_type)	((fp_type) & OPLUS_OFP_FP_TYPE_ULTRA_LOW_POWER_AOD)
 #define OPLUS_OFP_GET_VIDEO_MODE_AOD_FOD_CONFIG(fp_type)	((fp_type) & OPLUS_OFP_FP_TYPE_VIDEO_MODE_AOD_FOD)
+#define OPLUS_OFP_GET_LCD_AOD_CONFIG(fp_type)				((fp_type) & OPLUS_OFP_FP_TYPE_LCD_AOD)
 /* dbv level */
 #define OPLUS_OFP_900NIT_DBV_LEVEL 							(0x0DBB)
 
@@ -337,6 +339,10 @@ bool oplus_ofp_is_supported(void)
 		return false;
 	}
 
+	if (oplus_ofp_lcd_aod_is_enabled()) {
+		OFP_DEBUG("ofp is not support, lcd aod supported\n");
+		return false;
+	}
 	/* global config, support oled panel */
 	return (bool)(!OPLUS_OFP_GET_LCD_CAPACITIVE_CONFIG(p_oplus_ofp_params->fp_type));
 }
@@ -458,6 +464,18 @@ bool oplus_ofp_video_mode_aod_fod_is_enabled(void)
 	}
 
 	return (bool)(OPLUS_OFP_GET_VIDEO_MODE_AOD_FOD_CONFIG(p_oplus_ofp_params->fp_type));
+}
+
+bool oplus_ofp_lcd_aod_is_enabled(void)
+{
+	struct oplus_ofp_params *p_oplus_ofp_params = oplus_ofp_get_params(oplus_ofp_display_id);
+
+	if (!p_oplus_ofp_params) {
+		OFP_ERR("Invalid params\n");
+		return false;
+	}
+
+	return (bool)(OPLUS_OFP_GET_LCD_AOD_CONFIG(p_oplus_ofp_params->fp_type));
 }
 
 bool oplus_ofp_get_hbm_state(void)
@@ -3927,10 +3945,12 @@ int oplus_ofp_set_aod_light_mode(void *buf)
 	OFP_INFO("aod_light_mode:%u\n", p_oplus_ofp_params->aod_light_mode);
 	OPLUS_OFP_TRACE_INT("oplus_ofp_aod_light_mode", p_oplus_ofp_params->aod_light_mode);
 
-	if (!oplus_ofp_is_supported()) {
+	if (oplus_ofp_lcd_aod_is_enabled()) {
+	} else if (!oplus_ofp_is_supported()) {
 		OFP_DEBUG("aod is not supported\n");
 		return 0;
-	} else if (!oplus_ofp_get_aod_state()) {
+	}
+	if (!oplus_ofp_get_aod_state()) {
 		OFP_ERR("not in aod mode, should not set aod_light_mode\n");
 		return 0;
 	} else if (oplus_ofp_get_hbm_state()) {

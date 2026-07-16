@@ -11,6 +11,14 @@
 #include "cam_debug_util.h"
 #include "cam_cpas_api.h"
 
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+#define FWLINK_FLAG_CYCLE                BIT(0)
+static int camera_platform_compare_dev(struct device *dev, const void *data)
+{
+	return platform_bus_type.match(dev, (struct device_driver *) data);
+}
+#endif
+
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0)
 int cam_reserve_icp_fw(struct cam_fw_alloc_info *icp_fw, size_t fw_length)
 {
@@ -180,7 +188,7 @@ void cam_cpastop_scm_write(struct cam_cpas_hw_errata_wa *errata_wa)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
 void cam_free_clear(const void * ptr)
 {
-	kfree_sensitive(ptr);
+	kvfree(ptr);
 }
 #else
 void cam_free_clear(const void * ptr)
@@ -250,4 +258,36 @@ void cam_compat_util_put_dmabuf_va(struct dma_buf *dmabuf, void *vaddr)
 	dma_buf_vunmap(dmabuf, vaddr);
 }
 
+#endif
+
+#ifdef OPLUS_FEATURE_CAMERA_COMMON
+// check kernel_platform/msm-kernel/drivers/base/core.c
+// device_links_check_suppliers & fwnode_links_check_suppliers
+void dev_defer_supplier_debug(void *drv_ptr)
+{
+	struct device *match_dev = NULL;
+	match_dev = bus_find_device(&platform_bus_type, NULL, drv_ptr, &camera_platform_compare_dev);
+	if (match_dev) {
+		struct device_link *link;
+		if (match_dev->fwnode) {
+			struct fwnode_link *fw_link;
+			struct fwnode_handle *fwnode = match_dev->fwnode;
+			list_for_each_entry(fw_link, &fwnode->suppliers, c_hook) {
+				dev_err(match_dev, "supplier %pfwP needflag=%x",
+					fw_link->supplier, FWLINK_FLAG_CYCLE);
+			}
+		}
+		list_for_each_entry(link, &match_dev->links.suppliers, c_node) {
+			if (!(link->flags & DL_FLAG_MANAGED))
+				continue;
+
+			if (link->status != DL_STATE_AVAILABLE &&
+					!(link->flags & DL_FLAG_SYNC_STATE_ONLY)) {
+				dev_err(match_dev, "probe deferral - supplier %s not ready\n",
+						dev_name(link->supplier));
+			}
+		}
+	}
+	put_device(match_dev);
+}
 #endif

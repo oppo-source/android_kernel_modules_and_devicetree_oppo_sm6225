@@ -46,4 +46,5 @@ oplus_k6789v1_user_config = {
     "CONFIG_OPLUS_CHG_RECOVERY": "y",
     "CONFIG_OPLUS_CHG_STATE_KEEP": "y",
     "CONFIG_OPLUS_DEBUG_AUTH": "y",
+    "CONFIG_OPLUS_FEATURE_OLC": "m",
 }

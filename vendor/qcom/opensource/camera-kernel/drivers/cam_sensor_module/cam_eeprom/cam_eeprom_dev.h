@@ -45,7 +45,8 @@ enum qvga_state_t {
 };
 
 enum qvga_sensor_t {
-    QVGA_GC6133 = 1,
+    QVGA_GC6133     = 0,
+    QVGA_SC080CS    = 1,
     QVGA_NUM,
 };
 

@@ -197,7 +197,9 @@ int oplus_panel_features_config(struct dsi_panel *panel)
 	}
 
 	if(!strcmp(panel->name, "AC166 P 3 A0013 video mode dsi panel")
-		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")) {
+		|| !strcmp(panel->name, "AC166 P D A0018 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P 4 A0030 video mode dsi panel")
+		|| !strcmp(panel->name, "AC349 P D A0018 video mode dsi panel")) {
 		LCD_INFO("%s panel support two gamma \n", panel->name);
 		panel->oplus_priv.gamma_switch_enable = utils->read_bool(utils->data,
 			"oplus,mdss-dsi-gamma-switch-enabled");
@@ -240,6 +242,11 @@ int oplus_panel_features_config(struct dsi_panel *panel)
 		"oplus,dsi-set-backlight-not-do-esd-reg-read-enable");
 	LCD_INFO("oplus,dsi-set-backlight-not-do-esd-reg-read-enable: %s\n",
 		panel->oplus_priv.set_backlight_not_do_esd_reg_read_enable ? "true" : "false");
+
+	panel->oplus_priv.restore_cabc_enable = utils->read_bool(utils->data,
+		"oplus,restore-cabc-enable");
+	LCD_INFO("oplus,restore-cabc-enable: %s\n",
+		panel->oplus_priv.restore_cabc_enable ? "true" : "false");
 
 	return 0;
 }
@@ -412,7 +419,7 @@ void oplus_panel_update_backlight(struct dsi_panel *panel,
 
 #ifdef OPLUS_FEATURE_DISPLAY
 	if (panel->oplus_priv.dimming_setting_before_bl_0_enable) {
-		if (bl_lvl == 0) {
+		if ((bl_lvl == 0) && (panel->power_mode == SDE_MODE_DPMS_OFF)) {
 			rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_DIMMING_SETTING);
 		}
 	}

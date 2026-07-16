@@ -34,5 +34,6 @@ enum {
 
 int oplus_display_panel_get_cabc(void *data);
 int oplus_display_panel_set_cabc(void *data);
+int panel_cabc_restore(struct dsi_panel *panel);
 
 #endif /*_OPLUS_DISPLAY_PANEL_CABC_H_*/

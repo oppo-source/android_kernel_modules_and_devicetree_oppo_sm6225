@@ -7,13 +7,14 @@
 #include "nfc/Baikal-B4-nfc-pn560_25258.dtsi"
 #include "sensor/Baikal-B4-25031-sensor-mtp.dtsi"
 #include "oplus_chg/oplus-chg-bb4-15w.dtsi"
-#include "oplus_breathing/Baikal-B4-breathing_leds.dtsi"
 
 / {
     model = "Qualcomm Technologies, Inc. KHAJE QRD nopmi overlay, Baikal-B4";
-    oplus,dtsi_no = <25243>;
-    oplus,project-id = <25243>;
+    oplus,dtsi_no = <25243 25244 25260>;
+    oplus,project-id = <25243 25244 25260>;
+    oplus,gauge-id = <0>;
 };
+
 &spmi_bus {
 	qcom,pm6125@0 {
 		qcom,power-on@800 {

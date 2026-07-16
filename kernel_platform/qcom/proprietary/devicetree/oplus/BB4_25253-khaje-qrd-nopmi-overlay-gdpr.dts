@@ -7,7 +7,7 @@
 #include "nfc/Baikal-B4-nfc-pn560_25251_25253.dtsi"
 #include "sensor/Baikal-B4-25251-sensor-mtp.dtsi"
 #include "oplus_chg/oplus-chg-25253-gdpr.dtsi"
-#include "oplus_chg/oplus-chg-25251-25253-pps.dtsi"
+#include "oplus_chg/oplus-chg-25253-gdpr-pps.dtsi"
 
 
 &qupv3_se1_i2c {

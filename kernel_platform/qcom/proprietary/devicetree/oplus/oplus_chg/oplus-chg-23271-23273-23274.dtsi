@@ -1035,6 +1035,8 @@
 
 		oplus,uart_tx-gpio = <&tlmm 12 0x00>;
 		oplus,uart_rx-gpio = <&tlmm 13 0x00>;
+
+		oplus,batt_full_time = <60>;
 	};
 };
 

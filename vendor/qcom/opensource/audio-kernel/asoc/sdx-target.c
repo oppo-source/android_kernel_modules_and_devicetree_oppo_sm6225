@@ -134,7 +134,11 @@ static struct wcd_mbhc_config wcd_mbhc_cfg = {
 };
 
 /* set audio task affinity to core 1 & 2 */
+#ifndef OPLUS_ARCH_EXTENDS
 static const unsigned int audio_core_list[] = {1, 2};
+#else /* OPLUS_ARCH_EXTENDS */
+static const unsigned int audio_core_list[] = {0, 1, 2};
+#endif /* OPLUS_ARCH_EXTENDS */
 static cpumask_t audio_cpu_map = CPU_MASK_NONE;
 static struct dev_pm_qos_request *msm_audio_req = NULL;
 

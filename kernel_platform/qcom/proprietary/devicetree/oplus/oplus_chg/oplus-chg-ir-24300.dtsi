@@ -862,8 +862,8 @@
 		io-channel-names = "usbtemp_r_v_chan",
 				"usbtemp_l_v_chan";
 		dep-supply = <&pm6125_vadc>;
-        //ntc switch gpio
-        qcom,ntc-switch-gpio = <&tlmm 85 0x00>;
+		/* ntc switch gpio */
+		qcom,ntc-switch-gpio = <&tlmm 85 0x00>;
 
 		pinctrl-names = "dischg_enable", "dischg_disable";
 
@@ -1110,6 +1110,7 @@
 
 		oplus,uart_tx-gpio = <&tlmm 12 0x00>;
 		oplus,uart_rx-gpio = <&tlmm 13 0x00>;
+		oplus,batt_full_time = <60>;
 	};
 };
 &usb0 {

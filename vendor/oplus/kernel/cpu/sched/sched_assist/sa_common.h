@@ -33,6 +33,10 @@
 #define DEBUG_WARN_ON(x)
 #endif
 
+#include <linux/blkdev.h>
+struct blk_mq_tags;
+struct blk_mq_alloc_data;
+
 #define ux_err(fmt, ...) \
 		pr_err("[sched_assist][%s]"fmt, __func__, ##__VA_ARGS__)
 #define ux_warn(fmt, ...) \
@@ -835,5 +839,8 @@ void android_vh_sched_setaffinity_early_handler(void *unused, struct task_struct
 #endif
 void android_rvh_set_cpus_allowed_by_task_handler(void *unused, const struct cpumask *cpu_valid_mask, const struct cpumask *new_mask,
 				struct task_struct *p, unsigned int *dest_cpu);
+
+void android_vh_blk_rq_ctx_init_handler(void *unused, struct request *rq, struct blk_mq_tags *tags, struct blk_mq_alloc_data *data, u64 alloc_time_ns);
+
 extern struct notifier_block process_exit_notifier_block;
 #endif /* _OPLUS_SA_COMMON_H_ */

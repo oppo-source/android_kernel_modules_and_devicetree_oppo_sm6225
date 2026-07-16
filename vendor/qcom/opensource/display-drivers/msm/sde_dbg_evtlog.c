@@ -63,7 +63,6 @@ void sde_evtlog_log(struct sde_dbg_evtlog *evtlog, const char *name, int line,
 	va_list args;
 	struct sde_dbg_evtlog_log *log;
 	u32 index;
-	return;
 
 	if (!evtlog || !sde_evtlog_is_enabled(evtlog, flag) ||
 			_sde_evtlog_is_filtered_no_lock(evtlog, name))

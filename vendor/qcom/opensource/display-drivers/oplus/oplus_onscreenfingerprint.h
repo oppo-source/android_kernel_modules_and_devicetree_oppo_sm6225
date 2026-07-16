@@ -170,6 +170,7 @@ bool oplus_ofp_local_hbm_is_enabled(void);
 bool oplus_ofp_ultrasonic_is_enabled(void);
 bool oplus_ofp_ultra_low_power_aod_is_enabled(void);
 bool oplus_ofp_video_mode_aod_fod_is_enabled(void);
+bool oplus_ofp_lcd_aod_is_enabled(void);
 bool oplus_ofp_get_hbm_state(void);
 bool oplus_ofp_get_ultra_low_power_aod_state(void);
 int oplus_ofp_property_update(void *sde_connector, void *sde_connector_state, int prop_id, uint64_t prop_val);
