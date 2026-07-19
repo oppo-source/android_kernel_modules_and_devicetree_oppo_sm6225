@@ -1041,6 +1041,10 @@ exit:
 void zeroflash_download_firmware_work(struct work_struct *work)
 {
 	struct syna_tcm_hcd *tcm_hcd = g_zeroflash_hcd->tcm_hcd;
+
+	cancel_work_sync(&g_zeroflash_hcd->config_work);
+	flush_workqueue(g_zeroflash_hcd->config_workqueue);
+
 	if (tcm_hcd->id_info.mode == MODE_ROMBOOTLOADER) {
 		zeroflash_do_romboot_firmware_download();
 	} else {

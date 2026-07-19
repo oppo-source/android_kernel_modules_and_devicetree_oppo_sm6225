@@ -2755,6 +2755,12 @@ int wcd_mbhc_init(struct wcd_mbhc *mbhc, struct snd_soc_component *component,
 	const char *mbhc_headset_detect_mode = "oplus,mbhc-headset-detect-mode";
 	#endif /* OPLUS_ARCH_EXTENDS */
 
+	#ifdef OPLUS_ARCH_EXTENDS
+	/* add for avoid abnormal wcd status */
+	const char *mbhc_avoid_abnormal_wcd_status = "oplus,mbhc-avoid-abnormal-wcd-status";
+	u32 avoid_abnormal_wcd_status = 0;
+	#endif /* OPLUS_ARCH_EXTENDS */
+
 	pr_debug("%s: enter\n", __func__);
 
 	ret = of_property_read_u32(card->dev->of_node, hph_switch, &hph_swh);
@@ -2866,6 +2872,24 @@ int wcd_mbhc_init(struct wcd_mbhc *mbhc, struct snd_soc_component *component,
 			mbhc->headset_detect_mode = 1;
 		} else {
 			mbhc->headset_detect_mode = 0;
+		}
+	}
+	#endif /* OPLUS_ARCH_EXTENDS */
+
+	#ifdef OPLUS_ARCH_EXTENDS
+	/* add for avoid abnormal wcd status */
+	ret = of_property_read_u32(card->dev->of_node, mbhc_avoid_abnormal_wcd_status,
+				&avoid_abnormal_wcd_status);
+	if (ret) {
+		dev_info(card->dev,
+			"%s: missing %s in dt node\n", __func__, mbhc_avoid_abnormal_wcd_status);
+		mbhc->avoid_abnormal_wcd_status = 0;
+	} else {
+		dev_info(card->dev, "%s: avoid_abnormal_wcd_status %d\n", __func__, avoid_abnormal_wcd_status);
+		if (avoid_abnormal_wcd_status) {
+			mbhc->avoid_abnormal_wcd_status = 1;
+		} else {
+			mbhc->avoid_abnormal_wcd_status = 0;
 		}
 	}
 	#endif /* OPLUS_ARCH_EXTENDS */

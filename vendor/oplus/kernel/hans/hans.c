@@ -232,6 +232,11 @@ static int hans_handler(struct sk_buff *skb, struct genl_info *info)
 				if (CHECK_KERN_SUPPORT_CGRPV2 == data->target_uid) {
 					hans_kern_support_cgrpv2();
 				} else {
+					if (len < sizeof(struct hans_message)) {
+						printk(KERN_ERR "%s: ofreezer 1.0 native, uid = %d, type = %d\n", __func__, data->target_uid, data->type);
+						hans_check_frozen_transcation(data->target_uid, data->type, 0);
+						break;
+					}
 					if (printk_timed_ratelimit(&log_jiffies, PRINT_LIMIT)) {
 						printk(KERN_ERR "%s: --> FROZEN_TRANS, uid = %d, frozen_check_type = %d\n", __func__, data->target_uid, data->persistent);
 					}

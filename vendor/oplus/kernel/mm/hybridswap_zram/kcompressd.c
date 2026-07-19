@@ -15,6 +15,7 @@
 #include <linux/delay.h>
 #include <linux/proc_fs.h>
 #include <linux/vm_event.h>
+#include <linux/mmzone.h>
 
 #include "kcompressd.h"
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_MM_OSVELTE)
@@ -59,7 +60,7 @@ enum vm_kcomp_event_item {
 char *vm_kcomp_event_text[NR_VM_KCOMP_EVENT_ITEMS] = {
 	"kcomp_write_success_count",
 	"kcomp_write_fail_count",
-	"kcomp_write_ship_shmem_count",
+	"kcomp_write_skip_shmem_count",
 };
 
 struct vm_kcomp_event_state {
@@ -307,6 +308,12 @@ int schedule_bio_write(void *mem, struct bio *bio, compress_callback cb)
 		return -EBUSY;
 	}
 
+	/* Exclude CMA pages */
+	if (get_pageblock_migratetype(page) == MIGRATE_CMA) {
+		bio_put(bio);
+		return -EBUSY;
+	}
+
 	if(op_is_sync(bio->bi_opf)){
 		bio_put(bio);
 		pr_warn("kcompressd : op should not be sync, bio->bi_opf:%d\n", bio->bi_opf);
@@ -360,7 +367,8 @@ bool should_fallback_to_submit_bio(struct page *page, unsigned int op)
 		if (!page->mapping)
 			return false;
 
-		if (kcompressd_enabled() && current_is_kswapd())
+		if (kcompressd_enabled() && current_is_kswapd()
+		&& get_pageblock_migratetype(page) != MIGRATE_CMA)
 			return true;
 	}
 

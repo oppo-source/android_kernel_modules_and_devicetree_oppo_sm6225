@@ -2461,6 +2461,8 @@ static int init_parse_dts(struct device *dev, struct touchpanel_data *ts)
 
 	ts->tp_lcd_suspend_in_lp_support = of_property_read_bool(np, "tp_lcd_suspend_in_lp_support");
 	TP_INFO(ts->tp_index, "tp_lcd_suspend_in_lp_support is %d\n", ts->tp_lcd_suspend_in_lp_support);
+	ts->ili_use_new_driver_version = of_property_read_bool(np, "ili_use_new_driver_version");
+	TP_INFO(ts->tp_index, "ili_use_new_driver_version is %d\n", ts->ili_use_new_driver_version);
 
 	rc = of_property_read_u32(np, "vdd_2v8_volt", &ts->hw_res.vdd_volt);
 	if (rc < 0) {
@@ -5156,6 +5158,7 @@ static void lcd_on_event(struct touchpanel_data *ts)
 
 static void lcd_other_event(int *blank, struct touchpanel_data *ts)
 {
+	TP_INFO(ts->tp_index, "start in lcd_other_event blank :0x%x\n", *blank);
 	if (*blank == LCD_CTL_TP_LOAD_FW) {
 		lcd_tp_load_fw(ts->tp_index);
 	} else if (*blank == LCD_CTL_RST_ON) {
@@ -5182,6 +5185,7 @@ static void lcd_other_event(int *blank, struct touchpanel_data *ts)
 		ts->incell_aod_flag = true;
 		ts->is_suspended = 1;
 	}
+	TP_INFO(ts->tp_index, "end in lcd_other_event blank :0x%x\n", *blank);
 };
 
 #if IS_ENABLED(CONFIG_QCOM_PANEL_EVENT_NOTIFIER)

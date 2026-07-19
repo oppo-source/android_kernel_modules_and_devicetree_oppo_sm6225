@@ -39,3 +39,4 @@ obj-y += dynamic_readahead/
 obj-y += kswapd_opt/
 obj-$(CONFIG_LOOK_AROUND) += memload_opt/look_around/
 obj-y += mglru_opt/
+obj-y += ezreclaimd/

@@ -1084,6 +1084,11 @@ static int sgm41515_reg_dump(struct oplus_chg_ic_dev *ic_dev)
 	}
 	chip = oplus_chg_ic_get_drvdata(ic_dev);
 
+	if (atomic_read(&chip->charger_suspended) == 1) {
+		chg_err("charger is suspended, skip reg dump\n");
+		return 0;
+	}
+
 	mutex_lock(&chip->i2c_lock);
 	rc = regmap_bulk_read(chip->regmap, 0x00, buf, ARRAY_SIZE(buf));
 	mutex_unlock(&chip->i2c_lock);
@@ -3967,6 +3972,8 @@ static void sgm41515_shutdown(struct i2c_client *client)
 						REG00_SGM41515_HIZ_MODE_DISABLE);
 	sgm41515_set_stat_dis(chip, true);
 	sgm41515_enable_charging(chip);
+
+	atomic_set(&chip->charger_suspended, 1);
 }
 
 static const struct of_device_id sgm41515_match[] = {

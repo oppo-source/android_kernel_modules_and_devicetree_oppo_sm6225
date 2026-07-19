@@ -1057,12 +1057,16 @@ static int battery_type_check(struct cw_battery *cw_bat)
 								length);
 	}
 
-        value = get_batt_id_chan_value(cw_bat);
-	if (value <= 0) {
+	value = get_batt_id_chan_value(cw_bat);
+	if (value == -EPROBE_DEFER) {
+		chg_err("[OPLUS_CHG][%s]: IIO channel not ready, deferring probe\n", __func__);
+		return value;
+	} else if (value <= 0) {
 		chg_err("[OPLUS_CHG][%s]: iio_read_channel_processed  get error\n", __func__);
 		value = NTC_DEFAULT_VOLT_VALUE_MV;
 		return battery_type;
 	}
+
 	value = value / THERMAL_TEMP_UNIT;
 	for (i = 0; i < BATTID_ARR_LEN; i++) {
 		if (value >= cw_bat->batid_voltage_range[i][0] && value <= cw_bat->batid_voltage_range[i][1]) {
@@ -1952,7 +1956,7 @@ static int cw2217_probe(struct i2c_client *client, const struct i2c_device_id *i
 
 	ret = cw2217_device_init(cw_bat);
 	if (ret) {
-		chg_err("%s : cw2217_device_init fail!\n", __func__);
+		chg_err("%s : cw2217_device_init fail! ret = %d\n", __func__, ret);
 		goto error;
 	}
         chg_err("cw2217 driver probe success!\n");
@@ -2000,6 +2004,16 @@ static int cw2217_remove(struct i2c_client *client)
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 0))
 	return NUM_0;
 #endif
+}
+
+static void cw2217_shutdown(struct i2c_client *client)
+{
+	struct cw_battery *cw_bat = i2c_get_clientdata(client);
+
+	if (!cw_bat)
+	    return;
+
+	cancel_delayed_work_sync(&cw_bat->battery_delay_work);
 }
 
 #ifdef CONFIG_PM
@@ -2050,6 +2064,7 @@ static struct i2c_driver cw2217_driver = {
 	},
 	.probe = cw2217_probe,
 	.remove = cw2217_remove,
+	.shutdown = cw2217_shutdown,
 	.id_table = cw2217_id_table,
 };
 

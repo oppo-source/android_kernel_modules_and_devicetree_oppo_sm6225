@@ -62,7 +62,7 @@ void android_vh_dup_task_struct_handler(void *unused,
 		ux_err("failed %s oplus_task_struc common:%s, pid:%d, tgid=%d\n", __func__, tsk->comm, tsk->pid, tsk->tgid);
 		return;
 	}
-
+	atomic_set(&ots->is_vip_mvp, 0);
 	ots->task = tsk;
 #if IS_ENABLED(CONFIG_ARM64_AMU_EXTN) && IS_ENABLED(CONFIG_OPLUS_FEATURE_CPU_JANKINFO)
 	ots->uid_struct = NULL;
@@ -111,6 +111,7 @@ void android_vh_free_task_handler(void *unused, struct task_struct *tsk)
 	RB_CLEAR_NODE(&ots->ux_entry);
 	RB_CLEAR_NODE(&ots->exec_time_node);
 	list_del_init(&ots->fbg_list);
+	atomic_set(&ots->is_vip_mvp, 0);
 	ots->task = NULL;
 
 #if IS_ENABLED(CONFIG_OPLUS_FEATURE_SCHED_DDL)
@@ -126,6 +127,7 @@ void android_vh_free_task_handler(void *unused, struct task_struct *tsk)
 	ots->qos_level = -1;
 	ots->qos_recover_prio = -2;
 #endif
+	ots->im_flag = 0;
 	smp_mb();
 
 	free_oplus_task_struct(ots);

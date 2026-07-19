@@ -1,5 +1,5 @@
 /* Copyright (c) 2019-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -43,23 +43,27 @@
 #endif
 #endif /*CONFIG_OPLUS_FEATURE_MM_FEEDBACK*/
 
-#ifdef OPLUS_ARCH_EXTENDS
-#define GLOBAL_SKB_LEN  128
-static struct sk_buff *gskb = NULL;
-static bool gskb_used = false;
-static spinlock_t gskb_lock;
-#endif /* OPLUS_ARCH_EXTENDS */
-
 /* Define IPC Logging Macros */
 #define AUDIO_PKT_IPC_LOG_PAGE_CNT 2
 static void *audio_pkt_ilctxt;
 
 static int audio_pkt_debug_mask;
+#ifdef OPLUS_ARCH_EXTENDS
+/* Add for implement backup buffers queue for skb allocation. CR3958702 */
+static struct sk_buff_head audio_pkt_backup_buffers;
+static struct work_struct audio_pkt_skb_backup_work;
+#endif /* OPLUS_ARCH_EXTENDS */
 module_param_named(debug_mask, audio_pkt_debug_mask, int, 0664);
 
 #define APM_CMD_SHARED_MEM_MAP_REGIONS		0x0100100C
 #define APM_CMD_SHARED_SATELLITE_MEM_MAP_REGIONS	0x01001026
 #define APM_MEMORY_MAP_BIT_MASK_IS_OFFSET_MODE	0x00000004UL
+#ifdef OPLUS_ARCH_EXTENDS
+/* Add for implement backup buffers queue for skb allocation. CR3958702 */
+#define AUDIO_PKT_BUF_SIZE SZ_4K
+#define AUDIO_PKT_BACKUP_BUFFERS_NUM 10
+#endif /* OPLUS_ARCH_EXTENDS */
+
 enum {
 	AUDIO_PKT_INFO = 1U << 0,
 };
@@ -320,18 +324,7 @@ int audio_pkt_release(struct inode *inode, struct file *file)
 	/* Discard all SKBs */
 	while (!skb_queue_empty(&audpkt_dev->queue)) {
 		skb = skb_dequeue(&audpkt_dev->queue);
-#ifndef OPLUS_ARCH_EXTENDS
 		kfree_skb(skb);
-#else /* OPLUS_ARCH_EXTENDS */
-		if (skb != gskb) {
-			kfree_skb(skb);
-		} else {
-			// clear gskb
-			skb_reset_tail_pointer(gskb);
-			skb_trim(gskb, 0);
-			gskb_used = false;
-		}
-#endif /* OPLUS_ARCH_EXTENDS */
 	}
 	wake_up_interruptible(&audpkt_dev->readq);
 	spin_unlock_irqrestore(&audpkt_dev->queue_lock, flags);
@@ -364,18 +357,7 @@ static int audio_pkt_internal_release(struct platform_device *adev)
 		/* Discard all SKBs */
 		while (!skb_queue_empty(&audpkt_dev->queue)) {
 			skb = skb_dequeue(&audpkt_dev->queue);
-#ifndef OPLUS_ARCH_EXTENDS
-		kfree_skb(skb);
-#else /* OPLUS_ARCH_EXTENDS */
-		if (skb != gskb) {
 			kfree_skb(skb);
-		} else {
-			// clear gskb
-			skb_reset_tail_pointer(gskb);
-			skb_trim(gskb, 0);
-			gskb_used = false;
-		}
-#endif /* OPLUS_ARCH_EXTENDS */
 		}
 		spin_unlock_irqrestore(&audpkt_dev->queue_lock, flags);
 
@@ -446,18 +428,7 @@ ssize_t audio_pkt_read(struct file *file, char __user *buf,
 	if (copy_to_user(buf, skb->data, use))
 		use = -EFAULT;
 	temp = (uint32_t *) skb->data;
-#ifndef OPLUS_ARCH_EXTENDS
 	kfree_skb(skb);
-#else /* OPLUS_ARCH_EXTENDS */
-	if (skb != gskb) {
-		kfree_skb(skb);
-	} else {
-		// clear gskb
-		skb_reset_tail_pointer(gskb);
-		skb_trim(gskb, 0);
-		gskb_used = false;
-	}
-#endif  /* OPLUS_ARCH_EXTENDS */
 
 	return use;
 }
@@ -728,7 +699,33 @@ static const struct file_operations audio_pkt_fops = {
 	.write = audio_pkt_write,
 	.poll = audio_pkt_poll,
 };
+#ifdef OPLUS_ARCH_EXTENDS
+/* Add for implement backup buffers queue for skb allocation. CR3958702 */
+static void audio_pkt_alloc_backup(struct work_struct *work)
+{
+	struct sk_buff *skb;
 
+	AUDIO_PKT_INFO("%s: size of backup buffers queue %d\n",
+		__func__, skb_queue_len(&audio_pkt_backup_buffers));
+	while (skb_queue_len(&audio_pkt_backup_buffers) < AUDIO_PKT_BACKUP_BUFFERS_NUM) {
+		skb = alloc_skb(AUDIO_PKT_BUF_SIZE, GFP_ATOMIC);
+		if (!skb) {
+			AUDIO_PKT_ERR("%s: failed, size of bkp buffers queue %d\n", __func__,
+				skb_queue_len(&audio_pkt_backup_buffers));
+			break;
+		}
+		skb_queue_tail(&audio_pkt_backup_buffers, skb);
+	}
+}
+
+static struct sk_buff *audio_pkt_get_backup(void)
+{
+	struct sk_buff *buf = skb_dequeue(&audio_pkt_backup_buffers);
+
+	queue_work(system_unbound_wq, &audio_pkt_skb_backup_work);
+	return buf;
+}
+#endif /* OPLUS_ARCH_EXTENDS */
 /**
  * audio_pkt_srvc_callback() - Callback from gpr driver
  * adev:	pointer to the gpr device of this audio packet device
@@ -743,11 +740,7 @@ static int audio_pkt_srvc_callback(struct gpr_device *adev,
 	struct audio_pkt_device *audpkt_dev = ap_priv->ap_dev;
 
 	unsigned long flags;
-#ifndef OPLUS_ARCH_EXTENDS
 	struct sk_buff *skb;
-#else /* OPLUS_ARCH_EXTENDS */
-	struct sk_buff *skb = NULL;
-#endif /* OPLUS_ARCH_EXTENDS */
 	struct gpr_hdr *hdr = (struct gpr_hdr *)data;
 	uint16_t hdr_size, pkt_size;
 	hdr_size = GPR_PKT_GET_HEADER_BYTE_SIZE(hdr->header);
@@ -757,28 +750,23 @@ static int audio_pkt_srvc_callback(struct gpr_device *adev,
 		__func__,hdr_size, pkt_size);
 
 	skb = alloc_skb(pkt_size, GFP_ATOMIC);
+	if (!skb) {
 #ifndef OPLUS_ARCH_EXTENDS
-	if (!skb)
-		return -ENOMEM;
-#else /* OPLUS_ARCH_EXTENDS */
-	if (!skb) {
-		AUDIO_PKT_ERR("alloc_skb failed, pkt_size = 0x%x, gskb_used = %d\n", pkt_size, gskb_used);
-		spin_lock_irqsave(&gskb_lock, flags);
-		if (!gskb_used && gskb && (pkt_size <= GLOBAL_SKB_LEN)) {
-			gskb_used = true;
-			skb = gskb;
-			dev_info(&adev->dev, "%s: gskb_used=%d\n", __func__, gskb_used);
-		}
-		spin_unlock_irqrestore(&gskb_lock, flags);
-	}
-
-	if (!skb) {
-		dev_info(&adev->dev, "%s: alloc_skb failed, pkt_size = 0x%x\n",
+/* Add for implement backup buffers queue for skb allocation. CR3958702 */
+		dev_err(&adev->dev, "%s: alloc_skb failed, pkt_size = 0x%x\n",
 			__func__, pkt_size);
-
 		return -ENOMEM;
 	}
+#else /* OPLUS_ARCH_EXTENDS */
+		dev_info(&adev->dev, "%s: alloc_skb failed pkt_size %d\n", __func__, pkt_size);
+		skb = audio_pkt_get_backup();
+		if (!skb) {
+			dev_err(&adev->dev, "%s: get backup skb buffers failed\n",
+					__func__);
+			return -ENOMEM;
+		}
 #endif /* OPLUS_ARCH_EXTENDS */
+	}
 
 	skb_put_data(skb, data, pkt_size);
 
@@ -816,15 +804,6 @@ static int audio_pkt_probe(struct gpr_device *adev)
 		ap_priv->status = AUDIO_PKT_PROBED;
 		dev_set_drvdata(&adev->dev, ap_priv);
 		mutex_unlock(&ap_priv->lock);
-
-#ifdef OPLUS_ARCH_EXTENDS
-		gskb = alloc_skb(GLOBAL_SKB_LEN, GFP_ATOMIC);
-		if (!gskb) {
-			dev_dbg(&adev->dev, "%s: alloc_skb 256 failed \n", __func__);
-		}
-		spin_lock_init(&gskb_lock);
-#endif /* OPLUS_ARCH_EXTENDS */
-
 		dev_dbg(&adev->dev, "%s: Driver[%s] Probed\n", __func__,
 			adev->name);
 	} else {
@@ -859,13 +838,6 @@ static int audio_pkt_remove(struct gpr_device *adev)
 		ap_priv->adev = NULL;
 		ap_priv->status = AUDIO_PKT_REMOVED;
 		mutex_unlock(&ap_priv->lock);
-
-#ifdef OPLUS_ARCH_EXTENDS
-		if (gskb) {
-			kfree_skb(gskb);
-		}
-#endif /* OPLUS_ARCH_EXTENDS */
-
 		dev_dbg(&adev->dev, "%s: Driver[%s] Removing\n",
 		 __func__, adev->name);
 		dev_set_drvdata(&adev->dev, NULL);
@@ -996,6 +968,12 @@ static int audio_pkt_platform_driver_probe(struct platform_device *pdev)
 			goto free_dev;
 		}
 	}
+#ifdef OPLUS_ARCH_EXTENDS
+/* Add for implement backup buffers queue for skb allocation. CR3958702 */
+	skb_queue_head_init(&audio_pkt_backup_buffers);
+	INIT_WORK(&audio_pkt_skb_backup_work, audio_pkt_alloc_backup);
+	queue_work(system_unbound_wq, &audio_pkt_skb_backup_work);
+#endif /* OPLUS_ARCH_EXTENDS */
 	ret = audio_pkt_plaform_driver_register_gpr(pdev, audpkt_dev);
 	if (ret < 0) {
 		dev_err(&pdev->dev, "%s: Failed to register with gpr, err = %d\n",
@@ -1050,7 +1028,12 @@ static int audio_pkt_platform_driver_remove(struct platform_device *adev)
 		unregister_chrdev_region(MAJOR(audpkt_dev[0].audio_pkt_major),
 					DEV_MAX_NUM);
 	}
-
+#ifdef OPLUS_ARCH_EXTENDS
+/* Add for implement backup buffers queue for skb allocation. CR3958702 */
+	//of_platform_depopulate(&adev->dev);
+	cancel_work_sync(&audio_pkt_skb_backup_work);
+	skb_queue_purge(&audio_pkt_backup_buffers);
+#endif /* OPLUS_ARCH_EXTENDS */
 	AUDIO_PKT_INFO("Audio Packet Port Driver Removed\n");
 
 	return 0;

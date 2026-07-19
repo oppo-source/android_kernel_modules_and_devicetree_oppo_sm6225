@@ -579,9 +579,10 @@ static void __nocfi get_page_from_uxmempool(void *data, gfp_t gfp_mask, int orde
 	if (current_is_key_task() && !(gfp_mask & __GFP_DMA32)) {
 		page = ux_page_pool_alloc_pages(order, migratetype);
 		if (page) {
-			if (!page_count(page))
-				prep_new_page_dup(page, order, gfp_mask, ALLOC_WMARK_LOW);
-			else if (order && (gfp_mask & __GFP_COMP))
+			if (!page_count(page)) {
+				/* clear __GFP_DIRECT_RECLAIM because preempt is disabled in vh */
+				prep_new_page_dup(page, order, gfp_mask & ~(__GFP_DIRECT_RECLAIM), ALLOC_WMARK_LOW);
+			} else if (order && (gfp_mask & __GFP_COMP))
 				prep_compound_page_dup(page, order);
 		}
 	}

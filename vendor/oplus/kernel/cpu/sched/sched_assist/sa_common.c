@@ -515,6 +515,15 @@ noinline int tracing_mark_write(const char *buf)
 	return 0;
 }
 
+int is_vip_mvp(struct task_struct *p)
+{
+	struct oplus_task_struct *ots = get_oplus_task_struct(p);
+	if (IS_ERR_OR_NULL(ots))
+		return false;
+
+	return atomic_read(&ots->is_vip_mvp);
+}
+
 void ux_state_systrace_c(unsigned int cpu, struct task_struct *p)
 {
 	int ux_state = 0;
@@ -525,6 +534,9 @@ void ux_state_systrace_c(unsigned int cpu, struct task_struct *p)
 		ux_state = SCHED_UX_STATE_DEBUG_MAGIC;
 	else
 		ux_state = (oplus_get_ux_state(p) & (SCHED_ASSIST_UX_MASK | SA_TYPE_INHERIT | SCHED_ASSIST_UX_PRIORITY_MASK));
+
+	if (is_vip_mvp(p))
+		ux_state |= SA_TYPE_MQ_VIP;
 
 	if (per_cpu(prev_ux_state, cpu) != ux_state) {
 		char buf[256];

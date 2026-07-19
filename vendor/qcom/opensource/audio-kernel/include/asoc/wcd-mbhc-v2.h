@@ -687,6 +687,7 @@ struct wcd_mbhc {
 	#ifdef OPLUS_ARCH_EXTENDS
 	/* Add for headphone volume match to impedance */
 	bool enable_hp_impedance_detect;
+	int avoid_abnormal_wcd_status;
 	#endif /* OPLUS_ARCH_EXTENDS */
 
 	#ifdef OPLUS_ARCH_EXTENDS

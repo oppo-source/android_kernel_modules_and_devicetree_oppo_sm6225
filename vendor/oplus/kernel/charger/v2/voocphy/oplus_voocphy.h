@@ -957,6 +957,8 @@ struct oplus_voocphy_manager {
 	bool in_vbus_adjust_trans;
 	u8 vbus_adjust_hold_cnt;
 	u8 last_vooc_vbus_status;
+	struct oplus_chg_strategy *ccd_strategy;
+	bool twice_request_current_enable;
 };
 
 struct oplus_voocphy_operations {

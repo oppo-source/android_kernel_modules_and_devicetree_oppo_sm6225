@@ -555,6 +555,7 @@ struct syna_tcm_hcd {
 	int zeroflash_init_done;
 	int check_uboot_failed_count;
 	int request_fw_image_id;
+	int gesture_fw_finished_flag;
 
 	struct completion config_complete;
 	struct mutex reset_mutex;

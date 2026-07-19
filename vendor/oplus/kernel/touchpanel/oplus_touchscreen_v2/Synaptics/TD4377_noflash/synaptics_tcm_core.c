@@ -3102,9 +3102,21 @@ static int syna_tcm_set_gesture_mode(struct syna_tcm_hcd *tcm_hcd, bool enable)
 	unsigned short config;
 	struct touchpanel_data *ts = spi_get_drvdata(tcm_hcd->s_client);
 
-	if (ts->lpwg_fw_support) {
-		/*request lpwg firmware*/
-		syna_tcm_before_switch_to_gesture_mode(tcm_hcd, enable);
+	TPD_INFO("func:%s, line:%d, ts->is_suspended =%d , enable =%d\n", __func__, __LINE__, ts->is_suspended, enable);
+
+	if (ts->is_suspended && enable == 0) {
+		tcm_hcd->gesture_fw_finished_flag = 1;
+	} else if (ts->is_suspended == 0){
+		tcm_hcd->gesture_fw_finished_flag = 0;
+	}
+
+	if (tcm_hcd->gesture_fw_finished_flag == 1) {
+		TPD_INFO("func:%s, line:%d, Enable Gesture After Hand Occlusion \n", __func__, __LINE__);
+	} else {
+		if (ts->lpwg_fw_support) {
+			/*request lpwg firmware*/
+			syna_tcm_before_switch_to_gesture_mode(tcm_hcd, enable);
+		}
 	}
 
 	/*this command may take too much time, if needed can add flag to skip this */
@@ -3252,19 +3264,27 @@ static int syna_tcm_set_glove_mode(struct syna_tcm_hcd *tcm_hcd, bool enable)
 static int syna_tcm_normal_mode(struct syna_tcm_hcd *tcm_hcd)
 {
 	int retval = 0;
+	struct touchpanel_data *ts = spi_get_drvdata(tcm_hcd->s_client);
 
-	retval = syna_set_input_reporting(tcm_hcd, false);
-	if (retval < 0) {
-		TPD_INFO("Failed to set input reporting\n");
-		return retval;
+	if (!ts) {
+		TPD_INFO("%s, ts is NULL\n", __func__);
+		return -EINVAL;
 	}
 
-	retval = syna_tcm_set_dynamic_config(tcm_hcd, DC_IN_WAKEUP_GESTURE_MODE, false);
-	if (retval < 0) {
-		TPD_INFO("Failed to set dynamic gesture config\n");
-		return retval;
-	}
+	TPD_INFO("%s, is_suspended=%d, suspend_state=%d\n", __func__, ts->is_suspended, ts->suspend_state);
+	if (!ts->is_suspended) {
+		retval = syna_set_input_reporting(tcm_hcd, false);
+		if (retval < 0) {
+			TPD_INFO("Failed to set input reporting\n");
+			return retval;
+		}
 
+		retval = syna_tcm_set_dynamic_config(tcm_hcd, DC_IN_WAKEUP_GESTURE_MODE, false);
+		if (retval < 0) {
+			TPD_INFO("Failed to set dynamic gesture config\n");
+			return retval;
+		}
+	}
 	return retval;
 }
 
@@ -3523,11 +3543,12 @@ static int syna_mode_switch(void *chip_data, work_mode mode, int flag)
 	TPD_INFO("syna_mode_switch begin, mode = %d\n", mode);
 	switch (mode) {
 	case MODE_NORMAL:
-		TPD_DETAIL("syna_mode_switch MODE_NORMAL\n");
-		/*ret = syna_tcm_normal_mode(tcm_hcd);*/
+		TPD_INFO("syna_mode_switch go to set MODE_NORMAL\n");
+		ret = syna_tcm_normal_mode(tcm_hcd);
 		if (ret < 0) {
 			TPD_INFO("normal mode switch failed\n");
 		}
+		TPD_INFO("syna_mode_switch set MODE_NORMAL finish\n");
 		break;
 	case MODE_GESTURE:
 		ret = syna_tcm_set_gesture_mode(tcm_hcd, flag);
@@ -3641,9 +3662,18 @@ static int syna_hw_reset(struct syna_tcm_hcd *tcm_hcd, struct hw_resource *hw_re
 int syna_reset_gpio(void *chip_data, bool enable)
 {
 	struct syna_tcm_hcd *tcm_hcd = (struct syna_tcm_hcd *)chip_data;
+	struct touchpanel_data *ts = spi_get_drvdata(tcm_hcd->s_client);
 
-	TPD_DEBUG("000 %s:gpio enable %d\n", __func__, enable);
+	if (!ts) {
+		TPD_INFO("%s, ts is NULL\n", __func__);
+		return -EINVAL;
+	}
+	TPD_INFO("000 %s:gpio enable %d, suspend_state = %d, tcm_hcd->request_fw_image_id =%d\n", __func__, enable, ts->suspend_state, tcm_hcd->request_fw_image_id);
 	if (gpio_is_valid(tcm_hcd->hw_res->reset_gpio)) {
+		/* if tp reset ,reset request_fw_image_id force to load normal fw*/
+		if (ts->suspend_state == TP_RESUME_EARLY_EVENT) {
+			tcm_hcd->request_fw_image_id = 0;
+		}
 		gpio_set_value(tcm_hcd->hw_res->reset_gpio, enable);
 	}
 	return 0;
@@ -5752,6 +5782,7 @@ static int syna_tcm_spi_probe(struct spi_device *spi)
 	ts->tp_resume_order = LCD_TP_RESUME;
 	ts->skip_reset_in_resume = true;
 	ts->skip_suspend_operate = true;
+	tcm_hcd->gesture_fw_finished_flag = 0;
 	/*ts->mode_switch_type = SINGLE;*/
 	if (!ts->irq_trigger_hdl_support) {
 		ts->irq_trigger_hdl_support = tcm_hcd->irq_trigger_hdl_support;

@@ -156,6 +156,8 @@
 	hs-g-gpio = <&tlmm 24 0>;
 
 	oplus,rcv_as_l_spk = <1>;
+
+	oplus,mbhc-avoid-abnormal-wcd-status = <1>;
 };
 
 &qupv3_se1_i2c {

@@ -12,9 +12,15 @@
 			kcompressed {
 				feature-enable;
 			};
+			ezreclaimd {
+				feature-enable;
+			};
 		};
 		ram-6g {
 			kcompressed {
+				feature-enable;
+			};
+			ezreclaimd {
 				feature-enable;
 			};
 		};

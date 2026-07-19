@@ -118,8 +118,9 @@ enum {
 #define COPYCAT_ADAPTER_EFFECTIVE_IBATTHRESHOLD	1500
 #define VOOCPHY_NEED_CHANGE_CUR_MAXCNT		5
 #define COPYCAT_ADAPTER_CUR_JUDGMENT_CNT	10
-#define VOOC_INIT_WAIT_TIME_MS 300
-#define PCC_DELAY_MS		1500
+#define VOOC_INIT_WAIT_TIME_MS			300
+#define PCC_DELAY_MS				1500
+#define VOOC_45W_MODEL_VER			(0x1c)
 
 int voocphy_log_level = 3;
 static struct completion vooc_init_check_ack;
@@ -978,9 +979,9 @@ static int oplus_voocphy_reset_variables(struct oplus_voocphy_manager *chip)
 	chip->code_id_local = 0xFFFF;
 	chip->code_id_temp_h = 0;
 	chip->code_id_temp_l = 0;
-	if (chip->fastchg_reactive == false) {
+	if (chip->fastchg_reactive == false)
 		chip->adapter_model_ver = 0;
-	}
+	chip->twice_request_current_enable = false;
 	chip->adapter_model_count = 0;
 	chip->ask_batt_sys = 0;
 	chip->current_expect = chip->current_default;
@@ -3640,6 +3641,40 @@ static int oplus_voocphy_handle_ask_ap_status(struct oplus_voocphy_manager *chip
 	return status;
 }
 
+static int oplus_voocphy_handle_ask_fastchg_ornot(struct oplus_voocphy_manager *chip)
+{
+	int status = VOOCPHY_SUCCESS;
+
+	if (!chip) {
+		voocphy_info("oplus_voocphy_manager is null\n");
+		return VOOCPHY_EFATAL;
+	}
+
+	status = oplus_voocphy_handle_ask_fastchg_ornot_cmd(chip);
+	if (chip->adapter_model_ver == VOOC_45W_MODEL_VER)
+		chip->twice_request_current_enable = true;
+
+	return status;
+}
+
+static int oplus_voocphy_handle_get_batt_vol(struct oplus_voocphy_manager *chip)
+{
+	int status = VOOCPHY_SUCCESS;
+
+	if (!chip) {
+		voocphy_info("oplus_voocphy_manager is null\n");
+		return VOOCPHY_EFATAL;
+	}
+
+	status = oplus_voocphy_handle_get_batt_vol_cmd(chip);
+	if (chip->twice_request_current_enable) {
+		chip->twice_request_current_enable = false;
+		chip->ap_need_change_current = VOOCPHY_NEED_CHANGE_CUR_MAXCNT;
+	}
+
+	return status;
+}
+
 static int oplus_voocphy_reply_adapter_mesg(struct oplus_voocphy_manager *chip)
 {
 	int status = VOOCPHY_SUCCESS;
@@ -3669,7 +3704,7 @@ static int oplus_voocphy_reply_adapter_mesg(struct oplus_voocphy_manager *chip)
 	/* handle the adaper request mesg */
 	switch (chip->fastchg_adapter_ask_cmd) {
 	case VOOC_CMD_ASK_FASTCHG_ORNOT:
-		status = oplus_voocphy_handle_ask_fastchg_ornot_cmd(chip);
+		status = oplus_voocphy_handle_ask_fastchg_ornot(chip);
 		break;
 	case VOOC_CMD_IDENTIFICATION:
 		status = oplus_voocphy_handle_identification_cmd(chip);
@@ -3696,7 +3731,7 @@ static int oplus_voocphy_reply_adapter_mesg(struct oplus_voocphy_manager *chip)
 		status = oplus_voocphy_handle_ask_current_level_cmd(chip);
 		break;
 	case VOOC_CMD_GET_BATT_VOL:
-		status = oplus_voocphy_handle_get_batt_vol_cmd(chip);
+		status = oplus_voocphy_handle_get_batt_vol(chip);
 		break;
 	case VOOC_CMD_NULL:
 	case VOOC_CMD_RECEVICE_DATA_0E:

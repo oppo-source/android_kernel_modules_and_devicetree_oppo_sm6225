@@ -1,6 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+/* SPDX-License-Identifier: GPL-2.0-only */
 /*
- * Copyright (C) 2019 MediaTek Inc.
+ * Copyright (C) 2020-2024 Oplus. All rights reserved.
  */
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM sched_assist
@@ -14,36 +14,40 @@
 #include "sa_common.h"
 #include "sa_fair.h"
 
-
 TRACE_EVENT(set_ux_task_to_prefer_cpu,
-
-	TP_PROTO(struct task_struct *p, int target_cpu, int strict_cpu, int cls_nr, int start_cls),
-
-	TP_ARGS(p, target_cpu, strict_cpu, cls_nr, start_cls),
-
-	TP_STRUCT__entry(
-		__field(int,		pid)
-		__array(char,		comm, TASK_COMM_LEN)
-		__array(char,		cpus, 32)
-		__field(unsigned long,	util)
-		__field(int,		target_cpu)
-		__field(int,		strict_cpu)
-		__field(int,		cls_nr)
-		__field(int,		start_cls)),
-
-	TP_fast_assign(
-		__entry->pid			= p->pid;
-		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-		__entry->util			= oplus_task_util(p);
-		scnprintf(__entry->cpus, sizeof(__entry->cpus), "%*pbl", cpumask_pr_args(&p->cpus_mask));
-		__entry->target_cpu		= target_cpu;
-		__entry->strict_cpu		= strict_cpu;
-		__entry->cls_nr			= cls_nr;
-		__entry->start_cls		= start_cls;),
-
-	TP_printk("pid=%d comm=%s util=%lu cpus_allowed=%s target_cpu=%d strict_cpu=%d cls_nr=%d start_cls=%d",
+	TP_PROTO(struct task_struct *p, char *msg, int target_cpu,
+		int ux_cpu, int start_cls, int cls_nr,
+		const struct cpumask *cpumask),
+	TP_ARGS(p, msg, target_cpu,
+						ux_cpu, start_cls,
+						cls_nr, cpumask),
+	TP_STRUCT__entry(__field(int, pid)
+			__array(char, comm, TASK_COMM_LEN)
+			__array(char, cpus, 32)
+			__field(unsigned long, util)
+			__array(char, msg, TASK_COMM_LEN)
+			__field(int, target_cpu)
+			__field(int, ux_cpu)
+			__field(int, start_cls)
+			__field(int, cls_nr)
+			__field(unsigned long, cpumask)),
+	TP_fast_assign(__entry->pid = p->pid;
+			memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
+			__entry->util = oplus_task_util(p);
+			scnprintf(__entry->cpus, sizeof(__entry->cpus),
+				"%*pbl", cpumask_pr_args(&p->cpus_mask));
+			memcpy(__entry->msg, msg,
+				min((size_t) TASK_COMM_LEN, strlen(msg) + 1));
+			__entry->target_cpu = target_cpu;
+			__entry->ux_cpu = ux_cpu;
+			__entry->start_cls = start_cls;
+			__entry->cls_nr = cls_nr;
+			__entry->cpumask = cpumask_bits(cpumask)[0];),
+	TP_printk
+		("pid=%d comm=%s util=%lu cpus_allowed=%s reason=%s, target_cpu=%d ux_cpu=%d start_cls=%d cls_nr=%d cpumask=0x%lx",
 		__entry->pid, __entry->comm, __entry->util, __entry->cpus,
-		__entry->target_cpu, __entry->strict_cpu, __entry->cls_nr, __entry->start_cls)
+		__entry->msg, __entry->target_cpu, __entry->ux_cpu,
+		__entry->start_cls, __entry->cls_nr, __entry->cpumask)
 );
 
 DECLARE_EVENT_CLASS(inherit_ux_template,
