@@ -528,6 +528,10 @@
 #define CP_STRAT_OPEN_ALL		0
 #define CP_STRAT_OPEN_BY_CURR		1
 
+/* track version */
+#define TRACK_VER_3_4		0
+#define TRACK_VER_4_0		1
+
 /* oplus_plc_strategy_type */
 #define PLC_STRATEGY_STEP	0
 #define PLC_STRATEGY_SIMPLE	1

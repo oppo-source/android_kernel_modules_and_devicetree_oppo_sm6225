@@ -551,6 +551,7 @@ struct syna_tcm_hcd {
 	bool tp_fw_update_headfile;
 	bool tp_fw_update_first;
 	bool tp_fw_update_parse;
+	bool lpwg_fw_support_flag;
 	int tp_irq_state;
 	int zeroflash_init_done;
 	int check_uboot_failed_count;

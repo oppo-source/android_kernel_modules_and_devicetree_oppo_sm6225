@@ -12,8 +12,11 @@
 			kcompressed {
 				feature-enable;
 			};
-			ezreclaimd {
-				feature-enable;
+			oplus_bsp_uxmem_opt {
+				feature-disable;
+			};
+			oplus_bsp_zram_opt {
+				balance_anon_file_reclaim_always_true;
 			};
 		};
 		ram-6g {

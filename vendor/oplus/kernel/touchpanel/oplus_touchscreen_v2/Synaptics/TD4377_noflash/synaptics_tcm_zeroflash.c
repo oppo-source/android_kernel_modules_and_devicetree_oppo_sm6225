@@ -236,6 +236,7 @@ static int zeroflash_get_fw_image(void)
 	uint8_t copy_len = 0;
 
 	if (tcm_hcd->request_fw_image_id == 1) {
+		tcm_hcd->gesture_fw_finished_flag = 1;
 		fw_name_lpwg = kzalloc(MAX_FW_NAME_LENGTH, GFP_KERNEL);
 			if (fw_name_lpwg == NULL) {
 				TPD_INFO("fw_name_lpwg kzalloc error!\n");
@@ -265,6 +266,7 @@ static int zeroflash_get_fw_image(void)
 
 		kfree(fw_name_lpwg);
 	} else {
+		tcm_hcd->gesture_fw_finished_flag = 0;
 		if(!g_zeroflash_hcd->fw_entry) {
 			TPD_INFO("oplus tp update can't get fw, get fw from headfile\n");
 			request_fw_headfile = kzalloc(sizeof(struct firmware), GFP_KERNEL);

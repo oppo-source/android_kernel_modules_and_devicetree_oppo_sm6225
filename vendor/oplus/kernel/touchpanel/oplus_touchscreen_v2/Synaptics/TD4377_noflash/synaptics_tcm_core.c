@@ -3080,7 +3080,7 @@ static int syna_tcm_sw_reset(struct syna_tcm_hcd *tcm_hcd)
 static int syna_tcm_before_switch_to_gesture_mode(struct syna_tcm_hcd *tcm_hcd, bool enable)
 {
 
-	if (enable) {
+	if (enable && !tcm_hcd->gesture_fw_finished_flag) {
 		/*set gesture fw mode flag = 1*/
 		tcm_hcd->request_fw_image_id = 1;
 		/*sw reset*/
@@ -3573,9 +3573,11 @@ static int syna_mode_switch(void *chip_data, work_mode mode, int flag)
 		}
 		break;
 	case MODE_SLEEP:
-		ret = syna_tcm_sleep(tcm_hcd, true);
-		if (ret < 0) {
-			TPD_INFO("%s: failed to switch to sleep", __func__);
+		if (ts != NULL && ts->is_suspended) {
+			ret = syna_tcm_sleep(tcm_hcd, true);
+			if (ret < 0) {
+				TPD_INFO("%s: failed to switch to sleep", __func__);
+			}
 		}
 		break;
 	case MODE_CHARGE:
@@ -4140,6 +4142,8 @@ static int synaptics_auto_test_preoperation(struct seq_file *s, void *chip_data,
 	char *p_node = NULL;
 	char *postfix = "_TEST.img";
 	uint8_t copy_len = 0;
+
+	tcm_hcd->lpwg_fw_support_flag = ts->lpwg_fw_support;
 	ts->lpwg_fw_support = false;
 	TPD_INFO("%s  is called\n", __func__);
 
@@ -4200,7 +4204,7 @@ static int synaptics_auto_black_screen_test_endoperation(struct seq_file *s, voi
 	const struct firmware *fw = NULL;
 
 	TPD_INFO("%s  is called\n", __func__);
-	ts->lpwg_fw_support = true;
+	ts->lpwg_fw_support = tcm_hcd->lpwg_fw_support_flag;
 	ret = request_firmware(&fw, ts->panel_data.fw_name, ts->dev);
 	if (!ret) {
 		ts->loading_fw = true;
@@ -5717,6 +5721,7 @@ static int syna_tcm_spi_probe(struct spi_device *spi)
 	tcm_hcd->tp_fw_update_first = false;
 	tcm_hcd->tp_fw_update_parse = true;
 	tcm_hcd->tp_irq_state = 1;
+	tcm_hcd->gesture_fw_finished_flag = 0;
 	ts->chip_data = tcm_hcd;
 
 	/*tcm_hcd->syna_ops = &syna_proc_ops;*/

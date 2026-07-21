@@ -846,7 +846,7 @@
 	oplus_monitor: oplus,monitor {
 		compatible = "oplus,monitor";
 		oplus,topic-update-interval = <60000>;
-		track,fast_chg_break_t_thd = <1400>;
+		track,fast_chg_break_t_thd = <2500>;
 		track,general_chg_break_t_thd = <300>;
 		track,wired_max_power = <15000>;
 		track,wired_fast_chg_scheme = <6>;
@@ -860,6 +860,7 @@
 		track,gauge_max_cell_temp = <57>;
 		track,gauge_firmware_term_volt = <3100>;
 		track,gauge_lifetime_support;
+		track,track_ver = <TRACK_VER_4_0>;
 	};
 	oplus_smart_charge: oplus,smart_charge {
 		compatible = "oplus,smart_charge";
